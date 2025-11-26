@@ -25,9 +25,10 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: ekvator
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/ekvator
     ports:
       - '3000:3000'
-    command: sh -c "npm install && npm run build && npm run start:prod"
+    command: sh -c "npm install && ./scripts/migrate.sh && npm run build && npm run start:prod"
 
 volumes:
   db_data:
