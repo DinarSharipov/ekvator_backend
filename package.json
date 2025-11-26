@@ -7,7 +7,11 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main.js",
     "start:dev": "ts-node src/main.ts",
-    "start:prod": "node dist/main.js"
+    "start:prod": "node dist/main.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -20,6 +24,7 @@
     "class-validator": "^0.14.0",
     "pg": "^8.11.0",
     "@nestjs/config": "^3.0.0",
+    "@prisma/client": "^5.0.0",
     "typescript": "^5.0.0",
     "ts-node": "^10.0.0"
   },
@@ -27,6 +32,7 @@
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
+    "prisma": "^5.0.0",
     "ts-loader": "^9.0.0"
   }
 }
