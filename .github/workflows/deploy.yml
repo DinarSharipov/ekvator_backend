@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          timeout: 1800
+          timeout: 30m
           source: "."
           # меняем путь на домашнюю папку юзера
           target: "/home/${{ secrets.SSH_USER }}/ekvator"
