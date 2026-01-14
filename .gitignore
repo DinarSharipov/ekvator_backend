@@ -34,3 +34,7 @@ node_modules/.cache
 .nestcli.json
 
 
+
+/generated/prisma
+
+/app/generated/prisma
