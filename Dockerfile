@@ -1,29 +1,19 @@
-FROM node:20-alpine
+# Используем Node 24
+FROM node:24-alpine
 
 # Устанавливаем необходимые зависимости для Prisma
-RUN apk add --no-cache openssl libc6-compat
+RUN apk add --no-cache openssl libc6-compat bash
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package.json ./
-
-# Устанавливаем все зависимости (включая devDependencies, чтобы был доступен Nest CLI)
+# Копируем package.json и устанавливаем зависимости
+COPY package.json package-lock.json ./
 RUN npm install
 
-COPY tsconfig.json ./
-COPY prisma ./prisma
-COPY scripts ./scripts
-COPY src ./src
-
-# Делаем скрипт миграции исполняемым
-RUN chmod +x scripts/migrate.sh
-
-# Собираем проект (используется локальный nest из node_modules/.bin)
-RUN npm run build
-
-# После сборки переключаем окружение в production
-ENV NODE_ENV=production
+# Копируем весь код, Prisma и сгенерированные файлы
+COPY . .
 
 EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
+# Запускаем приложение
+CMD ["npm", "run", "start:dev"]

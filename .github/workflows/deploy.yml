@@ -17,7 +17,8 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           source: "."
           target: "/var/www/ekvator"
 
@@ -26,9 +27,12 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
             cd /var/www/ekvator
-            docker-compose pull
-            docker-compose down
-            docker-compose up -d --build
+            # убедимся, что используем продакшн env
+            cp .env.prod .env
+            docker compose pull
+            docker compose down
+            docker compose up -d --build

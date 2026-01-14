@@ -1,20 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../dist/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  surname   String
-  phone     String
-  email     String?
-  telegram  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id Int @id @default(autoincrement())
+  name String 
+  surname String
+  phone String
+  email String?
+  telegram String?
 }
 
+model ServiceType {
+  id Int @id @default(autoincrement())
+  name String
+  showInMain Boolean @default(false)
+  phone String?
+  secondPhone String?
+  photo String?
+  description String?
+}
+
+model ServiceElement {
+  id Int @id @default(autoincrement())
+  name String
+  description String?
+  price Int
+  photos String[] @default([])
+  type String
+  createdDate DateTime @default(now())
+  isArchive Boolean @default(false)
+}

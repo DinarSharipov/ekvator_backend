@@ -1,34 +1,47 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine
     container_name: ekvator_db
     environment:
-      POSTGRES_DB: ekvator
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - '5433:5432'
+      - "${DB_HOST_PORT}:${DB_PORT}"   # хост:контейнер
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
     container_name: ekvator_app
+    env_file:
+      - ${ENV_FILE:-.env.local}   # указываем явно, по умолчанию .env.local
     depends_on:
-      - db
-    environment:
-      PORT: 3000
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: ekvator
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/ekvator
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
-      - '3000:3000'
-    command: sh -c "npm install && ./scripts/migrate.sh && npm run build && npm run start:prod"
+      - "${PORT}:${PORT}"          # порт приложения
+    command: >
+      sh -c "
+      if [ \"$PRISMA_MODE\" = 'dev' ]; then
+        npx prisma migrate dev
+      else
+        npx prisma migrate deploy
+      fi
+      && if [ \"$PRISMA_MODE\" = 'dev' ]; then
+           npm run start:dev
+         else
+           npm run start:prod
+         fi
+      "
 
 volumes:
   db_data:

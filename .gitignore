@@ -6,6 +6,7 @@ build
 # env files
 .env
 .env.local
+.env.prod
 .env.*.local
 
 # logs
@@ -34,3 +35,7 @@ node_modules/.cache
 .nestcli.json
 
 
+
+/generated/prisma
+
+/app/generated/prisma
