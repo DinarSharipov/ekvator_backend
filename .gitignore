@@ -6,6 +6,7 @@ build
 # env files
 .env
 .env.local
+.env.prod
 .env.*.local
 
 # logs
