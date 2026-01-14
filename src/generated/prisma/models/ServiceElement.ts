@@ -29,11 +29,13 @@ export type AggregateServiceElement = {
 export type ServiceElementAvgAggregateOutputType = {
   id: number | null
   price: number | null
+  type: number | null
 }
 
 export type ServiceElementSumAggregateOutputType = {
   id: number | null
   price: number | null
+  type: number | null
 }
 
 export type ServiceElementMinAggregateOutputType = {
@@ -41,7 +43,7 @@ export type ServiceElementMinAggregateOutputType = {
   name: string | null
   description: string | null
   price: number | null
-  type: string | null
+  type: number | null
   createdDate: Date | null
   isArchive: boolean | null
 }
@@ -51,7 +53,7 @@ export type ServiceElementMaxAggregateOutputType = {
   name: string | null
   description: string | null
   price: number | null
-  type: string | null
+  type: number | null
   createdDate: Date | null
   isArchive: boolean | null
 }
@@ -72,11 +74,13 @@ export type ServiceElementCountAggregateOutputType = {
 export type ServiceElementAvgAggregateInputType = {
   id?: true
   price?: true
+  type?: true
 }
 
 export type ServiceElementSumAggregateInputType = {
   id?: true
   price?: true
+  type?: true
 }
 
 export type ServiceElementMinAggregateInputType = {
@@ -203,7 +207,7 @@ export type ServiceElementGroupByOutputType = {
   description: string | null
   price: number
   photos: string[]
-  type: string
+  type: number
   createdDate: Date
   isArchive: boolean
   _count: ServiceElementCountAggregateOutputType | null
@@ -237,7 +241,7 @@ export type ServiceElementWhereInput = {
   description?: Prisma.StringNullableFilter<"ServiceElement"> | string | null
   price?: Prisma.IntFilter<"ServiceElement"> | number
   photos?: Prisma.StringNullableListFilter<"ServiceElement">
-  type?: Prisma.StringFilter<"ServiceElement"> | string
+  type?: Prisma.IntFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeFilter<"ServiceElement"> | Date | string
   isArchive?: Prisma.BoolFilter<"ServiceElement"> | boolean
 }
@@ -262,7 +266,7 @@ export type ServiceElementWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"ServiceElement"> | string | null
   price?: Prisma.IntFilter<"ServiceElement"> | number
   photos?: Prisma.StringNullableListFilter<"ServiceElement">
-  type?: Prisma.StringFilter<"ServiceElement"> | string
+  type?: Prisma.IntFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeFilter<"ServiceElement"> | Date | string
   isArchive?: Prisma.BoolFilter<"ServiceElement"> | boolean
 }, "id">
@@ -292,7 +296,7 @@ export type ServiceElementScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"ServiceElement"> | string | null
   price?: Prisma.IntWithAggregatesFilter<"ServiceElement"> | number
   photos?: Prisma.StringNullableListFilter<"ServiceElement">
-  type?: Prisma.StringWithAggregatesFilter<"ServiceElement"> | string
+  type?: Prisma.IntWithAggregatesFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeWithAggregatesFilter<"ServiceElement"> | Date | string
   isArchive?: Prisma.BoolWithAggregatesFilter<"ServiceElement"> | boolean
 }
@@ -302,7 +306,7 @@ export type ServiceElementCreateInput = {
   description?: string | null
   price: number
   photos?: Prisma.ServiceElementCreatephotosInput | string[]
-  type: string
+  type: number
   createdDate?: Date | string
   isArchive?: boolean
 }
@@ -313,7 +317,7 @@ export type ServiceElementUncheckedCreateInput = {
   description?: string | null
   price: number
   photos?: Prisma.ServiceElementCreatephotosInput | string[]
-  type: string
+  type: number
   createdDate?: Date | string
   isArchive?: boolean
 }
@@ -323,7 +327,7 @@ export type ServiceElementUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.ServiceElementUpdatephotosInput | string[]
-  type?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -334,7 +338,7 @@ export type ServiceElementUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.ServiceElementUpdatephotosInput | string[]
-  type?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -345,7 +349,7 @@ export type ServiceElementCreateManyInput = {
   description?: string | null
   price: number
   photos?: Prisma.ServiceElementCreatephotosInput | string[]
-  type: string
+  type: number
   createdDate?: Date | string
   isArchive?: boolean
 }
@@ -355,7 +359,7 @@ export type ServiceElementUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.ServiceElementUpdatephotosInput | string[]
-  type?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -366,7 +370,7 @@ export type ServiceElementUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.ServiceElementUpdatephotosInput | string[]
-  type?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -393,6 +397,7 @@ export type ServiceElementCountOrderByAggregateInput = {
 export type ServiceElementAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  type?: Prisma.SortOrder
 }
 
 export type ServiceElementMaxOrderByAggregateInput = {
@@ -418,6 +423,7 @@ export type ServiceElementMinOrderByAggregateInput = {
 export type ServiceElementSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  type?: Prisma.SortOrder
 }
 
 export type ServiceElementCreatephotosInput = {
@@ -490,7 +496,7 @@ export type $ServiceElementPayload<ExtArgs extends runtime.Types.Extensions.Inte
     description: string | null
     price: number
     photos: string[]
-    type: string
+    type: number
     createdDate: Date
     isArchive: boolean
   }, ExtArgs["result"]["serviceElement"]>
@@ -921,7 +927,7 @@ export interface ServiceElementFieldRefs {
   readonly description: Prisma.FieldRef<"ServiceElement", 'String'>
   readonly price: Prisma.FieldRef<"ServiceElement", 'Int'>
   readonly photos: Prisma.FieldRef<"ServiceElement", 'String[]'>
-  readonly type: Prisma.FieldRef<"ServiceElement", 'String'>
+  readonly type: Prisma.FieldRef<"ServiceElement", 'Int'>
   readonly createdDate: Prisma.FieldRef<"ServiceElement", 'DateTime'>
   readonly isArchive: Prisma.FieldRef<"ServiceElement", 'Boolean'>
 }

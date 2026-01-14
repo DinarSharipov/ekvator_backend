@@ -22,7 +22,7 @@ export class CreateServiceTypeDto {
   @IsOptional()
   secondPhone?: string;
 
-  @ApiProperty({ description: "Второй номер телефона" })
+  @ApiProperty({ description: "Фото" })
   @IsString()
   @IsOptional()
   photo?: string;

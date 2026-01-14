@@ -38,7 +38,7 @@ model ServiceElement {
   description String?
   price Int
   photos String[] @default([])
-  type String
+  type Int
   createdDate DateTime @default(now())
   isArchive Boolean @default(false)
 }

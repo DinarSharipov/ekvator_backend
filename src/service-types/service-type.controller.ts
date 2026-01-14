@@ -8,8 +8,18 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { CreateServiceTypeDto } from "./dto/create.service-type.dto";
 import { ServiceTypeService } from "./service-type.service";
 
@@ -22,8 +32,32 @@ export class ServiceTypesController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать новый тип сервиса" })
   @ApiResponse({ status: 201, description: "Сервис успешно создан" })
-  create(@Body() createServiceType: CreateServiceTypeDto) {
-    return this.serviceTypeService.create(createServiceType);
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        showInMain: { type: "boolean" },
+        phone: { type: "string" },
+        secondPhone: { type: "string" },
+        description: { type: "string" },
+        photo: { type: "string", format: "binary" }, // поле для файла
+      },
+      required: ["name", "photo"],
+    },
+  })
+  @UseInterceptors(FileInterceptor("photo"))
+  async create(
+    @Body() createServiceType: CreateServiceTypeDto,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    const base64Photo = file.buffer.toString("base64");
+    return this.serviceTypeService.create({
+      ...createServiceType,
+      showInMain: String(createServiceType.showInMain) === "true",
+      photo: base64Photo,
+    });
   }
 
   @Get()
