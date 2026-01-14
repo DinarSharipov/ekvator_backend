@@ -20,7 +20,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           source: "."
-          target: "/var/www/ekvator"
+          # меняем путь на домашнюю папку юзера
+          target: "/home/${{ secrets.SSH_USER }}/ekvator"
 
       - name: Run docker-compose on server
         uses: appleboy/ssh-action@v1.1.0
@@ -30,8 +31,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd /var/www/ekvator
-            # убедимся, что используем продакшн env
+            cd /home/${{ secrets.SSH_USER }}/ekvator
+            # используем продакшн env
             cp .env.prod .env
             docker compose pull
             docker compose down
