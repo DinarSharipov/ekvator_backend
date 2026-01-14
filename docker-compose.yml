@@ -20,7 +20,7 @@ services:
     build: .
     container_name: ekvator_app
     env_file:
-      - ${ENV_FILE:-.env.local}   # указываем явно, по умолчанию .env.local
+      - ${ENV_FILE:-.env.prod}   # указываем явно, по умолчанию .env.local
     depends_on:
       db:
         condition: service_healthy
