@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Копируем package.json и устанавливаем зависимости
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci --omit=dev
 
 # Копируем весь код, Prisma и сгенерированные файлы
 COPY . .
