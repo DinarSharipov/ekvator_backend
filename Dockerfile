@@ -13,8 +13,6 @@ RUN npm ci
 # Копируем весь код, Prisma и сгенерированные файлы
 COPY . .
 
-RUN npx prisma generate
-
 RUN npm run build
 
 EXPOSE 3000
