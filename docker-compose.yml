@@ -21,7 +21,7 @@ services:
     image: dinarsharipov/ekvator:latest
     container_name: ekvator_app
     env_file:
-      - ${ENV_FILE:-.env.prod}
+      - .env
     ports:
       - "${PORT}:${PORT}"
     depends_on:
