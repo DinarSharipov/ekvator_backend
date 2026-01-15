@@ -1,6 +1,5 @@
 node_modules
 .git
 .github
-docker-compose.yml
 .env
 .env.*
