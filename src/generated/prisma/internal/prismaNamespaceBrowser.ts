@@ -78,7 +78,8 @@ export const UserScalarFieldEnum = {
   surname: 'surname',
   phone: 'phone',
   email: 'email',
-  telegram: 'telegram'
+  telegram: 'telegram',
+  role: 'role'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -105,7 +106,8 @@ export const ServiceElementScalarFieldEnum = {
   photos: 'photos',
   type: 'type',
   createdDate: 'createdDate',
-  isArchive: 'isArchive'
+  isArchive: 'isArchive',
+  showType: 'showType'
 } as const
 
 export type ServiceElementScalarFieldEnum = (typeof ServiceElementScalarFieldEnum)[keyof typeof ServiceElementScalarFieldEnum]

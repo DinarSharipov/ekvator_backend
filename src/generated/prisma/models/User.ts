@@ -41,6 +41,7 @@ export type UserMinAggregateOutputType = {
   phone: string | null
   email: string | null
   telegram: string | null
+  role: string | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -50,6 +51,7 @@ export type UserMaxAggregateOutputType = {
   phone: string | null
   email: string | null
   telegram: string | null
+  role: string | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -59,6 +61,7 @@ export type UserCountAggregateOutputType = {
   phone: number
   email: number
   telegram: number
+  role: number
   _all: number
 }
 
@@ -78,6 +81,7 @@ export type UserMinAggregateInputType = {
   phone?: true
   email?: true
   telegram?: true
+  role?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -87,6 +91,7 @@ export type UserMaxAggregateInputType = {
   phone?: true
   email?: true
   telegram?: true
+  role?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -96,6 +101,7 @@ export type UserCountAggregateInputType = {
   phone?: true
   email?: true
   telegram?: true
+  role?: true
   _all?: true
 }
 
@@ -192,6 +198,7 @@ export type UserGroupByOutputType = {
   phone: string
   email: string | null
   telegram: string | null
+  role: string
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
   _sum: UserSumAggregateOutputType | null
@@ -224,6 +231,7 @@ export type UserWhereInput = {
   phone?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringNullableFilter<"User"> | string | null
   telegram?: Prisma.StringNullableFilter<"User"> | string | null
+  role?: Prisma.StringFilter<"User"> | string
 }
 
 export type UserOrderByWithRelationInput = {
@@ -233,6 +241,7 @@ export type UserOrderByWithRelationInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   telegram?: Prisma.SortOrderInput | Prisma.SortOrder
+  role?: Prisma.SortOrder
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -245,6 +254,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringNullableFilter<"User"> | string | null
   telegram?: Prisma.StringNullableFilter<"User"> | string | null
+  role?: Prisma.StringFilter<"User"> | string
 }, "id">
 
 export type UserOrderByWithAggregationInput = {
@@ -254,6 +264,7 @@ export type UserOrderByWithAggregationInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   telegram?: Prisma.SortOrderInput | Prisma.SortOrder
+  role?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -271,6 +282,7 @@ export type UserScalarWhereWithAggregatesInput = {
   phone?: Prisma.StringWithAggregatesFilter<"User"> | string
   email?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   telegram?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  role?: Prisma.StringWithAggregatesFilter<"User"> | string
 }
 
 export type UserCreateInput = {
@@ -279,6 +291,7 @@ export type UserCreateInput = {
   phone: string
   email?: string | null
   telegram?: string | null
+  role: string
 }
 
 export type UserUncheckedCreateInput = {
@@ -288,6 +301,7 @@ export type UserUncheckedCreateInput = {
   phone: string
   email?: string | null
   telegram?: string | null
+  role: string
 }
 
 export type UserUpdateInput = {
@@ -296,6 +310,7 @@ export type UserUpdateInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UserUncheckedUpdateInput = {
@@ -305,6 +320,7 @@ export type UserUncheckedUpdateInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UserCreateManyInput = {
@@ -314,6 +330,7 @@ export type UserCreateManyInput = {
   phone: string
   email?: string | null
   telegram?: string | null
+  role: string
 }
 
 export type UserUpdateManyMutationInput = {
@@ -322,6 +339,7 @@ export type UserUpdateManyMutationInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -331,6 +349,7 @@ export type UserUncheckedUpdateManyInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -340,6 +359,7 @@ export type UserCountOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   telegram?: Prisma.SortOrder
+  role?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
@@ -353,6 +373,7 @@ export type UserMaxOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   telegram?: Prisma.SortOrder
+  role?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -362,6 +383,7 @@ export type UserMinOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   telegram?: Prisma.SortOrder
+  role?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
@@ -393,6 +415,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   phone?: boolean
   email?: boolean
   telegram?: boolean
+  role?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -402,6 +425,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   phone?: boolean
   email?: boolean
   telegram?: boolean
+  role?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -411,6 +435,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   phone?: boolean
   email?: boolean
   telegram?: boolean
+  role?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -420,9 +445,10 @@ export type UserSelectScalar = {
   phone?: boolean
   email?: boolean
   telegram?: boolean
+  role?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "surname" | "phone" | "email" | "telegram", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "surname" | "phone" | "email" | "telegram" | "role", ExtArgs["result"]["user"]>
 
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
@@ -434,6 +460,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     phone: string
     email: string | null
     telegram: string | null
+    role: string
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -863,6 +890,7 @@ export interface UserFieldRefs {
   readonly phone: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly telegram: Prisma.FieldRef<"User", 'String'>
+  readonly role: Prisma.FieldRef<"User", 'String'>
 }
     
 
