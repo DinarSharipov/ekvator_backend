@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Запускаем приложение
-CMD ["node", "dist/main.js"]
+CMD npx prisma generate && node dist/main.js
