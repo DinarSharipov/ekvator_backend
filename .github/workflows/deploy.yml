@@ -37,4 +37,4 @@ jobs:
             cp .env.prod .env
             docker compose pull
             docker compose down
-            docker compose up -d --build
+            docker compose up
