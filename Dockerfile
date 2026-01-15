@@ -1,17 +1,13 @@
 FROM node:24-alpine
 
-RUN apk add --no-cache openssl libc6-compat bash
-
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --omit=dev
 
-COPY . .
-
-RUN npx prisma generate
-RUN npm run build
+COPY dist ./dist
+COPY prisma ./prisma
+COPY node_modules ./node_modules
 
 EXPOSE 3000
-
-CMD sh -c "npx prisma migrate deploy && node dist/main.js"
+CMD ["node", "dist/main.js"]

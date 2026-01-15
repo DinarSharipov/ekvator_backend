@@ -17,15 +17,16 @@ services:
       retries: 5
 
   app:
-    image: dinarsharipov/ekvator:latest   # ← ВАЖНО
+    app:
+    image: dinarsharipov/ekvator:latest
     container_name: ekvator_app
     env_file:
-      - ${ENV_FILE:-.env.prod}
+      - .env.prod
+    ports:
+      - "${PORT}:${PORT}"
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - "${PORT}:${PORT}"
 
 volumes:
   db_data:
