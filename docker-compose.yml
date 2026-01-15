@@ -17,7 +17,6 @@ services:
       retries: 5
 
   app:
-    app:
     image: dinarsharipov/ekvator:latest
     container_name: ekvator_app
     env_file:
