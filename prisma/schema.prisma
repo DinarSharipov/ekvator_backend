@@ -25,6 +25,7 @@ model ServiceType {
   secondPhone String?
   photo String?
   description String?
+  showType String? @default("table")
 }
 
 model ServiceElement {
@@ -36,5 +37,4 @@ model ServiceElement {
   type Int
   createdDate DateTime @default(now())
   isArchive Boolean @default(false)
-  showType String? @default("table")
 }

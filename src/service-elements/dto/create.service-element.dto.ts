@@ -41,12 +41,5 @@ export class CreateServiceElementDto {
   @IsBoolean()
   @IsOptional()
   isArchive?: boolean;
-
-  @ApiPropertyOptional({
-    description: "Тип отображения в списке (blocks/table)",
-  })
-  @IsString()
-  @IsOptional()
-  showType?: string;
 }
 

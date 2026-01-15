@@ -42,6 +42,7 @@ export type ServiceTypeMinAggregateOutputType = {
   secondPhone: string | null
   photo: string | null
   description: string | null
+  showType: string | null
 }
 
 export type ServiceTypeMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type ServiceTypeMaxAggregateOutputType = {
   secondPhone: string | null
   photo: string | null
   description: string | null
+  showType: string | null
 }
 
 export type ServiceTypeCountAggregateOutputType = {
@@ -62,6 +64,7 @@ export type ServiceTypeCountAggregateOutputType = {
   secondPhone: number
   photo: number
   description: number
+  showType: number
   _all: number
 }
 
@@ -82,6 +85,7 @@ export type ServiceTypeMinAggregateInputType = {
   secondPhone?: true
   photo?: true
   description?: true
+  showType?: true
 }
 
 export type ServiceTypeMaxAggregateInputType = {
@@ -92,6 +96,7 @@ export type ServiceTypeMaxAggregateInputType = {
   secondPhone?: true
   photo?: true
   description?: true
+  showType?: true
 }
 
 export type ServiceTypeCountAggregateInputType = {
@@ -102,6 +107,7 @@ export type ServiceTypeCountAggregateInputType = {
   secondPhone?: true
   photo?: true
   description?: true
+  showType?: true
   _all?: true
 }
 
@@ -199,6 +205,7 @@ export type ServiceTypeGroupByOutputType = {
   secondPhone: string | null
   photo: string | null
   description: string | null
+  showType: string | null
   _count: ServiceTypeCountAggregateOutputType | null
   _avg: ServiceTypeAvgAggregateOutputType | null
   _sum: ServiceTypeSumAggregateOutputType | null
@@ -232,6 +239,7 @@ export type ServiceTypeWhereInput = {
   secondPhone?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   photo?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   description?: Prisma.StringNullableFilter<"ServiceType"> | string | null
+  showType?: Prisma.StringNullableFilter<"ServiceType"> | string | null
 }
 
 export type ServiceTypeOrderByWithRelationInput = {
@@ -242,6 +250,7 @@ export type ServiceTypeOrderByWithRelationInput = {
   secondPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   photo?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  showType?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
@@ -255,6 +264,7 @@ export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
   secondPhone?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   photo?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   description?: Prisma.StringNullableFilter<"ServiceType"> | string | null
+  showType?: Prisma.StringNullableFilter<"ServiceType"> | string | null
 }, "id">
 
 export type ServiceTypeOrderByWithAggregationInput = {
@@ -265,6 +275,7 @@ export type ServiceTypeOrderByWithAggregationInput = {
   secondPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   photo?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  showType?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ServiceTypeCountOrderByAggregateInput
   _avg?: Prisma.ServiceTypeAvgOrderByAggregateInput
   _max?: Prisma.ServiceTypeMaxOrderByAggregateInput
@@ -283,6 +294,7 @@ export type ServiceTypeScalarWhereWithAggregatesInput = {
   secondPhone?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
   photo?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
+  showType?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
 }
 
 export type ServiceTypeCreateInput = {
@@ -292,6 +304,7 @@ export type ServiceTypeCreateInput = {
   secondPhone?: string | null
   photo?: string | null
   description?: string | null
+  showType?: string | null
 }
 
 export type ServiceTypeUncheckedCreateInput = {
@@ -302,6 +315,7 @@ export type ServiceTypeUncheckedCreateInput = {
   secondPhone?: string | null
   photo?: string | null
   description?: string | null
+  showType?: string | null
 }
 
 export type ServiceTypeUpdateInput = {
@@ -311,6 +325,7 @@ export type ServiceTypeUpdateInput = {
   secondPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ServiceTypeUncheckedUpdateInput = {
@@ -321,6 +336,7 @@ export type ServiceTypeUncheckedUpdateInput = {
   secondPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ServiceTypeCreateManyInput = {
@@ -331,6 +347,7 @@ export type ServiceTypeCreateManyInput = {
   secondPhone?: string | null
   photo?: string | null
   description?: string | null
+  showType?: string | null
 }
 
 export type ServiceTypeUpdateManyMutationInput = {
@@ -340,6 +357,7 @@ export type ServiceTypeUpdateManyMutationInput = {
   secondPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ServiceTypeUncheckedUpdateManyInput = {
@@ -350,6 +368,7 @@ export type ServiceTypeUncheckedUpdateManyInput = {
   secondPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ServiceTypeCountOrderByAggregateInput = {
@@ -360,6 +379,7 @@ export type ServiceTypeCountOrderByAggregateInput = {
   secondPhone?: Prisma.SortOrder
   photo?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  showType?: Prisma.SortOrder
 }
 
 export type ServiceTypeAvgOrderByAggregateInput = {
@@ -374,6 +394,7 @@ export type ServiceTypeMaxOrderByAggregateInput = {
   secondPhone?: Prisma.SortOrder
   photo?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  showType?: Prisma.SortOrder
 }
 
 export type ServiceTypeMinOrderByAggregateInput = {
@@ -384,6 +405,7 @@ export type ServiceTypeMinOrderByAggregateInput = {
   secondPhone?: Prisma.SortOrder
   photo?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  showType?: Prisma.SortOrder
 }
 
 export type ServiceTypeSumOrderByAggregateInput = {
@@ -404,6 +426,7 @@ export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   secondPhone?: boolean
   photo?: boolean
   description?: boolean
+  showType?: boolean
 }, ExtArgs["result"]["serviceType"]>
 
 export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -414,6 +437,7 @@ export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   secondPhone?: boolean
   photo?: boolean
   description?: boolean
+  showType?: boolean
 }, ExtArgs["result"]["serviceType"]>
 
 export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -424,6 +448,7 @@ export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   secondPhone?: boolean
   photo?: boolean
   description?: boolean
+  showType?: boolean
 }, ExtArgs["result"]["serviceType"]>
 
 export type ServiceTypeSelectScalar = {
@@ -434,9 +459,10 @@ export type ServiceTypeSelectScalar = {
   secondPhone?: boolean
   photo?: boolean
   description?: boolean
+  showType?: boolean
 }
 
-export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description", ExtArgs["result"]["serviceType"]>
+export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description" | "showType", ExtArgs["result"]["serviceType"]>
 
 export type $ServiceTypePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ServiceType"
@@ -449,6 +475,7 @@ export type $ServiceTypePayload<ExtArgs extends runtime.Types.Extensions.Interna
     secondPhone: string | null
     photo: string | null
     description: string | null
+    showType: string | null
   }, ExtArgs["result"]["serviceType"]>
   composites: {}
 }
@@ -879,6 +906,7 @@ export interface ServiceTypeFieldRefs {
   readonly secondPhone: Prisma.FieldRef<"ServiceType", 'String'>
   readonly photo: Prisma.FieldRef<"ServiceType", 'String'>
   readonly description: Prisma.FieldRef<"ServiceType", 'String'>
+  readonly showType: Prisma.FieldRef<"ServiceType", 'String'>
 }
     
 

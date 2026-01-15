@@ -31,5 +31,12 @@ export class CreateServiceTypeDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @ApiPropertyOptional({
+    description: "Тип отображения в списке (blocks/table)",
+  })
+  @IsString()
+  @IsOptional()
+  showType?: string;
 }
 

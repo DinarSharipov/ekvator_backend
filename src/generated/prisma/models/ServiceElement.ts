@@ -46,7 +46,6 @@ export type ServiceElementMinAggregateOutputType = {
   type: number | null
   createdDate: Date | null
   isArchive: boolean | null
-  showType: string | null
 }
 
 export type ServiceElementMaxAggregateOutputType = {
@@ -57,7 +56,6 @@ export type ServiceElementMaxAggregateOutputType = {
   type: number | null
   createdDate: Date | null
   isArchive: boolean | null
-  showType: string | null
 }
 
 export type ServiceElementCountAggregateOutputType = {
@@ -69,7 +67,6 @@ export type ServiceElementCountAggregateOutputType = {
   type: number
   createdDate: number
   isArchive: number
-  showType: number
   _all: number
 }
 
@@ -94,7 +91,6 @@ export type ServiceElementMinAggregateInputType = {
   type?: true
   createdDate?: true
   isArchive?: true
-  showType?: true
 }
 
 export type ServiceElementMaxAggregateInputType = {
@@ -105,7 +101,6 @@ export type ServiceElementMaxAggregateInputType = {
   type?: true
   createdDate?: true
   isArchive?: true
-  showType?: true
 }
 
 export type ServiceElementCountAggregateInputType = {
@@ -117,7 +112,6 @@ export type ServiceElementCountAggregateInputType = {
   type?: true
   createdDate?: true
   isArchive?: true
-  showType?: true
   _all?: true
 }
 
@@ -216,7 +210,6 @@ export type ServiceElementGroupByOutputType = {
   type: number
   createdDate: Date
   isArchive: boolean
-  showType: string | null
   _count: ServiceElementCountAggregateOutputType | null
   _avg: ServiceElementAvgAggregateOutputType | null
   _sum: ServiceElementSumAggregateOutputType | null
@@ -251,7 +244,6 @@ export type ServiceElementWhereInput = {
   type?: Prisma.IntFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeFilter<"ServiceElement"> | Date | string
   isArchive?: Prisma.BoolFilter<"ServiceElement"> | boolean
-  showType?: Prisma.StringNullableFilter<"ServiceElement"> | string | null
 }
 
 export type ServiceElementOrderByWithRelationInput = {
@@ -263,7 +255,6 @@ export type ServiceElementOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
-  showType?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type ServiceElementWhereUniqueInput = Prisma.AtLeast<{
@@ -278,7 +269,6 @@ export type ServiceElementWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.IntFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeFilter<"ServiceElement"> | Date | string
   isArchive?: Prisma.BoolFilter<"ServiceElement"> | boolean
-  showType?: Prisma.StringNullableFilter<"ServiceElement"> | string | null
 }, "id">
 
 export type ServiceElementOrderByWithAggregationInput = {
@@ -290,7 +280,6 @@ export type ServiceElementOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
-  showType?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ServiceElementCountOrderByAggregateInput
   _avg?: Prisma.ServiceElementAvgOrderByAggregateInput
   _max?: Prisma.ServiceElementMaxOrderByAggregateInput
@@ -310,7 +299,6 @@ export type ServiceElementScalarWhereWithAggregatesInput = {
   type?: Prisma.IntWithAggregatesFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeWithAggregatesFilter<"ServiceElement"> | Date | string
   isArchive?: Prisma.BoolWithAggregatesFilter<"ServiceElement"> | boolean
-  showType?: Prisma.StringNullableWithAggregatesFilter<"ServiceElement"> | string | null
 }
 
 export type ServiceElementCreateInput = {
@@ -321,7 +309,6 @@ export type ServiceElementCreateInput = {
   type: number
   createdDate?: Date | string
   isArchive?: boolean
-  showType?: string | null
 }
 
 export type ServiceElementUncheckedCreateInput = {
@@ -333,7 +320,6 @@ export type ServiceElementUncheckedCreateInput = {
   type: number
   createdDate?: Date | string
   isArchive?: boolean
-  showType?: string | null
 }
 
 export type ServiceElementUpdateInput = {
@@ -344,7 +330,6 @@ export type ServiceElementUpdateInput = {
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ServiceElementUncheckedUpdateInput = {
@@ -356,7 +341,6 @@ export type ServiceElementUncheckedUpdateInput = {
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ServiceElementCreateManyInput = {
@@ -368,7 +352,6 @@ export type ServiceElementCreateManyInput = {
   type: number
   createdDate?: Date | string
   isArchive?: boolean
-  showType?: string | null
 }
 
 export type ServiceElementUpdateManyMutationInput = {
@@ -379,7 +362,6 @@ export type ServiceElementUpdateManyMutationInput = {
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ServiceElementUncheckedUpdateManyInput = {
@@ -391,7 +373,6 @@ export type ServiceElementUncheckedUpdateManyInput = {
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type StringNullableListFilter<$PrismaModel = never> = {
@@ -411,7 +392,6 @@ export type ServiceElementCountOrderByAggregateInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
-  showType?: Prisma.SortOrder
 }
 
 export type ServiceElementAvgOrderByAggregateInput = {
@@ -428,7 +408,6 @@ export type ServiceElementMaxOrderByAggregateInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
-  showType?: Prisma.SortOrder
 }
 
 export type ServiceElementMinOrderByAggregateInput = {
@@ -439,7 +418,6 @@ export type ServiceElementMinOrderByAggregateInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
-  showType?: Prisma.SortOrder
 }
 
 export type ServiceElementSumOrderByAggregateInput = {
@@ -472,7 +450,6 @@ export type ServiceElementSelect<ExtArgs extends runtime.Types.Extensions.Intern
   type?: boolean
   createdDate?: boolean
   isArchive?: boolean
-  showType?: boolean
 }, ExtArgs["result"]["serviceElement"]>
 
 export type ServiceElementSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -484,7 +461,6 @@ export type ServiceElementSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   type?: boolean
   createdDate?: boolean
   isArchive?: boolean
-  showType?: boolean
 }, ExtArgs["result"]["serviceElement"]>
 
 export type ServiceElementSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -496,7 +472,6 @@ export type ServiceElementSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   type?: boolean
   createdDate?: boolean
   isArchive?: boolean
-  showType?: boolean
 }, ExtArgs["result"]["serviceElement"]>
 
 export type ServiceElementSelectScalar = {
@@ -508,10 +483,9 @@ export type ServiceElementSelectScalar = {
   type?: boolean
   createdDate?: boolean
   isArchive?: boolean
-  showType?: boolean
 }
 
-export type ServiceElementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "price" | "photos" | "type" | "createdDate" | "isArchive" | "showType", ExtArgs["result"]["serviceElement"]>
+export type ServiceElementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "price" | "photos" | "type" | "createdDate" | "isArchive", ExtArgs["result"]["serviceElement"]>
 
 export type $ServiceElementPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ServiceElement"
@@ -525,7 +499,6 @@ export type $ServiceElementPayload<ExtArgs extends runtime.Types.Extensions.Inte
     type: number
     createdDate: Date
     isArchive: boolean
-    showType: string | null
   }, ExtArgs["result"]["serviceElement"]>
   composites: {}
 }
@@ -957,7 +930,6 @@ export interface ServiceElementFieldRefs {
   readonly type: Prisma.FieldRef<"ServiceElement", 'Int'>
   readonly createdDate: Prisma.FieldRef<"ServiceElement", 'DateTime'>
   readonly isArchive: Prisma.FieldRef<"ServiceElement", 'Boolean'>
-  readonly showType: Prisma.FieldRef<"ServiceElement", 'String'>
 }
     
 
