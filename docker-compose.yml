@@ -20,7 +20,7 @@ services:
     image: dinarsharipov/ekvator:latest   # ← ВАЖНО
     container_name: ekvator_app
     env_file:
-      - .env
+      - ${ENV_FILE:-.env.prod}
     depends_on:
       db:
         condition: service_healthy
