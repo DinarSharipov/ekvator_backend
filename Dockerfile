@@ -1,20 +1,23 @@
+# Используем Node 24
 FROM node:24-alpine
 
-RUN apk add --no-cache openssl libc6-compat
+# Устанавливаем необходимые зависимости для Prisma
+RUN apk add --no-cache openssl libc6-compat bash
 
 WORKDIR /app
 
-# 1. зависимости
+# Копируем package.json и устанавливаем зависимости
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
-# 2. код + prisma + dist
-COPY dist ./dist
-COPY prisma ./prisma
+# Копируем весь код, Prisma и сгенерированные файлы
+COPY . .
 
-# 3. prisma client (НЕ требует DATABASE_URL)
 RUN npx prisma generate
+
+RUN npm run build
 
 EXPOSE 3000
 
+# Запускаем приложение
 CMD ["node", "dist/main.js"]
