@@ -12,29 +12,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Copy project to server
-        uses: appleboy/scp-action@v0.1.7
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          timeout: 30m
-          source: "."
-          # меняем путь на домашнюю папку юзера
-          target: "/home/${{ secrets.SSH_USER }}/ekvator"
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Run docker-compose on server
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: dinarsharipov/ekvator:latest
+
+      - name: Deploy on server
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
           script: |
             cd /home/${{ secrets.SSH_USER }}/ekvator
-            # используем продакшн env
             cp .env.prod .env
-            docker compose pull
-            docker compose down -v
+            docker pull dinarsharipov/ekvator:latest
+            docker compose down
             docker compose up -d

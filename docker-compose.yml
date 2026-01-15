@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "${DB_HOST_PORT}:${DB_PORT}"   # хост:контейнер
+      - "${DB_HOST_PORT}:${DB_PORT}"
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -17,28 +17,15 @@ services:
       retries: 5
 
   app:
-    build: .
+    image: dinarsharipov/ekvator:latest   # ← ВАЖНО
     container_name: ekvator_app
     env_file:
-      - ${ENV_FILE:-.env.prod}
+      - .env
     depends_on:
       db:
         condition: service_healthy
     ports:
-      - "${PORT}:${PORT}"          # порт приложения
-    command: >
-      sh -c "
-      if [ \"$PRISMA_MODE\" = 'dev' ]; then
-        npx prisma migrate dev
-      else
-        npx prisma migrate deploy
-      fi
-      && if [ \"$PRISMA_MODE\" = 'dev' ]; then
-           npm run start:dev
-         else
-           npm run start:prod
-         fi
-      "
+      - "${PORT}:${PORT}"
 
 volumes:
   db_data:
