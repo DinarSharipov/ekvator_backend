@@ -9,6 +9,7 @@ async function bootstrap() {
   app.enableCors({
     origin: "*", // фронтенд Vite
   });
+  console.log(123);
 
   const config = new DocumentBuilder()
     .setTitle("Ekvator API")
