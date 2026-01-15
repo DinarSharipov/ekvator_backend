@@ -40,5 +40,5 @@ jobs:
             cd /home/${{ secrets.SSH_USER }}/ekvator
             cp .env.prod .env
             docker compose pull
-            docker compose down -v
-            docker compose up -d --build
+            docker compose down
+            docker compose up -d
