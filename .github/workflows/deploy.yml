@@ -26,7 +26,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: dinarsharipov/ekvator:${{ github.sha }}
+          tags: dinarsharipov/ekvator:latest
 
       # 4. Деплой на сервер (ТОЛЬКО запуск)
       - name: Deploy on server
