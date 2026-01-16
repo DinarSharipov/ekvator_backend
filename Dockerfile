@@ -16,7 +16,10 @@ FROM base AS runtime
 # Устанавливаем необходимые зависимости для Prisma
 RUN apk add --no-cache openssl libc6-compat bash
 
-COPY --from=build /app/dist /app
+COPY --from=build /app/dist .
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/prisma ./prisma
 EXPOSE 3000
 # Запускаем приложение
-CMD npx prisma generate && node main.js
+CMD node main.js
