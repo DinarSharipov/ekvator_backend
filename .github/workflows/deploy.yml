@@ -37,7 +37,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd /home/${{ secrets.SSH_USER }}/ekvator
+            cd /home/${{ secrets.SSH_USER }}/ekvator 
             cp .env.prod .env
             docker compose pull
             docker compose down
