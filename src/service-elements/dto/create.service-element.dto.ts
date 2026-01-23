@@ -20,7 +20,7 @@ export class CreateServiceElementDto {
   description?: string;
 
   @ApiPropertyOptional({ description: "Цена", default: 0 })
-  @IsInt()
+  @IsNotEmpty()
   price: number;
 
   @ApiProperty({ description: "Фотографии" })

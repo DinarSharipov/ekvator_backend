@@ -21,6 +21,15 @@ export class ServiceElementService {
     });
   }
 
+  findAllByServiceId(id: number) {
+    return this.prisma.serviceElement.findMany({
+      orderBy: {
+        name: "desc",
+      },
+      where: { type: id },
+    });
+  }
+
   findOne(id: number) {
     return this.prisma.serviceElement.findUnique({
       where: { id },
@@ -35,7 +44,7 @@ export class ServiceElementService {
   }
 
   remove(id: number) {
-    return this.prisma.serviceType.delete({
+    return this.prisma.serviceElement.delete({
       where: { id },
     });
   }

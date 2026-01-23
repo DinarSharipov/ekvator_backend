@@ -20,6 +20,13 @@ export class UsersService {
     });
   }
 
+  async findByLogin(login: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { login },
+    });
+    return user;
+  }
+
   async findOne(id: number) {
     return this.prisma.user.findUnique({
       where: { id },

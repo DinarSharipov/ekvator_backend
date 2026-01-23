@@ -8,8 +8,10 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "../auth/auth.guard";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UsersService } from "./users.service";
 
@@ -29,6 +31,7 @@ export class UsersController {
   @Get()
   @ApiOperation({ summary: "Получить список всех пользователей" })
   @ApiResponse({ status: 200, description: "Список пользователей" })
+  @UseGuards(AuthGuard)
   findAll() {
     return this.usersService.findAll();
   }

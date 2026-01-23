@@ -8,7 +8,9 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -20,6 +22,8 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { memoryStorage } from "multer";
+import { AuthGuard } from "../auth/auth.guard";
 import { CreateServiceTypeDto } from "./dto/create.service-type.dto";
 import { ServiceTypeService } from "./service-type.service";
 
@@ -29,6 +33,7 @@ export class ServiceTypesController {
   constructor(private readonly serviceTypeService: ServiceTypeService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать новый тип сервиса" })
   @ApiResponse({ status: 201, description: "Сервис успешно создан" })
@@ -47,10 +52,15 @@ export class ServiceTypesController {
       required: ["name", "photo"],
     },
   })
-  @UseInterceptors(FileInterceptor("photo"))
+  @UseInterceptors(
+    FileInterceptor("photo", {
+      storage: memoryStorage(),
+      limits: { fileSize: 10 * 1024 * 1024 },
+    }),
+  )
   async create(
     @Body() createServiceType: CreateServiceTypeDto,
-    @UploadedFile() file: Express.Multer.File
+    @UploadedFile() file: Express.Multer.File,
   ) {
     const base64Photo = file.buffer.toString("base64");
     return this.serviceTypeService.create({
@@ -77,12 +87,53 @@ export class ServiceTypesController {
   }
 
   @Delete(":id")
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Удалить сервис по ID" })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
   @ApiResponse({ status: 204, description: "Сервис удален" })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.serviceTypeService.remove(id);
+  }
+
+  @Put(":id")
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: "Обновить сервис по ID" })
+  @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
+  @ApiResponse({ status: 201, description: "Сервис изменен" })
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        showInMain: { type: "boolean" },
+        phone: { type: "string" },
+        secondPhone: { type: "string" },
+        description: { type: "string" },
+        photo: { type: "string", format: "binary" }, // поле для файла
+      },
+      required: ["name", "photo"],
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor("photo", {
+      storage: memoryStorage(),
+      limits: { fileSize: 10 * 1024 * 1024 },
+    }),
+  )
+  update(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() createServiceType: CreateServiceTypeDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const base64Photo = file.buffer.toString("base64");
+    return this.serviceTypeService.update(id, {
+      ...createServiceType,
+      showInMain: String(createServiceType.showInMain) === "true",
+      photo: base64Photo,
+    });
   }
 }
 

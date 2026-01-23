@@ -10,8 +10,10 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   name String 
-  surname String
-  phone String
+  login String
+  password String
+  surname String?
+  phone String?
   email String?
   telegram String?
   role String
