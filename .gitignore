@@ -33,9 +33,3 @@ node_modules/.cache
 
 # Nest CLI
 .nestcli.json
-
-
-
-/generated/prisma
-
-/app/generated/prisma
