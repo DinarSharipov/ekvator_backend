@@ -28,6 +28,7 @@ model ServiceType {
   photo String?
   description String?
   showType String? @default("table")
+  gallery String[] @default([])
 }
 
 model ServiceElement {

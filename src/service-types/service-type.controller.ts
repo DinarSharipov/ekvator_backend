@@ -9,11 +9,11 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
+import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import {
   ApiBody,
   ApiConsumes,
@@ -47,26 +47,48 @@ export class ServiceTypesController {
         phone: { type: "string" },
         secondPhone: { type: "string" },
         description: { type: "string" },
-        photo: { type: "string", format: "binary" }, // поле для файла
+        photo: { type: "string", format: "binary" },
+        gallery: {
+          type: "array",
+          items: {
+            type: "string",
+            format: "binary",
+          },
+        },
       },
       required: ["name", "photo"],
     },
   })
   @UseInterceptors(
-    FileInterceptor("photo", {
-      storage: memoryStorage(),
-      limits: { fileSize: 10 * 1024 * 1024 },
-    }),
+    FileFieldsInterceptor(
+      [
+        { name: "photo", maxCount: 1 },
+        { name: "gallery", maxCount: 10 },
+      ],
+      {
+        storage: memoryStorage(),
+        limits: { fileSize: 10 * 1024 * 1024 },
+      },
+    ),
   )
   async create(
     @Body() createServiceType: CreateServiceTypeDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles()
+    files: {
+      photo?: Express.Multer.File;
+      gallery?: Express.Multer.File[];
+    },
   ) {
-    const base64Photo = file.buffer.toString("base64");
+    const base64Photo = files?.photo.buffer.toString("base64");
+
+    const base64Gallery = files?.gallery?.map((file) =>
+      file.buffer.toString("base64"),
+    );
     return this.serviceTypeService.create({
       ...createServiceType,
       showInMain: String(createServiceType.showInMain) === "true",
       photo: base64Photo,
+      gallery: base64Gallery,
     });
   }
 
@@ -112,27 +134,52 @@ export class ServiceTypesController {
         phone: { type: "string" },
         secondPhone: { type: "string" },
         description: { type: "string" },
-        photo: { type: "string", format: "binary" }, // поле для файла
+        photo: { type: "string", format: "binary" },
+        gallery: {
+          type: "array",
+          items: {
+            type: "string",
+            format: "binary",
+          },
+        },
       },
       required: ["name", "photo"],
     },
   })
   @UseInterceptors(
-    FileInterceptor("photo", {
-      storage: memoryStorage(),
-      limits: { fileSize: 10 * 1024 * 1024 },
-    }),
+    FileFieldsInterceptor(
+      [
+        { name: "photo", maxCount: 1 },
+        { name: "gallery", maxCount: 10 },
+      ],
+      {
+        storage: memoryStorage(),
+        limits: { fileSize: 10 * 1024 * 1024 },
+      },
+    ),
   )
   update(
     @Param("id", ParseIntPipe) id: number,
     @Body() createServiceType: CreateServiceTypeDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles()
+    files: {
+      photo?: Express.Multer.File;
+      gallery?: Express.Multer.File[];
+    },
   ) {
-    const base64Photo = file.buffer.toString("base64");
+    console.log("UPD", createServiceType);
+
+    const base64Photo = files?.photo?.buffer?.toString("base64");
+
+    const base64Gallery = files?.gallery?.map((file) =>
+      file.buffer.toString("base64"),
+    );
+
     return this.serviceTypeService.update(id, {
       ...createServiceType,
       showInMain: String(createServiceType.showInMain) === "true",
       photo: base64Photo,
+      gallery: base64Gallery,
     });
   }
 }

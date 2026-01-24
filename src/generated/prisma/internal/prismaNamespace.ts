@@ -690,7 +690,8 @@ export const ServiceTypeScalarFieldEnum = {
   secondPhone: 'secondPhone',
   photo: 'photo',
   description: 'description',
-  showType: 'showType'
+  showType: 'showType',
+  gallery: 'gallery'
 } as const
 
 export type ServiceTypeScalarFieldEnum = (typeof ServiceTypeScalarFieldEnum)[keyof typeof ServiceTypeScalarFieldEnum]

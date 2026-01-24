@@ -38,5 +38,10 @@ export class CreateServiceTypeDto {
   @IsString()
   @IsOptional()
   showType?: string;
+
+  @ApiProperty({ description: "Галерея" })
+  @IsString()
+  @IsOptional()
+  gallery?: string[];
 }
 

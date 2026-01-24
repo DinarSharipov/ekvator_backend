@@ -65,6 +65,7 @@ export type ServiceTypeCountAggregateOutputType = {
   photo: number
   description: number
   showType: number
+  gallery: number
   _all: number
 }
 
@@ -108,6 +109,7 @@ export type ServiceTypeCountAggregateInputType = {
   photo?: true
   description?: true
   showType?: true
+  gallery?: true
   _all?: true
 }
 
@@ -206,6 +208,7 @@ export type ServiceTypeGroupByOutputType = {
   photo: string | null
   description: string | null
   showType: string | null
+  gallery: string[]
   _count: ServiceTypeCountAggregateOutputType | null
   _avg: ServiceTypeAvgAggregateOutputType | null
   _sum: ServiceTypeSumAggregateOutputType | null
@@ -240,6 +243,7 @@ export type ServiceTypeWhereInput = {
   photo?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   description?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   showType?: Prisma.StringNullableFilter<"ServiceType"> | string | null
+  gallery?: Prisma.StringNullableListFilter<"ServiceType">
 }
 
 export type ServiceTypeOrderByWithRelationInput = {
@@ -251,6 +255,7 @@ export type ServiceTypeOrderByWithRelationInput = {
   photo?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   showType?: Prisma.SortOrderInput | Prisma.SortOrder
+  gallery?: Prisma.SortOrder
 }
 
 export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
@@ -265,6 +270,7 @@ export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
   photo?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   description?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   showType?: Prisma.StringNullableFilter<"ServiceType"> | string | null
+  gallery?: Prisma.StringNullableListFilter<"ServiceType">
 }, "id">
 
 export type ServiceTypeOrderByWithAggregationInput = {
@@ -276,6 +282,7 @@ export type ServiceTypeOrderByWithAggregationInput = {
   photo?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   showType?: Prisma.SortOrderInput | Prisma.SortOrder
+  gallery?: Prisma.SortOrder
   _count?: Prisma.ServiceTypeCountOrderByAggregateInput
   _avg?: Prisma.ServiceTypeAvgOrderByAggregateInput
   _max?: Prisma.ServiceTypeMaxOrderByAggregateInput
@@ -295,6 +302,7 @@ export type ServiceTypeScalarWhereWithAggregatesInput = {
   photo?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
   showType?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
+  gallery?: Prisma.StringNullableListFilter<"ServiceType">
 }
 
 export type ServiceTypeCreateInput = {
@@ -305,6 +313,7 @@ export type ServiceTypeCreateInput = {
   photo?: string | null
   description?: string | null
   showType?: string | null
+  gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
 }
 
 export type ServiceTypeUncheckedCreateInput = {
@@ -316,6 +325,7 @@ export type ServiceTypeUncheckedCreateInput = {
   photo?: string | null
   description?: string | null
   showType?: string | null
+  gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
 }
 
 export type ServiceTypeUpdateInput = {
@@ -326,6 +336,7 @@ export type ServiceTypeUpdateInput = {
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
 }
 
 export type ServiceTypeUncheckedUpdateInput = {
@@ -337,6 +348,7 @@ export type ServiceTypeUncheckedUpdateInput = {
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
 }
 
 export type ServiceTypeCreateManyInput = {
@@ -348,6 +360,7 @@ export type ServiceTypeCreateManyInput = {
   photo?: string | null
   description?: string | null
   showType?: string | null
+  gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
 }
 
 export type ServiceTypeUpdateManyMutationInput = {
@@ -358,6 +371,7 @@ export type ServiceTypeUpdateManyMutationInput = {
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
 }
 
 export type ServiceTypeUncheckedUpdateManyInput = {
@@ -369,6 +383,15 @@ export type ServiceTypeUncheckedUpdateManyInput = {
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type ServiceTypeCountOrderByAggregateInput = {
@@ -380,6 +403,7 @@ export type ServiceTypeCountOrderByAggregateInput = {
   photo?: Prisma.SortOrder
   description?: Prisma.SortOrder
   showType?: Prisma.SortOrder
+  gallery?: Prisma.SortOrder
 }
 
 export type ServiceTypeAvgOrderByAggregateInput = {
@@ -412,8 +436,17 @@ export type ServiceTypeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
+export type ServiceTypeCreategalleryInput = {
+  set: string[]
+}
+
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type ServiceTypeUpdategalleryInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 
@@ -427,6 +460,7 @@ export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   photo?: boolean
   description?: boolean
   showType?: boolean
+  gallery?: boolean
 }, ExtArgs["result"]["serviceType"]>
 
 export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -438,6 +472,7 @@ export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   photo?: boolean
   description?: boolean
   showType?: boolean
+  gallery?: boolean
 }, ExtArgs["result"]["serviceType"]>
 
 export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -449,6 +484,7 @@ export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   photo?: boolean
   description?: boolean
   showType?: boolean
+  gallery?: boolean
 }, ExtArgs["result"]["serviceType"]>
 
 export type ServiceTypeSelectScalar = {
@@ -460,9 +496,10 @@ export type ServiceTypeSelectScalar = {
   photo?: boolean
   description?: boolean
   showType?: boolean
+  gallery?: boolean
 }
 
-export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description" | "showType", ExtArgs["result"]["serviceType"]>
+export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description" | "showType" | "gallery", ExtArgs["result"]["serviceType"]>
 
 export type $ServiceTypePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ServiceType"
@@ -476,6 +513,7 @@ export type $ServiceTypePayload<ExtArgs extends runtime.Types.Extensions.Interna
     photo: string | null
     description: string | null
     showType: string | null
+    gallery: string[]
   }, ExtArgs["result"]["serviceType"]>
   composites: {}
 }
@@ -907,6 +945,7 @@ export interface ServiceTypeFieldRefs {
   readonly photo: Prisma.FieldRef<"ServiceType", 'String'>
   readonly description: Prisma.FieldRef<"ServiceType", 'String'>
   readonly showType: Prisma.FieldRef<"ServiceType", 'String'>
+  readonly gallery: Prisma.FieldRef<"ServiceType", 'String[]'>
 }
     
 
