@@ -20,8 +20,8 @@ export class AuthController {
       required: ["login", "password"],
     },
   })
-  signIn(@Body() signInDto: { username: string; password: string }) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  signIn(@Body() signInDto: { login: string; password: string }) {
+    return this.authService.signIn(signInDto.login, signInDto.password);
   }
 }
 
