@@ -23,6 +23,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать нового пользователя" })
   @ApiResponse({ status: 201, description: "Пользователь успешно создан" })
@@ -31,6 +32,7 @@ export class UsersController {
   }
 
   @Put(":id")
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Изменить пользователя" })
   @ApiResponse({ status: 201, description: "Пользователь успешно изменен" })
@@ -42,6 +44,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Получить список всех пользователей" })
   @ApiResponse({ status: 200, description: "Список пользователей" })
   @UseGuards(AuthGuard)
@@ -50,6 +53,7 @@ export class UsersController {
   }
 
   @Get(":id")
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Получить пользователя по ID" })
   @ApiParam({ name: "id", type: "number", description: "ID пользователя" })
   @ApiResponse({ status: 200, description: "Пользователь найден" })
@@ -59,6 +63,7 @@ export class UsersController {
   }
 
   @Delete(":id")
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Получить пользователя по ID" })
   @ApiParam({ name: "id", type: "number", description: "ID пользователя" })
   @ApiResponse({ status: 200, description: "Пользователь удален" })
