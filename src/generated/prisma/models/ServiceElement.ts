@@ -239,7 +239,7 @@ export type ServiceElementWhereInput = {
   id?: Prisma.IntFilter<"ServiceElement"> | number
   name?: Prisma.StringFilter<"ServiceElement"> | string
   description?: Prisma.StringNullableFilter<"ServiceElement"> | string | null
-  price?: Prisma.IntFilter<"ServiceElement"> | number
+  price?: Prisma.FloatFilter<"ServiceElement"> | number
   photos?: Prisma.StringNullableListFilter<"ServiceElement">
   type?: Prisma.IntFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeFilter<"ServiceElement"> | Date | string
@@ -264,7 +264,7 @@ export type ServiceElementWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ServiceElementWhereInput | Prisma.ServiceElementWhereInput[]
   name?: Prisma.StringFilter<"ServiceElement"> | string
   description?: Prisma.StringNullableFilter<"ServiceElement"> | string | null
-  price?: Prisma.IntFilter<"ServiceElement"> | number
+  price?: Prisma.FloatFilter<"ServiceElement"> | number
   photos?: Prisma.StringNullableListFilter<"ServiceElement">
   type?: Prisma.IntFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeFilter<"ServiceElement"> | Date | string
@@ -294,7 +294,7 @@ export type ServiceElementScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"ServiceElement"> | number
   name?: Prisma.StringWithAggregatesFilter<"ServiceElement"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"ServiceElement"> | string | null
-  price?: Prisma.IntWithAggregatesFilter<"ServiceElement"> | number
+  price?: Prisma.FloatWithAggregatesFilter<"ServiceElement"> | number
   photos?: Prisma.StringNullableListFilter<"ServiceElement">
   type?: Prisma.IntWithAggregatesFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeWithAggregatesFilter<"ServiceElement"> | Date | string
@@ -325,7 +325,7 @@ export type ServiceElementUncheckedCreateInput = {
 export type ServiceElementUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  price?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
   photos?: Prisma.ServiceElementUpdatephotosInput | string[]
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -336,7 +336,7 @@ export type ServiceElementUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  price?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
   photos?: Prisma.ServiceElementUpdatephotosInput | string[]
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -357,7 +357,7 @@ export type ServiceElementCreateManyInput = {
 export type ServiceElementUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  price?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
   photos?: Prisma.ServiceElementUpdatephotosInput | string[]
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -368,7 +368,7 @@ export type ServiceElementUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  price?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
   photos?: Prisma.ServiceElementUpdatephotosInput | string[]
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -420,6 +420,14 @@ export type ServiceElementSumOrderByAggregateInput = {
 
 export type ServiceElementCreatephotosInput = {
   set: string[]
+}
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type ServiceElementUpdatephotosInput = {
@@ -917,7 +925,7 @@ export interface ServiceElementFieldRefs {
   readonly id: Prisma.FieldRef<"ServiceElement", 'Int'>
   readonly name: Prisma.FieldRef<"ServiceElement", 'String'>
   readonly description: Prisma.FieldRef<"ServiceElement", 'String'>
-  readonly price: Prisma.FieldRef<"ServiceElement", 'Int'>
+  readonly price: Prisma.FieldRef<"ServiceElement", 'Float'>
   readonly photos: Prisma.FieldRef<"ServiceElement", 'String[]'>
   readonly type: Prisma.FieldRef<"ServiceElement", 'Int'>
   readonly createdDate: Prisma.FieldRef<"ServiceElement", 'DateTime'>
