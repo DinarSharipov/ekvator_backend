@@ -11,6 +11,7 @@ RUN npm ci
 COPY . .
 
 RUN npm run build
+CMD npx prisma migrate deploy
 FROM base AS runtime
 
 # Устанавливаем необходимые зависимости для Prisma
@@ -21,8 +22,6 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/prisma.config.ts ./prisma.config.ts
-
-RUN npx prisma migrate deploy
 
 EXPOSE 3000
 # Запускаем приложение
