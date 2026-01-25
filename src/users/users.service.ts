@@ -14,7 +14,7 @@ export class UsersService {
   }
 
   update(id: number, updateUserDTO: UpdateUserDTO) {
-    return this.prisma.serviceType.update({
+    return this.prisma.user.update({
       where: { id },
       data: updateUserDTO,
     });
