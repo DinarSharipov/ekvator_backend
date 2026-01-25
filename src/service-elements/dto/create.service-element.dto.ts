@@ -21,7 +21,7 @@ export class CreateServiceElementDto {
 
   @ApiPropertyOptional({ description: "Цена", default: 0 })
   @IsNotEmpty()
-  price: number;
+  price: string;
 
   @ApiProperty({ description: "Фотографии" })
   @IsString()

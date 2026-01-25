@@ -9,7 +9,10 @@ export class ServiceElementService {
 
   create(createServiceDTO: CreateServiceElementDto) {
     return this.prisma.serviceElement.create({
-      data: createServiceDTO,
+      data: {
+        ...createServiceDTO,
+        price: parseFloat(createServiceDTO.price),
+      },
     });
   }
 
@@ -48,7 +51,10 @@ export class ServiceElementService {
   update(id: number, updateServiceElementDto: UpdateServiceElementDto) {
     return this.prisma.serviceElement.update({
       where: { id },
-      data: updateServiceElementDto,
+      data: {
+        ...updateServiceElementDto,
+        price: parseFloat(updateServiceElementDto.price),
+      },
     });
   }
 
