@@ -23,6 +23,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { memoryStorage } from "multer";
+import sharp from "sharp";
 import { AuthGuard } from "../auth/auth.guard";
 import { CreateServiceTypeDto } from "./dto/create.service-type.dto";
 import { ServiceTypeService } from "./service-type.service";
@@ -79,11 +80,25 @@ export class ServiceTypesController {
       gallery?: Express.Multer.File[];
     },
   ) {
-    const base64Photo = files?.photo.buffer.toString("base64");
+    // Конвертируем main photo в webp
+    const base64Photo = files?.photo?.[0]
+      ? (
+          await sharp(files.photo[0].buffer).webp({ quality: 80 }).toBuffer()
+        ).toString("base64")
+      : null;
 
-    const base64Gallery = files?.gallery?.map((file) =>
-      file.buffer.toString("base64"),
-    );
+    // Конвертируем все файлы галереи в webp
+    const base64Gallery = files?.gallery
+      ? await Promise.all(
+          files.gallery.map(async (file) => {
+            const webpBuffer = await sharp(file.buffer)
+              .webp({ quality: 80 })
+              .toBuffer();
+            return webpBuffer.toString("base64");
+          }),
+        )
+      : [];
+
     return this.serviceTypeService.create({
       ...createServiceType,
       showInMain: String(createServiceType.showInMain) === "true",
@@ -158,7 +173,7 @@ export class ServiceTypesController {
       },
     ),
   )
-  update(
+  async update(
     @Param("id", ParseIntPipe) id: number,
     @Body() createServiceType: CreateServiceTypeDto,
     @UploadedFiles()
@@ -167,13 +182,24 @@ export class ServiceTypesController {
       gallery?: Express.Multer.File[];
     },
   ) {
-    console.log("UPD", createServiceType);
+    // Конвертируем main photo в webp
+    const base64Photo = files?.photo?.[0]
+      ? (
+          await sharp(files.photo[0].buffer).webp({ quality: 80 }).toBuffer()
+        ).toString("base64")
+      : null;
 
-    const base64Photo = files?.photo?.buffer?.toString("base64");
-
-    const base64Gallery = files?.gallery?.map((file) =>
-      file.buffer.toString("base64"),
-    );
+    // Конвертируем все файлы галереи в webp
+    const base64Gallery = files?.gallery
+      ? await Promise.all(
+          files.gallery.map(async (file) => {
+            const webpBuffer = await sharp(file.buffer)
+              .webp({ quality: 80 })
+              .toBuffer();
+            return webpBuffer.toString("base64");
+          }),
+        )
+      : [];
 
     return this.serviceTypeService.update(id, {
       ...createServiceType,
