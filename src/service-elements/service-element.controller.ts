@@ -43,7 +43,7 @@ export class ServiceElementsController {
       properties: {
         name: { type: "string" },
         description: { type: "string" },
-        price: { type: "string" },
+        price: { type: "number" },
         type: { type: "number" },
         photos: {
           type: "array",
@@ -65,7 +65,7 @@ export class ServiceElementsController {
     const base64Photos = files?.map((e) => e.buffer.toString("base64"));
     return this.serviceElementService.create({
       ...createServiceElement,
-      price: Number(createServiceElement.price),
+      price: createServiceElement.price,
       type: Number(createServiceElement.type),
       isArchive: String(createServiceElement.isArchive) === "true",
       photos: base64Photos,
@@ -109,7 +109,7 @@ export class ServiceElementsController {
     const base64Photos = files?.map((e) => e.buffer.toString("base64"));
     return this.serviceElementService.update(id, {
       ...createServiceElement,
-      price: Number(createServiceElement.price),
+      price: createServiceElement.price,
       type: Number(createServiceElement.type),
       isArchive: String(createServiceElement.isArchive) === "true",
       photos: base64Photos,
