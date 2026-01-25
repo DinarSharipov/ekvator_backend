@@ -22,6 +22,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import * as sharp from "sharp";
 import { AuthGuard } from "../auth/auth.guard";
 import { CreateServiceElementDto } from "./dto/create.service-element.dto";
 import { ServiceElementService } from "./service-element.service";
@@ -62,7 +63,16 @@ export class ServiceElementsController {
     @Body() createServiceElement: CreateServiceElementDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    const base64Photos = files?.map((e) => e.buffer.toString("base64"));
+    const base64Photos = files?.length
+      ? await Promise.all(
+          files.map(async (file) => {
+            const webpBuffer = await sharp(file.buffer)
+              .webp({ quality: 80 })
+              .toBuffer();
+            return webpBuffer.toString("base64");
+          }),
+        )
+      : [];
     return this.serviceElementService.create({
       ...createServiceElement,
       price: createServiceElement.price,
@@ -106,7 +116,16 @@ export class ServiceElementsController {
     @Body() createServiceElement: CreateServiceElementDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    const base64Photos = files?.map((e) => e.buffer.toString("base64"));
+    const base64Photos = files?.length
+      ? await Promise.all(
+          files.map(async (file) => {
+            const webpBuffer = await sharp(file.buffer)
+              .webp({ quality: 80 })
+              .toBuffer();
+            return webpBuffer.toString("base64");
+          }),
+        )
+      : [];
     return this.serviceElementService.update(id, {
       ...createServiceElement,
       price: createServiceElement.price,
