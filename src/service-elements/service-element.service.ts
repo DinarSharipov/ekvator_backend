@@ -18,6 +18,15 @@ export class ServiceElementService {
       orderBy: {
         name: "desc",
       },
+      select: {
+        id: true,
+        description: true,
+        isArchive: true,
+        name: true,
+        price: true,
+        type: true,
+        createdDate: true,
+      },
     });
   }
 
