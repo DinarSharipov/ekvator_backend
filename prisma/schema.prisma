@@ -35,7 +35,7 @@ model ServiceElement {
   id Int @id @default(autoincrement())
   name String
   description String?
-  price Int
+  price Float
   photos String[] @default([])
   type Int
   createdDate DateTime @default(now())
