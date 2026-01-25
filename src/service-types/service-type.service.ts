@@ -18,6 +18,15 @@ export class ServiceTypeService {
       orderBy: {
         name: "desc",
       },
+      select: {
+        id: true,
+        description: true,
+        name: true,
+        phone: true,
+        photo: true,
+        showInMain: true,
+        showType: true,
+      },
     });
   }
 
