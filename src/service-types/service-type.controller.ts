@@ -23,7 +23,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { memoryStorage } from "multer";
-import sharp from "sharp";
+import * as sharp from "sharp";
 import { AuthGuard } from "../auth/auth.guard";
 import { CreateServiceTypeDto } from "./dto/create.service-type.dto";
 import { ServiceTypeService } from "./service-type.service";
