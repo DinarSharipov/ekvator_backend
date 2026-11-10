@@ -684,6 +684,7 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const ServiceTypeScalarFieldEnum = {
   id: 'id',
+  sortOrder: 'sortOrder',
   name: 'name',
   showInMain: 'showInMain',
   phone: 'phone',

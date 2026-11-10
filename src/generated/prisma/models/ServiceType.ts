@@ -28,14 +28,17 @@ export type AggregateServiceType = {
 
 export type ServiceTypeAvgAggregateOutputType = {
   id: number | null
+  sortOrder: number | null
 }
 
 export type ServiceTypeSumAggregateOutputType = {
   id: number | null
+  sortOrder: number | null
 }
 
 export type ServiceTypeMinAggregateOutputType = {
   id: number | null
+  sortOrder: number | null
   name: string | null
   showInMain: boolean | null
   phone: string | null
@@ -47,6 +50,7 @@ export type ServiceTypeMinAggregateOutputType = {
 
 export type ServiceTypeMaxAggregateOutputType = {
   id: number | null
+  sortOrder: number | null
   name: string | null
   showInMain: boolean | null
   phone: string | null
@@ -58,6 +62,7 @@ export type ServiceTypeMaxAggregateOutputType = {
 
 export type ServiceTypeCountAggregateOutputType = {
   id: number
+  sortOrder: number
   name: number
   showInMain: number
   phone: number
@@ -72,14 +77,17 @@ export type ServiceTypeCountAggregateOutputType = {
 
 export type ServiceTypeAvgAggregateInputType = {
   id?: true
+  sortOrder?: true
 }
 
 export type ServiceTypeSumAggregateInputType = {
   id?: true
+  sortOrder?: true
 }
 
 export type ServiceTypeMinAggregateInputType = {
   id?: true
+  sortOrder?: true
   name?: true
   showInMain?: true
   phone?: true
@@ -91,6 +99,7 @@ export type ServiceTypeMinAggregateInputType = {
 
 export type ServiceTypeMaxAggregateInputType = {
   id?: true
+  sortOrder?: true
   name?: true
   showInMain?: true
   phone?: true
@@ -102,6 +111,7 @@ export type ServiceTypeMaxAggregateInputType = {
 
 export type ServiceTypeCountAggregateInputType = {
   id?: true
+  sortOrder?: true
   name?: true
   showInMain?: true
   phone?: true
@@ -201,6 +211,7 @@ export type ServiceTypeGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type ServiceTypeGroupByOutputType = {
   id: number
+  sortOrder: number
   name: string
   showInMain: boolean
   phone: string | null
@@ -236,6 +247,7 @@ export type ServiceTypeWhereInput = {
   OR?: Prisma.ServiceTypeWhereInput[]
   NOT?: Prisma.ServiceTypeWhereInput | Prisma.ServiceTypeWhereInput[]
   id?: Prisma.IntFilter<"ServiceType"> | number
+  sortOrder?: Prisma.IntFilter<"ServiceType"> | number
   name?: Prisma.StringFilter<"ServiceType"> | string
   showInMain?: Prisma.BoolFilter<"ServiceType"> | boolean
   phone?: Prisma.StringNullableFilter<"ServiceType"> | string | null
@@ -248,6 +260,7 @@ export type ServiceTypeWhereInput = {
 
 export type ServiceTypeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -263,6 +276,7 @@ export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ServiceTypeWhereInput | Prisma.ServiceTypeWhereInput[]
   OR?: Prisma.ServiceTypeWhereInput[]
   NOT?: Prisma.ServiceTypeWhereInput | Prisma.ServiceTypeWhereInput[]
+  sortOrder?: Prisma.IntFilter<"ServiceType"> | number
   name?: Prisma.StringFilter<"ServiceType"> | string
   showInMain?: Prisma.BoolFilter<"ServiceType"> | boolean
   phone?: Prisma.StringNullableFilter<"ServiceType"> | string | null
@@ -275,6 +289,7 @@ export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
 
 export type ServiceTypeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -295,6 +310,7 @@ export type ServiceTypeScalarWhereWithAggregatesInput = {
   OR?: Prisma.ServiceTypeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ServiceTypeScalarWhereWithAggregatesInput | Prisma.ServiceTypeScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ServiceType"> | number
+  sortOrder?: Prisma.IntWithAggregatesFilter<"ServiceType"> | number
   name?: Prisma.StringWithAggregatesFilter<"ServiceType"> | string
   showInMain?: Prisma.BoolWithAggregatesFilter<"ServiceType"> | boolean
   phone?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
@@ -306,6 +322,7 @@ export type ServiceTypeScalarWhereWithAggregatesInput = {
 }
 
 export type ServiceTypeCreateInput = {
+  sortOrder?: number
   name: string
   showInMain?: boolean
   phone?: string | null
@@ -318,6 +335,7 @@ export type ServiceTypeCreateInput = {
 
 export type ServiceTypeUncheckedCreateInput = {
   id?: number
+  sortOrder?: number
   name: string
   showInMain?: boolean
   phone?: string | null
@@ -329,6 +347,7 @@ export type ServiceTypeUncheckedCreateInput = {
 }
 
 export type ServiceTypeUpdateInput = {
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -341,6 +360,7 @@ export type ServiceTypeUpdateInput = {
 
 export type ServiceTypeUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -353,6 +373,7 @@ export type ServiceTypeUncheckedUpdateInput = {
 
 export type ServiceTypeCreateManyInput = {
   id?: number
+  sortOrder?: number
   name: string
   showInMain?: boolean
   phone?: string | null
@@ -364,6 +385,7 @@ export type ServiceTypeCreateManyInput = {
 }
 
 export type ServiceTypeUpdateManyMutationInput = {
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -376,6 +398,7 @@ export type ServiceTypeUpdateManyMutationInput = {
 
 export type ServiceTypeUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -396,6 +419,7 @@ export type StringNullableListFilter<$PrismaModel = never> = {
 
 export type ServiceTypeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -408,10 +432,12 @@ export type ServiceTypeCountOrderByAggregateInput = {
 
 export type ServiceTypeAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  sortOrder?: Prisma.SortOrder
 }
 
 export type ServiceTypeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -423,6 +449,7 @@ export type ServiceTypeMaxOrderByAggregateInput = {
 
 export type ServiceTypeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -434,6 +461,7 @@ export type ServiceTypeMinOrderByAggregateInput = {
 
 export type ServiceTypeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  sortOrder?: Prisma.SortOrder
 }
 
 export type ServiceTypeCreategalleryInput = {
@@ -453,6 +481,7 @@ export type ServiceTypeUpdategalleryInput = {
 
 export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  sortOrder?: boolean
   name?: boolean
   showInMain?: boolean
   phone?: boolean
@@ -465,6 +494,7 @@ export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  sortOrder?: boolean
   name?: boolean
   showInMain?: boolean
   phone?: boolean
@@ -477,6 +507,7 @@ export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
 
 export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  sortOrder?: boolean
   name?: boolean
   showInMain?: boolean
   phone?: boolean
@@ -489,6 +520,7 @@ export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
 
 export type ServiceTypeSelectScalar = {
   id?: boolean
+  sortOrder?: boolean
   name?: boolean
   showInMain?: boolean
   phone?: boolean
@@ -499,13 +531,14 @@ export type ServiceTypeSelectScalar = {
   gallery?: boolean
 }
 
-export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description" | "showType" | "gallery", ExtArgs["result"]["serviceType"]>
+export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sortOrder" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description" | "showType" | "gallery", ExtArgs["result"]["serviceType"]>
 
 export type $ServiceTypePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ServiceType"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    sortOrder: number
     name: string
     showInMain: boolean
     phone: string | null
@@ -938,6 +971,7 @@ export interface Prisma__ServiceTypeClient<T, Null = never, ExtArgs extends runt
  */
 export interface ServiceTypeFieldRefs {
   readonly id: Prisma.FieldRef<"ServiceType", 'Int'>
+  readonly sortOrder: Prisma.FieldRef<"ServiceType", 'Int'>
   readonly name: Prisma.FieldRef<"ServiceType", 'String'>
   readonly showInMain: Prisma.FieldRef<"ServiceType", 'Boolean'>
   readonly phone: Prisma.FieldRef<"ServiceType", 'String'>

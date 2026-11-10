@@ -21,6 +21,7 @@ model User {
 
 model ServiceType {
   id Int @id @default(autoincrement())
+  sortOrder Int @default(0)
   name String
   showInMain Boolean @default(false)
   phone String?

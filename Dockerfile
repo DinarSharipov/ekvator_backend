@@ -10,8 +10,7 @@ RUN npm ci
 # Копируем весь код, Prisma и сгенерированные файлы
 COPY . .
 
-RUN npm run build
-CMD npx prisma migrate deploy
+RUN DATABASE_URL=postgresql://localhost:5432/codegen_only npx prisma generate && npm run build
 FROM base AS runtime
 
 # Устанавливаем необходимые зависимости для Prisma
@@ -24,5 +23,6 @@ COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 
 EXPOSE 3000
+HEALTHCHECK --interval=10s --timeout=5s --start-period=40s --retries=6 CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/api-json').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 # Запускаем приложение
-CMD node main.js
+CMD ["sh", "-c", "npx prisma migrate deploy && exec node main.js"]

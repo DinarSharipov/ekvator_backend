@@ -12,6 +12,7 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
+  ValidationPipe,
 } from "@nestjs/common";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import {
@@ -27,6 +28,7 @@ import * as sharp from "sharp";
 import { AuthGuard } from "../auth/auth.guard";
 import { CreateServiceTypeDto } from "./dto/create.service-type.dto";
 import { ServiceTypeService } from "./service-type.service";
+import { ReorderServicesDto } from "./dto/reorder-services.dto";
 
 @ApiTags("services")
 @Controller("services")
@@ -112,6 +114,21 @@ export class ServiceTypesController {
   @ApiResponse({ status: 200, description: "Список сервисов" })
   findAll() {
     return this.serviceTypeService.findAll();
+  }
+
+  @Get("order-permission")
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "Проверить доступ к изменению порядка (все авторизованные пользователи — администраторы)" })
+  orderPermission() { return { canReorder: true }; }
+
+  @Put("order")
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: "Сохранить порядок всех сервисов" })
+  @ApiResponse({ status: 204, description: "Порядок сохранён" })
+  @ApiResponse({ status: 409, description: "Передан устаревший или неполный список ID" })
+  reorder(@Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) dto: ReorderServicesDto) {
+    return this.serviceTypeService.reorder(dto.ids);
   }
 
   @Get(":id")

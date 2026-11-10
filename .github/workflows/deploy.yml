@@ -4,6 +4,10 @@ on:
   push:
     branches: ["main"]
 
+concurrency:
+  group: ekvator-backend-production
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -37,8 +41,36 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            set -eu
             cd /home/${{ secrets.SSH_USER }}/ekvator 
-            cp .env.prod .env
-            docker compose pull
-            docker compose down
-            docker compose up -d
+            test -s .env
+            previous_image=""
+            current_container=$(docker compose ps -q app)
+            if [ -n "$current_container" ]; then
+              previous_image=$(docker inspect --format '{{.Image}}' "$current_container")
+            fi
+            docker compose pull app
+            docker compose run --rm --no-deps app npx prisma migrate deploy
+            started=true
+            docker compose up -d --no-deps app || started=false
+            for attempt in $(seq 1 24); do
+              if [ "$started" != "true" ]; then break; fi
+              container=$(docker compose ps -q app)
+              if [ -n "$container" ]; then
+                state=$(docker inspect --format '{{.State.Status}}' "$container")
+                health=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}missing{{end}}' "$container")
+                if [ "$health" = "healthy" ]; then
+                  echo "Backend deployment is healthy."
+                  exit 0
+                fi
+                if [ "$state" = "exited" ] || [ "$health" = "unhealthy" ]; then break; fi
+              fi
+              sleep 5
+            done
+            echo "Backend health verification failed."
+            if [ -n "$previous_image" ]; then
+              docker image tag "$previous_image" dinarsharipov/ekvator:latest
+              docker compose up -d --no-deps app
+              echo "Previous application image restored."
+            fi
+            exit 1
