@@ -11,7 +11,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "npx prisma migrate dev",
     "prisma:migrate:prod": "npx prisma migrate deploy",
-    "migrate:prod": "cp .env.prod .env && npx prisma migrate deploy"
+    "migrate:prod": "cp .env.prod .env && npx prisma migrate deploy",
+    "test:auth": "npm run build && node --test tests/auth.integration.cjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

@@ -25,6 +25,7 @@ import {
 } from "@nestjs/swagger";
 import { memoryStorage } from "multer";
 import * as sharp from "sharp";
+import { AdminGuard } from "../auth/admin.guard";
 import { AuthGuard } from "../auth/auth.guard";
 import { CreateServiceTypeDto } from "./dto/create.service-type.dto";
 import { ServiceTypeService } from "./service-type.service";
@@ -36,7 +37,7 @@ export class ServiceTypesController {
   constructor(private readonly serviceTypeService: ServiceTypeService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать новый тип сервиса" })
   @ApiResponse({ status: 201, description: "Сервис успешно создан" })
@@ -117,12 +118,12 @@ export class ServiceTypesController {
   }
 
   @Get("order-permission")
-  @UseGuards(AuthGuard)
-  @ApiOperation({ summary: "Проверить доступ к изменению порядка (все авторизованные пользователи — администраторы)" })
+  @UseGuards(AuthGuard, AdminGuard)
+  @ApiOperation({ summary: "Проверить доступ к изменению порядка (только администраторы)" })
   orderPermission() { return { canReorder: true }; }
 
   @Put("order")
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Сохранить порядок всех сервисов" })
   @ApiResponse({ status: 204, description: "Порядок сохранён" })
@@ -141,7 +142,7 @@ export class ServiceTypesController {
   }
 
   @Delete(":id")
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Удалить сервис по ID" })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
@@ -151,7 +152,7 @@ export class ServiceTypesController {
   }
 
   @Put(":id")
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Обновить сервис по ID" })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })

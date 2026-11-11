@@ -7,16 +7,24 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  admin
+  user
+}
+
 model User {
   id Int @id @default(autoincrement())
   name String 
-  login String
+  login String @unique
   password String
   surname String?
   phone String?
+  phoneNormalized String? @unique
+  phoneVerifiedAt DateTime?
+  userRole UserRole @default(user)
   email String?
   telegram String?
-  role String
+  role String @default("user")
 }
 
 model ServiceType {
