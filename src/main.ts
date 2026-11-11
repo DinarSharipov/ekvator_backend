@@ -15,6 +15,7 @@ async function bootstrap() {
     .setTitle("Ekvator API")
     .setDescription("Minimal NestJS API with PostgreSQL")
     .setVersion("1.0")
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

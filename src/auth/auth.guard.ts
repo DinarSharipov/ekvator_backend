@@ -4,35 +4,40 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
+import { AuthTokensService } from "./auth-tokens.service";
 import { Request } from "express";
+import { PrismaService } from "../prisma/prisma.service";
+import { publicUserSelect } from "../users/users.service";
+import { SmsVerificationService } from "./sms-verification.service";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private tokens: AuthTokensService,
+    private prisma: PrismaService,
+    private smsVerification: SmsVerificationService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-    if (!token) {
-      throw new UnauthorizedException();
-    }
+    const [type, token] =
+      (request as Request).headers.authorization?.split(" ") ?? [];
+    if (type !== "Bearer" || !token) throw new UnauthorizedException();
+    let payload: { sub: number };
     try {
-      // 💡 Here the JWT secret key that's used for verifying the payload
-      // is the key that was passsed in the JwtModule
-      const payload = await this.jwtService.verifyAsync(token);
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
-      request["user"] = payload;
+      payload = await this.tokens.verify(token);
+      if (!Number.isInteger(payload.sub) || payload.sub < 1)
+        throw new Error("Invalid subject");
     } catch {
       throw new UnauthorizedException();
     }
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: publicUserSelect,
+    });
+    if (!user) throw new UnauthorizedException();
+    this.smsVerification.assertCanSignIn(user);
+    request.user = user;
     return true;
   }
-
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(" ") ?? [];
-    return type === "Bearer" ? token : undefined;
-  }
 }
-

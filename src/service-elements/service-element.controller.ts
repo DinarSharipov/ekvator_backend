@@ -23,6 +23,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import * as sharp from "sharp";
+import { AdminGuard } from "../auth/admin.guard";
 import { AuthGuard } from "../auth/auth.guard";
 import { CreateServiceElementDto } from "./dto/create.service-element.dto";
 import { ServiceElementService } from "./service-element.service";
@@ -33,7 +34,7 @@ export class ServiceElementsController {
   constructor(private readonly serviceElementService: ServiceElementService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать новую услугу" })
   @ApiResponse({ status: 201, description: "Услуга успешно создан" })
@@ -84,7 +85,7 @@ export class ServiceElementsController {
   }
 
   @Put(":id")
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Изменить услугу" })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
@@ -160,7 +161,7 @@ export class ServiceElementsController {
   }
 
   @Delete(":id")
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Удалить услугу по ID" })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })

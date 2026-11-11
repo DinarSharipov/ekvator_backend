@@ -50,6 +50,17 @@ jobs:
               previous_image=$(docker inspect --format '{{.Image}}' "$current_container")
             fi
             docker compose pull app
+            # Abort on identity conflicts before Prisma records a failed migration.
+            docker compose run --rm --no-deps app node scripts/auth-preflight.cjs
+            # Keep a private, complete database backup on the server before any migration.
+            umask 077
+            mkdir -p backups
+            backup="backups/before-migration-$(date -u +%Y%m%dT%H%M%SZ)-${{ github.sha }}.dump"
+            docker compose exec -T db sh -c 'exec pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc' > "$backup.partial"
+            test -s "$backup.partial"
+            docker compose exec -T db pg_restore --list < "$backup.partial" > /dev/null
+            mv "$backup.partial" "$backup"
+            echo "Database backup saved: $backup"
             docker compose run --rm --no-deps app npx prisma migrate deploy
             started=true
             docker compose up -d --no-deps app || started=false
