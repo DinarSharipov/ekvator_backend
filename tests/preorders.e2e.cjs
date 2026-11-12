@@ -288,7 +288,8 @@ test("cart and preorder HTTP workflows with PostgreSQL", async (t) => {
       const end = future(12);
       await http.post("/cart/items").auth(users.customer.token, { type: "bearer" }).send({ serviceElementId: catalogue.duration.item.id, quantity: 1 }).expect(201);
       await http.post("/orders").auth(users.customer.token, { type: "bearer" }).send({ desiredStartAt: start.toISOString() }).expect(400);
-      await http.post("/orders").auth(users.customer.token, { type: "bearer" }).send({ desiredStartAt: start.toISOString(), desiredEndAt: end.toISOString() }).expect(201);
+      const durationOrder = await http.post("/orders").auth(users.customer.token, { type: "bearer" }).send({ desiredStartAt: start.toISOString(), desiredEndAt: end.toISOString() }).expect(201);
+      catalogue.durationOrderId = durationOrder.body.id;
       const cart = await http
         .get("/cart")
         .auth(users.otherCustomer.token, { type: "bearer" })
@@ -297,6 +298,54 @@ test("cart and preorder HTTP workflows with PostgreSQL", async (t) => {
       await http.post("/cart/items").auth(users.otherCustomer.token, { type: "bearer" }).send({ serviceElementId: catalogue.duration.item.id, quantity: 1 }).expect(201);
       await http.post("/orders").auth(users.otherCustomer.token, { type: "bearer" }).send({ desiredStartAt: future(11).toISOString(), desiredEndAt: future(13).toISOString() }).expect(409);
       await http.post("/orders").auth(users.otherCustomer.token, { type: "bearer" }).send({ desiredStartAt: future(13).toISOString(), desiredEndAt: future(14).toISOString() }).expect(201);
+    });
+
+    await t.test("returns calendar events and independent filter options for administrators", async () => {
+      await http.get(`/admin/calendar/events?from=${encodeURIComponent(future(1).toISOString())}&to=${encodeURIComponent(future(20).toISOString())}`).expect(401);
+      await http.get(`/admin/calendar/events?from=${encodeURIComponent(future(1).toISOString())}&to=${encodeURIComponent(future(20).toISOString())}`).auth(users.customer.token, { type: "bearer" }).expect(403);
+      await http.get("/admin/calendar/events?from=not-a-date&to=also-not-a-date").auth(users.admin.token, { type: "bearer" }).expect(400);
+
+      const proposalStart = future(16);
+      const proposalEnd = future(18);
+      await http
+        .post(`/admin/orders/${catalogue.durationOrderId}/propose-schedule`)
+        .auth(users.admin.token, { type: "bearer" })
+        .send({ scheduledStartAt: proposalStart.toISOString(), scheduledEndAt: proposalEnd.toISOString() })
+        .expect(201);
+
+      const from = future(1).toISOString();
+      const to = future(20).toISOString();
+      const events = await http
+        .get(`/admin/calendar/events?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&serviceTypeIds=${catalogue.duration.service.id}&userIds=${users.customer.id}&statuses=needs_confirmation`)
+        .auth(users.admin.token, { type: "bearer" })
+        .expect(200);
+      assert.equal(events.body.length, 1);
+      const event = events.body[0];
+      assert.equal(event.orderId, catalogue.durationOrderId);
+      assert.equal(event.timeSource, "proposed");
+      assert.equal(event.startAt, proposalStart.toISOString());
+      assert.equal(event.endAt, proposalEnd.toISOString());
+      assert.equal(event.customer.id, users.customer.id);
+      assert.equal(event.items[0].service.id, catalogue.duration.service.id);
+      assert.equal(event.items[0].serviceElementId, catalogue.duration.item.id);
+      assert.equal(event.items[0].quantity, 1);
+      assert.equal(event.total, 100);
+
+      const byElement = await http
+        .get(`/admin/calendar/events?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&serviceElementIds=${catalogue.duration.item.id}&statuses=needs_confirmation`)
+        .auth(users.admin.token, { type: "bearer" })
+        .expect(200);
+      assert.equal(byElement.body.some((item) => item.orderId === catalogue.durationOrderId), true);
+
+      const filterOptions = await http.get("/admin/calendar/filter-options").auth(users.admin.token, { type: "bearer" }).expect(200);
+      assert.equal(filterOptions.body.services.some((service) => service.id === catalogue.duration.service.id), true);
+      assert.equal(filterOptions.body.serviceElements.some((item) => item.id === catalogue.duration.item.id), true);
+      assert.equal(filterOptions.body.statuses.includes("needs_confirmation"), true);
+
+      const userOptions = await http.get(`/admin/users/filter-options?query=${encodeURIComponent("customer")}`).auth(users.admin.token, { type: "bearer" }).expect(200);
+      const customer = userOptions.body.find((user) => user.id === users.customer.id);
+      assert.equal(customer.login.startsWith(prefix), true);
+      assert.equal(customer.label, "customer");
     });
 
     await t.test("completes overdue accepted orders before returning them", async () => {

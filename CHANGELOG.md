@@ -7,3 +7,4 @@
 - Added carts and preorders: availability controls for services and catalogue items, order lifecycle and schedule confirmation, one-time postponement, archival, and a foundation for future prepayments.
 - Added interval booking for long-running services with configurable capacity and transaction-safe protection against overlapping reservations.
 - Added end-to-end PostgreSQL coverage for carts and preorders, including access control, booking conflicts, order lifecycle, price snapshots, and overdue completion. Empty carts now consistently return an empty item list.
+- Added read-only administrator calendar endpoints with interval, service, catalogue item, customer, status, and archive filters, along with compact filter option endpoints for services and users.

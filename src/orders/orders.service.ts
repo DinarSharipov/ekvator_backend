@@ -4,6 +4,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { AddCartItemDto, UpdateCartItemDto } from "./dto/cart.dto";
 import { CheckoutDto } from "./dto/checkout.dto";
 import { PostponeOrderDto, ProposeScheduleDto, SetOrderStatusDto } from "./dto/order-actions.dto";
+import { CalendarEventsQueryDto } from "./dto/calendar-query.dto";
 
 const orderInclude = {
   user: { select: { id: true, name: true, surname: true, login: true, phone: true } },
@@ -124,6 +125,78 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
   async adminOrders(includeArchived: boolean) {
     await this.completeOverdueOrders();
     return Promise.all((await this.prisma.preorder.findMany({ where: includeArchived ? {} : { isArchived: false }, include: orderInclude, orderBy: { createdAt: "desc" } })).map((order) => this.present(order)));
+  }
+
+  async calendarEvents(query: CalendarEventsQueryDto) {
+    await this.completeOverdueOrders();
+    const from = new Date(query.from);
+    const to = new Date(query.to);
+    if (from >= to) throw new BadRequestException("Конец периода должен быть позже начала");
+    const activeStatuses = [PreorderStatus.pending, PreorderStatus.needs_confirmation, PreorderStatus.accepted, PreorderStatus.in_progress, PreorderStatus.ready];
+    const statuses = query.statuses?.length ? query.statuses : activeStatuses;
+    const itemWhere: Prisma.PreorderItemWhereInput = {
+      ...(query.serviceTypeIds?.length ? { serviceTypeId: { in: query.serviceTypeIds } } : {}),
+      ...(query.serviceElementIds?.length ? { serviceElementId: { in: query.serviceElementIds } } : {}),
+    };
+    const overlaps = (start: "scheduledStartAt" | "proposedStartAt", end: "scheduledEndAt" | "proposedEndAt"): Prisma.PreorderWhereInput => ({
+      [start]: { lt: to },
+      OR: [{ [end]: null }, { [end]: { gt: from } }],
+    });
+    const orders = await this.prisma.preorder.findMany({
+      where: {
+        status: { in: statuses },
+        ...(query.includeArchived ? {} : { isArchived: false }),
+        ...(query.userIds?.length ? { userId: { in: query.userIds } } : {}),
+        ...(query.serviceTypeIds?.length || query.serviceElementIds?.length ? { items: { some: itemWhere } } : {}),
+        OR: [
+          { status: PreorderStatus.needs_confirmation, proposedStartAt: { not: null }, ...overlaps("proposedStartAt", "proposedEndAt") },
+          { status: { not: PreorderStatus.needs_confirmation }, ...overlaps("scheduledStartAt", "scheduledEndAt") },
+        ],
+      },
+      include: orderInclude,
+      orderBy: [{ scheduledStartAt: "asc" }, { id: "asc" }],
+    });
+    return orders.map((order) => {
+      const proposal = order.status === PreorderStatus.needs_confirmation && order.proposedStartAt;
+      const startAt = proposal ? order.proposedStartAt! : order.scheduledStartAt;
+      const endAt = proposal ? order.proposedEndAt : order.scheduledEndAt;
+      return {
+        id: `order:${order.id}`,
+        orderId: order.id,
+        title: `Заказ #${order.id}: ${order.items.map((item) => item.name).join(", ")}`,
+        startAt,
+        endAt,
+        timeSource: proposal ? "proposed" : "scheduled",
+        status: order.status,
+        isArchived: order.isArchived,
+        customer: order.user,
+        items: order.items.map(({ serviceType, ...item }) => ({ ...item, service: serviceType })),
+        customerNote: order.customerNote,
+        adminNote: order.adminNote,
+        proposalNote: order.proposalNote,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+        total: order.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+      };
+    });
+  }
+
+  async calendarFilterOptions() {
+    const [services, serviceElements] = await this.prisma.$transaction([
+      this.prisma.serviceType.findMany({ orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { id: true, name: true, sortOrder: true, bookingMode: true, bookingCapacity: true, acceptsPreorders: true } }),
+      this.prisma.serviceElement.findMany({ orderBy: [{ type: "asc" }, { name: "asc" }], select: { id: true, name: true, type: true, isArchive: true, preorderAvailable: true } }),
+    ]);
+    return { services, serviceElements, statuses: Object.values(PreorderStatus) };
+  }
+
+  async userFilterOptions(query?: string) {
+    const search = query || undefined;
+    const users = await this.prisma.user.findMany({
+      where: search ? { OR: ["name", "surname", "login", "phone", "email", "telegram"].map((field) => ({ [field]: { contains: search, mode: "insensitive" } })) } : undefined,
+      orderBy: [{ name: "asc" }, { surname: "asc" }, { id: "asc" }],
+      select: { id: true, name: true, surname: true, login: true, phone: true, email: true, telegram: true, role: true, userRole: true },
+    });
+    return users.map((user) => ({ ...user, label: [user.name, user.surname].filter(Boolean).join(" ") || user.login }));
   }
 
   async proposeSchedule(id: number, dto: ProposeScheduleDto) {

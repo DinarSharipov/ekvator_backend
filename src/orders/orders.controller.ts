@@ -5,6 +5,7 @@ import { AuthGuard } from "../auth/auth.guard";
 import { AddCartItemDto, UpdateCartItemDto } from "./dto/cart.dto";
 import { CheckoutDto } from "./dto/checkout.dto";
 import { ArchiveOrderDto, PostponeOrderDto, ProposeScheduleDto, SetOrderStatusDto } from "./dto/order-actions.dto";
+import { CalendarEventsQueryDto, UserFilterOptionsQueryDto } from "./dto/calendar-query.dto";
 import { OrdersService } from "./orders.service";
 
 @ApiTags("cart-and-preorders")
@@ -24,6 +25,15 @@ export class OrdersController {
   @Post("orders/:id/confirm-completion") confirmCompletion(@Request() req: { user: { id: number } }, @Param("id", ParseIntPipe) id: number) { return this.orders.confirmCompletion(req.user.id, id); }
   @Post("orders/:id/postpone") postpone(@Request() req: { user: { id: number } }, @Param("id", ParseIntPipe) id: number, @Body(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) dto: PostponeOrderDto) { return this.orders.postpone(req.user.id, id, dto); }
   @Get("admin/orders") @UseGuards(AdminGuard) adminOrders(@Query("includeArchived", new ParseBoolPipe({ optional: true })) includeArchived = false) { return this.orders.adminOrders(includeArchived); }
+  @Get("admin/calendar/events")
+  @UseGuards(AdminGuard)
+  calendarEvents(@Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) query: CalendarEventsQueryDto) { return this.orders.calendarEvents(query); }
+  @Get("admin/calendar/filter-options")
+  @UseGuards(AdminGuard)
+  calendarFilterOptions() { return this.orders.calendarFilterOptions(); }
+  @Get("admin/users/filter-options")
+  @UseGuards(AdminGuard)
+  userFilterOptions(@Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) query: UserFilterOptionsQueryDto) { return this.orders.userFilterOptions(query.query); }
   @Post("admin/orders/:id/propose-schedule") @UseGuards(AdminGuard) propose(@Param("id", ParseIntPipe) id: number, @Body(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) dto: ProposeScheduleDto) { return this.orders.proposeSchedule(id, dto); }
   @Patch("admin/orders/:id/status") @UseGuards(AdminGuard) setStatus(@Param("id", ParseIntPipe) id: number, @Body(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) dto: SetOrderStatusDto) { return this.orders.setStatus(id, dto); }
   @Patch("admin/orders/:id/archive") @UseGuards(AdminGuard) archive(@Param("id", ParseIntPipe) id: number, @Body(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) dto: ArchiveOrderDto) { return this.orders.archive(id, dto.isArchived); }
