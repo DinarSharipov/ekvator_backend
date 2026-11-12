@@ -11,4 +11,8 @@
 export type * from './models/User'
 export type * from './models/ServiceType'
 export type * from './models/ServiceElement'
+export type * from './models/Cart'
+export type * from './models/CartItem'
+export type * from './models/Preorder'
+export type * from './models/PreorderItem'
 export type * from './commonInputTypes'

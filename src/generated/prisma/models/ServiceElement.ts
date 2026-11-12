@@ -46,6 +46,7 @@ export type ServiceElementMinAggregateOutputType = {
   type: number | null
   createdDate: Date | null
   isArchive: boolean | null
+  preorderAvailable: boolean | null
 }
 
 export type ServiceElementMaxAggregateOutputType = {
@@ -56,6 +57,7 @@ export type ServiceElementMaxAggregateOutputType = {
   type: number | null
   createdDate: Date | null
   isArchive: boolean | null
+  preorderAvailable: boolean | null
 }
 
 export type ServiceElementCountAggregateOutputType = {
@@ -67,6 +69,7 @@ export type ServiceElementCountAggregateOutputType = {
   type: number
   createdDate: number
   isArchive: number
+  preorderAvailable: number
   _all: number
 }
 
@@ -91,6 +94,7 @@ export type ServiceElementMinAggregateInputType = {
   type?: true
   createdDate?: true
   isArchive?: true
+  preorderAvailable?: true
 }
 
 export type ServiceElementMaxAggregateInputType = {
@@ -101,6 +105,7 @@ export type ServiceElementMaxAggregateInputType = {
   type?: true
   createdDate?: true
   isArchive?: true
+  preorderAvailable?: true
 }
 
 export type ServiceElementCountAggregateInputType = {
@@ -112,6 +117,7 @@ export type ServiceElementCountAggregateInputType = {
   type?: true
   createdDate?: true
   isArchive?: true
+  preorderAvailable?: true
   _all?: true
 }
 
@@ -210,6 +216,7 @@ export type ServiceElementGroupByOutputType = {
   type: number
   createdDate: Date
   isArchive: boolean
+  preorderAvailable: boolean
   _count: ServiceElementCountAggregateOutputType | null
   _avg: ServiceElementAvgAggregateOutputType | null
   _sum: ServiceElementSumAggregateOutputType | null
@@ -244,6 +251,9 @@ export type ServiceElementWhereInput = {
   type?: Prisma.IntFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeFilter<"ServiceElement"> | Date | string
   isArchive?: Prisma.BoolFilter<"ServiceElement"> | boolean
+  preorderAvailable?: Prisma.BoolFilter<"ServiceElement"> | boolean
+  cartItems?: Prisma.CartItemListRelationFilter
+  preorderItems?: Prisma.PreorderItemListRelationFilter
 }
 
 export type ServiceElementOrderByWithRelationInput = {
@@ -255,6 +265,9 @@ export type ServiceElementOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
+  preorderAvailable?: Prisma.SortOrder
+  cartItems?: Prisma.CartItemOrderByRelationAggregateInput
+  preorderItems?: Prisma.PreorderItemOrderByRelationAggregateInput
 }
 
 export type ServiceElementWhereUniqueInput = Prisma.AtLeast<{
@@ -269,6 +282,9 @@ export type ServiceElementWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.IntFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeFilter<"ServiceElement"> | Date | string
   isArchive?: Prisma.BoolFilter<"ServiceElement"> | boolean
+  preorderAvailable?: Prisma.BoolFilter<"ServiceElement"> | boolean
+  cartItems?: Prisma.CartItemListRelationFilter
+  preorderItems?: Prisma.PreorderItemListRelationFilter
 }, "id">
 
 export type ServiceElementOrderByWithAggregationInput = {
@@ -280,6 +296,7 @@ export type ServiceElementOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
+  preorderAvailable?: Prisma.SortOrder
   _count?: Prisma.ServiceElementCountOrderByAggregateInput
   _avg?: Prisma.ServiceElementAvgOrderByAggregateInput
   _max?: Prisma.ServiceElementMaxOrderByAggregateInput
@@ -299,6 +316,7 @@ export type ServiceElementScalarWhereWithAggregatesInput = {
   type?: Prisma.IntWithAggregatesFilter<"ServiceElement"> | number
   createdDate?: Prisma.DateTimeWithAggregatesFilter<"ServiceElement"> | Date | string
   isArchive?: Prisma.BoolWithAggregatesFilter<"ServiceElement"> | boolean
+  preorderAvailable?: Prisma.BoolWithAggregatesFilter<"ServiceElement"> | boolean
 }
 
 export type ServiceElementCreateInput = {
@@ -309,6 +327,9 @@ export type ServiceElementCreateInput = {
   type: number
   createdDate?: Date | string
   isArchive?: boolean
+  preorderAvailable?: boolean
+  cartItems?: Prisma.CartItemCreateNestedManyWithoutServiceElementInput
+  preorderItems?: Prisma.PreorderItemCreateNestedManyWithoutServiceElementInput
 }
 
 export type ServiceElementUncheckedCreateInput = {
@@ -320,6 +341,9 @@ export type ServiceElementUncheckedCreateInput = {
   type: number
   createdDate?: Date | string
   isArchive?: boolean
+  preorderAvailable?: boolean
+  cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutServiceElementInput
+  preorderItems?: Prisma.PreorderItemUncheckedCreateNestedManyWithoutServiceElementInput
 }
 
 export type ServiceElementUpdateInput = {
@@ -330,6 +354,9 @@ export type ServiceElementUpdateInput = {
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cartItems?: Prisma.CartItemUpdateManyWithoutServiceElementNestedInput
+  preorderItems?: Prisma.PreorderItemUpdateManyWithoutServiceElementNestedInput
 }
 
 export type ServiceElementUncheckedUpdateInput = {
@@ -341,6 +368,9 @@ export type ServiceElementUncheckedUpdateInput = {
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutServiceElementNestedInput
+  preorderItems?: Prisma.PreorderItemUncheckedUpdateManyWithoutServiceElementNestedInput
 }
 
 export type ServiceElementCreateManyInput = {
@@ -352,6 +382,7 @@ export type ServiceElementCreateManyInput = {
   type: number
   createdDate?: Date | string
   isArchive?: boolean
+  preorderAvailable?: boolean
 }
 
 export type ServiceElementUpdateManyMutationInput = {
@@ -362,6 +393,7 @@ export type ServiceElementUpdateManyMutationInput = {
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ServiceElementUncheckedUpdateManyInput = {
@@ -373,6 +405,7 @@ export type ServiceElementUncheckedUpdateManyInput = {
   type?: Prisma.IntFieldUpdateOperationsInput | number
   createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ServiceElementCountOrderByAggregateInput = {
@@ -384,6 +417,7 @@ export type ServiceElementCountOrderByAggregateInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
+  preorderAvailable?: Prisma.SortOrder
 }
 
 export type ServiceElementAvgOrderByAggregateInput = {
@@ -400,6 +434,7 @@ export type ServiceElementMaxOrderByAggregateInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
+  preorderAvailable?: Prisma.SortOrder
 }
 
 export type ServiceElementMinOrderByAggregateInput = {
@@ -410,12 +445,18 @@ export type ServiceElementMinOrderByAggregateInput = {
   type?: Prisma.SortOrder
   createdDate?: Prisma.SortOrder
   isArchive?: Prisma.SortOrder
+  preorderAvailable?: Prisma.SortOrder
 }
 
 export type ServiceElementSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   price?: Prisma.SortOrder
   type?: Prisma.SortOrder
+}
+
+export type ServiceElementScalarRelationFilter = {
+  is?: Prisma.ServiceElementWhereInput
+  isNot?: Prisma.ServiceElementWhereInput
 }
 
 export type ServiceElementCreatephotosInput = {
@@ -439,6 +480,204 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type ServiceElementCreateNestedOneWithoutCartItemsInput = {
+  create?: Prisma.XOR<Prisma.ServiceElementCreateWithoutCartItemsInput, Prisma.ServiceElementUncheckedCreateWithoutCartItemsInput>
+  connectOrCreate?: Prisma.ServiceElementCreateOrConnectWithoutCartItemsInput
+  connect?: Prisma.ServiceElementWhereUniqueInput
+}
+
+export type ServiceElementUpdateOneRequiredWithoutCartItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceElementCreateWithoutCartItemsInput, Prisma.ServiceElementUncheckedCreateWithoutCartItemsInput>
+  connectOrCreate?: Prisma.ServiceElementCreateOrConnectWithoutCartItemsInput
+  upsert?: Prisma.ServiceElementUpsertWithoutCartItemsInput
+  connect?: Prisma.ServiceElementWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceElementUpdateToOneWithWhereWithoutCartItemsInput, Prisma.ServiceElementUpdateWithoutCartItemsInput>, Prisma.ServiceElementUncheckedUpdateWithoutCartItemsInput>
+}
+
+export type ServiceElementCreateNestedOneWithoutPreorderItemsInput = {
+  create?: Prisma.XOR<Prisma.ServiceElementCreateWithoutPreorderItemsInput, Prisma.ServiceElementUncheckedCreateWithoutPreorderItemsInput>
+  connectOrCreate?: Prisma.ServiceElementCreateOrConnectWithoutPreorderItemsInput
+  connect?: Prisma.ServiceElementWhereUniqueInput
+}
+
+export type ServiceElementUpdateOneRequiredWithoutPreorderItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceElementCreateWithoutPreorderItemsInput, Prisma.ServiceElementUncheckedCreateWithoutPreorderItemsInput>
+  connectOrCreate?: Prisma.ServiceElementCreateOrConnectWithoutPreorderItemsInput
+  upsert?: Prisma.ServiceElementUpsertWithoutPreorderItemsInput
+  connect?: Prisma.ServiceElementWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceElementUpdateToOneWithWhereWithoutPreorderItemsInput, Prisma.ServiceElementUpdateWithoutPreorderItemsInput>, Prisma.ServiceElementUncheckedUpdateWithoutPreorderItemsInput>
+}
+
+export type ServiceElementCreateWithoutCartItemsInput = {
+  name: string
+  description?: string | null
+  price: number
+  photos?: Prisma.ServiceElementCreatephotosInput | string[]
+  type: number
+  createdDate?: Date | string
+  isArchive?: boolean
+  preorderAvailable?: boolean
+  preorderItems?: Prisma.PreorderItemCreateNestedManyWithoutServiceElementInput
+}
+
+export type ServiceElementUncheckedCreateWithoutCartItemsInput = {
+  id?: number
+  name: string
+  description?: string | null
+  price: number
+  photos?: Prisma.ServiceElementCreatephotosInput | string[]
+  type: number
+  createdDate?: Date | string
+  isArchive?: boolean
+  preorderAvailable?: boolean
+  preorderItems?: Prisma.PreorderItemUncheckedCreateNestedManyWithoutServiceElementInput
+}
+
+export type ServiceElementCreateOrConnectWithoutCartItemsInput = {
+  where: Prisma.ServiceElementWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceElementCreateWithoutCartItemsInput, Prisma.ServiceElementUncheckedCreateWithoutCartItemsInput>
+}
+
+export type ServiceElementUpsertWithoutCartItemsInput = {
+  update: Prisma.XOR<Prisma.ServiceElementUpdateWithoutCartItemsInput, Prisma.ServiceElementUncheckedUpdateWithoutCartItemsInput>
+  create: Prisma.XOR<Prisma.ServiceElementCreateWithoutCartItemsInput, Prisma.ServiceElementUncheckedCreateWithoutCartItemsInput>
+  where?: Prisma.ServiceElementWhereInput
+}
+
+export type ServiceElementUpdateToOneWithWhereWithoutCartItemsInput = {
+  where?: Prisma.ServiceElementWhereInput
+  data: Prisma.XOR<Prisma.ServiceElementUpdateWithoutCartItemsInput, Prisma.ServiceElementUncheckedUpdateWithoutCartItemsInput>
+}
+
+export type ServiceElementUpdateWithoutCartItemsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  photos?: Prisma.ServiceElementUpdatephotosInput | string[]
+  type?: Prisma.IntFieldUpdateOperationsInput | number
+  createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderItems?: Prisma.PreorderItemUpdateManyWithoutServiceElementNestedInput
+}
+
+export type ServiceElementUncheckedUpdateWithoutCartItemsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  photos?: Prisma.ServiceElementUpdatephotosInput | string[]
+  type?: Prisma.IntFieldUpdateOperationsInput | number
+  createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderItems?: Prisma.PreorderItemUncheckedUpdateManyWithoutServiceElementNestedInput
+}
+
+export type ServiceElementCreateWithoutPreorderItemsInput = {
+  name: string
+  description?: string | null
+  price: number
+  photos?: Prisma.ServiceElementCreatephotosInput | string[]
+  type: number
+  createdDate?: Date | string
+  isArchive?: boolean
+  preorderAvailable?: boolean
+  cartItems?: Prisma.CartItemCreateNestedManyWithoutServiceElementInput
+}
+
+export type ServiceElementUncheckedCreateWithoutPreorderItemsInput = {
+  id?: number
+  name: string
+  description?: string | null
+  price: number
+  photos?: Prisma.ServiceElementCreatephotosInput | string[]
+  type: number
+  createdDate?: Date | string
+  isArchive?: boolean
+  preorderAvailable?: boolean
+  cartItems?: Prisma.CartItemUncheckedCreateNestedManyWithoutServiceElementInput
+}
+
+export type ServiceElementCreateOrConnectWithoutPreorderItemsInput = {
+  where: Prisma.ServiceElementWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceElementCreateWithoutPreorderItemsInput, Prisma.ServiceElementUncheckedCreateWithoutPreorderItemsInput>
+}
+
+export type ServiceElementUpsertWithoutPreorderItemsInput = {
+  update: Prisma.XOR<Prisma.ServiceElementUpdateWithoutPreorderItemsInput, Prisma.ServiceElementUncheckedUpdateWithoutPreorderItemsInput>
+  create: Prisma.XOR<Prisma.ServiceElementCreateWithoutPreorderItemsInput, Prisma.ServiceElementUncheckedCreateWithoutPreorderItemsInput>
+  where?: Prisma.ServiceElementWhereInput
+}
+
+export type ServiceElementUpdateToOneWithWhereWithoutPreorderItemsInput = {
+  where?: Prisma.ServiceElementWhereInput
+  data: Prisma.XOR<Prisma.ServiceElementUpdateWithoutPreorderItemsInput, Prisma.ServiceElementUncheckedUpdateWithoutPreorderItemsInput>
+}
+
+export type ServiceElementUpdateWithoutPreorderItemsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  photos?: Prisma.ServiceElementUpdatephotosInput | string[]
+  type?: Prisma.IntFieldUpdateOperationsInput | number
+  createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cartItems?: Prisma.CartItemUpdateManyWithoutServiceElementNestedInput
+}
+
+export type ServiceElementUncheckedUpdateWithoutPreorderItemsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  photos?: Prisma.ServiceElementUpdatephotosInput | string[]
+  type?: Prisma.IntFieldUpdateOperationsInput | number
+  createdDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isArchive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cartItems?: Prisma.CartItemUncheckedUpdateManyWithoutServiceElementNestedInput
+}
+
+
+/**
+ * Count Type ServiceElementCountOutputType
+ */
+
+export type ServiceElementCountOutputType = {
+  cartItems: number
+  preorderItems: number
+}
+
+export type ServiceElementCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  cartItems?: boolean | ServiceElementCountOutputTypeCountCartItemsArgs
+  preorderItems?: boolean | ServiceElementCountOutputTypeCountPreorderItemsArgs
+}
+
+/**
+ * ServiceElementCountOutputType without action
+ */
+export type ServiceElementCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServiceElementCountOutputType
+   */
+  select?: Prisma.ServiceElementCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ServiceElementCountOutputType without action
+ */
+export type ServiceElementCountOutputTypeCountCartItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CartItemWhereInput
+}
+
+/**
+ * ServiceElementCountOutputType without action
+ */
+export type ServiceElementCountOutputTypeCountPreorderItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PreorderItemWhereInput
+}
 
 
 export type ServiceElementSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -450,6 +689,10 @@ export type ServiceElementSelect<ExtArgs extends runtime.Types.Extensions.Intern
   type?: boolean
   createdDate?: boolean
   isArchive?: boolean
+  preorderAvailable?: boolean
+  cartItems?: boolean | Prisma.ServiceElement$cartItemsArgs<ExtArgs>
+  preorderItems?: boolean | Prisma.ServiceElement$preorderItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.ServiceElementCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["serviceElement"]>
 
 export type ServiceElementSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -461,6 +704,7 @@ export type ServiceElementSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   type?: boolean
   createdDate?: boolean
   isArchive?: boolean
+  preorderAvailable?: boolean
 }, ExtArgs["result"]["serviceElement"]>
 
 export type ServiceElementSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -472,6 +716,7 @@ export type ServiceElementSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   type?: boolean
   createdDate?: boolean
   isArchive?: boolean
+  preorderAvailable?: boolean
 }, ExtArgs["result"]["serviceElement"]>
 
 export type ServiceElementSelectScalar = {
@@ -483,13 +728,24 @@ export type ServiceElementSelectScalar = {
   type?: boolean
   createdDate?: boolean
   isArchive?: boolean
+  preorderAvailable?: boolean
 }
 
-export type ServiceElementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "price" | "photos" | "type" | "createdDate" | "isArchive", ExtArgs["result"]["serviceElement"]>
+export type ServiceElementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "price" | "photos" | "type" | "createdDate" | "isArchive" | "preorderAvailable", ExtArgs["result"]["serviceElement"]>
+export type ServiceElementInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  cartItems?: boolean | Prisma.ServiceElement$cartItemsArgs<ExtArgs>
+  preorderItems?: boolean | Prisma.ServiceElement$preorderItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.ServiceElementCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type ServiceElementIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ServiceElementIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $ServiceElementPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ServiceElement"
-  objects: {}
+  objects: {
+    cartItems: Prisma.$CartItemPayload<ExtArgs>[]
+    preorderItems: Prisma.$PreorderItemPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
@@ -499,6 +755,7 @@ export type $ServiceElementPayload<ExtArgs extends runtime.Types.Extensions.Inte
     type: number
     createdDate: Date
     isArchive: boolean
+    preorderAvailable: boolean
   }, ExtArgs["result"]["serviceElement"]>
   composites: {}
 }
@@ -893,6 +1150,8 @@ readonly fields: ServiceElementFieldRefs;
  */
 export interface Prisma__ServiceElementClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  cartItems<T extends Prisma.ServiceElement$cartItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceElement$cartItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  preorderItems<T extends Prisma.ServiceElement$preorderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceElement$preorderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PreorderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -930,6 +1189,7 @@ export interface ServiceElementFieldRefs {
   readonly type: Prisma.FieldRef<"ServiceElement", 'Int'>
   readonly createdDate: Prisma.FieldRef<"ServiceElement", 'DateTime'>
   readonly isArchive: Prisma.FieldRef<"ServiceElement", 'Boolean'>
+  readonly preorderAvailable: Prisma.FieldRef<"ServiceElement", 'Boolean'>
 }
     
 
@@ -946,6 +1206,10 @@ export type ServiceElementFindUniqueArgs<ExtArgs extends runtime.Types.Extension
    * Omit specific fields from the ServiceElement
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
   /**
    * Filter, which ServiceElement to fetch.
    */
@@ -965,6 +1229,10 @@ export type ServiceElementFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
+  /**
    * Filter, which ServiceElement to fetch.
    */
   where: Prisma.ServiceElementWhereUniqueInput
@@ -982,6 +1250,10 @@ export type ServiceElementFindFirstArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the ServiceElement
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
   /**
    * Filter, which ServiceElement to fetch.
    */
@@ -1031,6 +1303,10 @@ export type ServiceElementFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ext
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
+  /**
    * Filter, which ServiceElement to fetch.
    */
   where?: Prisma.ServiceElementWhereInput
@@ -1079,6 +1355,10 @@ export type ServiceElementFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
+  /**
    * Filter, which ServiceElements to fetch.
    */
   where?: Prisma.ServiceElementWhereInput
@@ -1121,6 +1401,10 @@ export type ServiceElementCreateArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the ServiceElement
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
   /**
    * The data needed to create a ServiceElement.
    */
@@ -1169,6 +1453,10 @@ export type ServiceElementUpdateArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the ServiceElement
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
   /**
    * The data needed to update a ServiceElement.
    */
@@ -1236,6 +1524,10 @@ export type ServiceElementUpsertArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
+  /**
    * The filter to search for the ServiceElement to update in case it exists.
    */
   where: Prisma.ServiceElementWhereUniqueInput
@@ -1262,6 +1554,10 @@ export type ServiceElementDeleteArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
+  /**
    * Filter which ServiceElement to delete.
    */
   where: Prisma.ServiceElementWhereUniqueInput
@@ -1282,6 +1578,54 @@ export type ServiceElementDeleteManyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
+ * ServiceElement.cartItems
+ */
+export type ServiceElement$cartItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CartItem
+   */
+  select?: Prisma.CartItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CartItem
+   */
+  omit?: Prisma.CartItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CartItemInclude<ExtArgs> | null
+  where?: Prisma.CartItemWhereInput
+  orderBy?: Prisma.CartItemOrderByWithRelationInput | Prisma.CartItemOrderByWithRelationInput[]
+  cursor?: Prisma.CartItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CartItemScalarFieldEnum | Prisma.CartItemScalarFieldEnum[]
+}
+
+/**
+ * ServiceElement.preorderItems
+ */
+export type ServiceElement$preorderItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PreorderItem
+   */
+  select?: Prisma.PreorderItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PreorderItem
+   */
+  omit?: Prisma.PreorderItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PreorderItemInclude<ExtArgs> | null
+  where?: Prisma.PreorderItemWhereInput
+  orderBy?: Prisma.PreorderItemOrderByWithRelationInput | Prisma.PreorderItemOrderByWithRelationInput[]
+  cursor?: Prisma.PreorderItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PreorderItemScalarFieldEnum | Prisma.PreorderItemScalarFieldEnum[]
+}
+
+/**
  * ServiceElement without action
  */
 export type ServiceElementDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1293,4 +1637,8 @@ export type ServiceElementDefaultArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the ServiceElement
    */
   omit?: Prisma.ServiceElementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceElementInclude<ExtArgs> | null
 }

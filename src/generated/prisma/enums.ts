@@ -15,3 +15,35 @@ export const UserRole = {
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const BookingMode = {
+  appointment: 'appointment',
+  duration: 'duration'
+} as const
+
+export type BookingMode = (typeof BookingMode)[keyof typeof BookingMode]
+
+
+export const PreorderStatus = {
+  pending: 'pending',
+  needs_confirmation: 'needs_confirmation',
+  accepted: 'accepted',
+  in_progress: 'in_progress',
+  ready: 'ready',
+  completed: 'completed',
+  rejected: 'rejected',
+  cancelled: 'cancelled'
+} as const
+
+export type PreorderStatus = (typeof PreorderStatus)[keyof typeof PreorderStatus]
+
+
+export const PaymentStatus = {
+  not_required: 'not_required',
+  pending: 'pending',
+  paid: 'paid',
+  refunded: 'refunded'
+} as const
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]

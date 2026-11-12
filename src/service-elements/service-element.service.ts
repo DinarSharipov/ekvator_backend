@@ -29,6 +29,7 @@ export class ServiceElementService {
         price: true,
         type: true,
         createdDate: true,
+        preorderAvailable: true,
       },
     });
   }

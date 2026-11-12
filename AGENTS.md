@@ -17,3 +17,4 @@ These instructions apply only to this repository and all files within it. They d
 
 - Before every commit and every push, delete temporary snapshots generated during agent work, including browser snapshots and screenshots in `.playwright-mcp/`. Do not include these artifacts in commits.
 - This cleanup applies only to temporary artifacts within this repository. Preserve intentional test fixtures and reference assets.
+- Before every commit, update `CHANGELOG.md` with a concise, user-facing summary of the change.

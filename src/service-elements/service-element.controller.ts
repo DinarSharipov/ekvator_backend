@@ -55,6 +55,7 @@ export class ServiceElementsController {
           },
         }, // поле для файла
         isArchive: { type: "boolean" },
+        preorderAvailable: { type: "boolean" },
       },
       required: ["name", "photos"],
     },
@@ -78,7 +79,8 @@ export class ServiceElementsController {
       ...createServiceElement,
       price: createServiceElement.price,
       type: Number(createServiceElement.type),
-      isArchive: String(createServiceElement.isArchive) === "true",
+      ...(createServiceElement.isArchive === undefined ? {} : { isArchive: String(createServiceElement.isArchive) === "true" }),
+      ...(createServiceElement.preorderAvailable === undefined ? {} : { preorderAvailable: String(createServiceElement.preorderAvailable) === "true" }),
       photos: base64Photos,
       createdDate: createServiceElement.createdDate || new Date().toISOString(),
     });
@@ -107,6 +109,7 @@ export class ServiceElementsController {
           },
         }, // поле для файла
         isArchive: { type: "boolean" },
+        preorderAvailable: { type: "boolean" },
       },
       required: ["name", "price"],
     },
@@ -131,7 +134,8 @@ export class ServiceElementsController {
       ...createServiceElement,
       price: createServiceElement.price,
       type: Number(createServiceElement.type),
-      isArchive: String(createServiceElement.isArchive) === "true",
+      ...(createServiceElement.isArchive === undefined ? {} : { isArchive: String(createServiceElement.isArchive) === "true" }),
+      ...(createServiceElement.preorderAvailable === undefined ? {} : { preorderAvailable: String(createServiceElement.preorderAvailable) === "true" }),
       photos: base64Photos,
     });
   }
