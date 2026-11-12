@@ -2,6 +2,7 @@
 
 ## 2026-11-12
 
+- Added a public server-side Open-Meteo weather endpoint with UTC date validation, normalized forecast responses, timeout protection, and a short successful-response cache.
 - Added extensible role-based access for administrators, managers, employees, and customers. Administrators can assign roles and multiple services; managers can manage employees and orders only within their assigned services.
 - Added service-scoped access to order management, calendar events, filter options, and catalogue items, plus end-to-end coverage for cross-service isolation and privilege boundaries.
 - Added repository engineering and commit hygiene guidelines in `AGENTS.md`.
