@@ -28,6 +28,11 @@ export class ServiceTypeService {
         photo: true,
         showInMain: true,
         showType: true,
+        acceptsPreorders: true,
+        allowMixedCart: true,
+        bookingMode: true,
+        bookingCapacity: true,
+        prepaymentEnabled: true,
       },
     });
   }

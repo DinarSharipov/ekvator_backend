@@ -272,6 +272,8 @@ export type UserWhereInput = {
   email?: Prisma.StringNullableFilter<"User"> | string | null
   telegram?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.StringFilter<"User"> | string
+  carts?: Prisma.CartListRelationFilter
+  preorders?: Prisma.PreorderListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -287,6 +289,8 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   telegram?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  carts?: Prisma.CartOrderByRelationAggregateInput
+  preorders?: Prisma.PreorderOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -305,6 +309,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   email?: Prisma.StringNullableFilter<"User"> | string | null
   telegram?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.StringFilter<"User"> | string
+  carts?: Prisma.CartListRelationFilter
+  preorders?: Prisma.PreorderListRelationFilter
 }, "id" | "login" | "phoneNormalized">
 
 export type UserOrderByWithAggregationInput = {
@@ -357,6 +363,8 @@ export type UserCreateInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -372,6 +380,8 @@ export type UserUncheckedCreateInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -386,6 +396,8 @@ export type UserUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -401,6 +413,8 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -500,6 +514,11 @@ export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -524,6 +543,228 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type UserCreateNestedOneWithoutCartsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCartsInput, Prisma.UserUncheckedCreateWithoutCartsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCartsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCartsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCartsInput, Prisma.UserUncheckedCreateWithoutCartsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCartsInput
+  upsert?: Prisma.UserUpsertWithoutCartsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCartsInput, Prisma.UserUpdateWithoutCartsInput>, Prisma.UserUncheckedUpdateWithoutCartsInput>
+}
+
+export type UserCreateNestedOneWithoutPreordersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPreordersInput, Prisma.UserUncheckedCreateWithoutPreordersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPreordersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPreordersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPreordersInput, Prisma.UserUncheckedCreateWithoutPreordersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPreordersInput
+  upsert?: Prisma.UserUpsertWithoutPreordersInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPreordersInput, Prisma.UserUpdateWithoutPreordersInput>, Prisma.UserUncheckedUpdateWithoutPreordersInput>
+}
+
+export type UserCreateWithoutCartsInput = {
+  name: string
+  login: string
+  password: string
+  surname?: string | null
+  phone?: string | null
+  phoneNormalized?: string | null
+  phoneVerifiedAt?: Date | string | null
+  userRole?: $Enums.UserRole
+  email?: string | null
+  telegram?: string | null
+  role?: string
+  preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCartsInput = {
+  id?: number
+  name: string
+  login: string
+  password: string
+  surname?: string | null
+  phone?: string | null
+  phoneNormalized?: string | null
+  phoneVerifiedAt?: Date | string | null
+  userRole?: $Enums.UserRole
+  email?: string | null
+  telegram?: string | null
+  role?: string
+  preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCartsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCartsInput, Prisma.UserUncheckedCreateWithoutCartsInput>
+}
+
+export type UserUpsertWithoutCartsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCartsInput, Prisma.UserUncheckedUpdateWithoutCartsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCartsInput, Prisma.UserUncheckedCreateWithoutCartsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCartsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCartsInput, Prisma.UserUncheckedUpdateWithoutCartsInput>
+}
+
+export type UserUpdateWithoutCartsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  login?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNormalized?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRole?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCartsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  login?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNormalized?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRole?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPreordersInput = {
+  name: string
+  login: string
+  password: string
+  surname?: string | null
+  phone?: string | null
+  phoneNormalized?: string | null
+  phoneVerifiedAt?: Date | string | null
+  userRole?: $Enums.UserRole
+  email?: string | null
+  telegram?: string | null
+  role?: string
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPreordersInput = {
+  id?: number
+  name: string
+  login: string
+  password: string
+  surname?: string | null
+  phone?: string | null
+  phoneNormalized?: string | null
+  phoneVerifiedAt?: Date | string | null
+  userRole?: $Enums.UserRole
+  email?: string | null
+  telegram?: string | null
+  role?: string
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPreordersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPreordersInput, Prisma.UserUncheckedCreateWithoutPreordersInput>
+}
+
+export type UserUpsertWithoutPreordersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPreordersInput, Prisma.UserUncheckedUpdateWithoutPreordersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPreordersInput, Prisma.UserUncheckedCreateWithoutPreordersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPreordersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPreordersInput, Prisma.UserUncheckedUpdateWithoutPreordersInput>
+}
+
+export type UserUpdateWithoutPreordersInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  login?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNormalized?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRole?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPreordersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  login?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNormalized?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRole?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+}
+
+
+/**
+ * Count Type UserCountOutputType
+ */
+
+export type UserCountOutputType = {
+  carts: number
+  preorders: number
+}
+
+export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  carts?: boolean | UserCountOutputTypeCountCartsArgs
+  preorders?: boolean | UserCountOutputTypeCountPreordersArgs
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserCountOutputType
+   */
+  select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCartsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CartWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPreordersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PreorderWhereInput
+}
 
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -539,6 +780,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   telegram?: boolean
   role?: boolean
+  carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
+  preorders?: boolean | Prisma.User$preordersArgs<ExtArgs>
+  _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -587,10 +831,20 @@ export type UserSelectScalar = {
 }
 
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "login" | "password" | "surname" | "phone" | "phoneNormalized" | "phoneVerifiedAt" | "userRole" | "email" | "telegram" | "role", ExtArgs["result"]["user"]>
+export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
+  preorders?: boolean | Prisma.User$preordersArgs<ExtArgs>
+  _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
-  objects: {}
+  objects: {
+    carts: Prisma.$CartPayload<ExtArgs>[]
+    preorders: Prisma.$PreorderPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
@@ -998,6 +1252,8 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  carts<T extends Prisma.User$cartsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$cartsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  preorders<T extends Prisma.User$preordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$preordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PreorderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1056,6 +1312,10 @@ export type UserFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  /**
    * Filter, which User to fetch.
    */
   where: Prisma.UserWhereUniqueInput
@@ -1074,6 +1334,10 @@ export type UserFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  /**
    * Filter, which User to fetch.
    */
   where: Prisma.UserWhereUniqueInput
@@ -1091,6 +1355,10 @@ export type UserFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the User
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
   /**
    * Filter, which User to fetch.
    */
@@ -1140,6 +1408,10 @@ export type UserFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  /**
    * Filter, which User to fetch.
    */
   where?: Prisma.UserWhereInput
@@ -1188,6 +1460,10 @@ export type UserFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  /**
    * Filter, which Users to fetch.
    */
   where?: Prisma.UserWhereInput
@@ -1230,6 +1506,10 @@ export type UserCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the User
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
   /**
    * The data needed to create a User.
    */
@@ -1278,6 +1558,10 @@ export type UserUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the User
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
   /**
    * The data needed to update a User.
    */
@@ -1345,6 +1629,10 @@ export type UserUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  /**
    * The filter to search for the User to update in case it exists.
    */
   where: Prisma.UserWhereUniqueInput
@@ -1371,6 +1659,10 @@ export type UserDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  /**
    * Filter which User to delete.
    */
   where: Prisma.UserWhereUniqueInput
@@ -1391,6 +1683,54 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * User.carts
+ */
+export type User$cartsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Cart
+   */
+  select?: Prisma.CartSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Cart
+   */
+  omit?: Prisma.CartOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CartInclude<ExtArgs> | null
+  where?: Prisma.CartWhereInput
+  orderBy?: Prisma.CartOrderByWithRelationInput | Prisma.CartOrderByWithRelationInput[]
+  cursor?: Prisma.CartWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CartScalarFieldEnum | Prisma.CartScalarFieldEnum[]
+}
+
+/**
+ * User.preorders
+ */
+export type User$preordersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Preorder
+   */
+  select?: Prisma.PreorderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Preorder
+   */
+  omit?: Prisma.PreorderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PreorderInclude<ExtArgs> | null
+  where?: Prisma.PreorderWhereInput
+  orderBy?: Prisma.PreorderOrderByWithRelationInput | Prisma.PreorderOrderByWithRelationInput[]
+  cursor?: Prisma.PreorderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PreorderScalarFieldEnum | Prisma.PreorderScalarFieldEnum[]
+}
+
+/**
  * User without action
  */
 export type UserDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1402,4 +1742,8 @@ export type UserDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the User
    */
   omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
 }

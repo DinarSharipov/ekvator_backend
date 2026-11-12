@@ -29,11 +29,13 @@ export type AggregateServiceType = {
 export type ServiceTypeAvgAggregateOutputType = {
   id: number | null
   sortOrder: number | null
+  bookingCapacity: number | null
 }
 
 export type ServiceTypeSumAggregateOutputType = {
   id: number | null
   sortOrder: number | null
+  bookingCapacity: number | null
 }
 
 export type ServiceTypeMinAggregateOutputType = {
@@ -46,6 +48,11 @@ export type ServiceTypeMinAggregateOutputType = {
   photo: string | null
   description: string | null
   showType: string | null
+  acceptsPreorders: boolean | null
+  allowMixedCart: boolean | null
+  bookingMode: $Enums.BookingMode | null
+  bookingCapacity: number | null
+  prepaymentEnabled: boolean | null
 }
 
 export type ServiceTypeMaxAggregateOutputType = {
@@ -58,6 +65,11 @@ export type ServiceTypeMaxAggregateOutputType = {
   photo: string | null
   description: string | null
   showType: string | null
+  acceptsPreorders: boolean | null
+  allowMixedCart: boolean | null
+  bookingMode: $Enums.BookingMode | null
+  bookingCapacity: number | null
+  prepaymentEnabled: boolean | null
 }
 
 export type ServiceTypeCountAggregateOutputType = {
@@ -71,6 +83,11 @@ export type ServiceTypeCountAggregateOutputType = {
   description: number
   showType: number
   gallery: number
+  acceptsPreorders: number
+  allowMixedCart: number
+  bookingMode: number
+  bookingCapacity: number
+  prepaymentEnabled: number
   _all: number
 }
 
@@ -78,11 +95,13 @@ export type ServiceTypeCountAggregateOutputType = {
 export type ServiceTypeAvgAggregateInputType = {
   id?: true
   sortOrder?: true
+  bookingCapacity?: true
 }
 
 export type ServiceTypeSumAggregateInputType = {
   id?: true
   sortOrder?: true
+  bookingCapacity?: true
 }
 
 export type ServiceTypeMinAggregateInputType = {
@@ -95,6 +114,11 @@ export type ServiceTypeMinAggregateInputType = {
   photo?: true
   description?: true
   showType?: true
+  acceptsPreorders?: true
+  allowMixedCart?: true
+  bookingMode?: true
+  bookingCapacity?: true
+  prepaymentEnabled?: true
 }
 
 export type ServiceTypeMaxAggregateInputType = {
@@ -107,6 +131,11 @@ export type ServiceTypeMaxAggregateInputType = {
   photo?: true
   description?: true
   showType?: true
+  acceptsPreorders?: true
+  allowMixedCart?: true
+  bookingMode?: true
+  bookingCapacity?: true
+  prepaymentEnabled?: true
 }
 
 export type ServiceTypeCountAggregateInputType = {
@@ -120,6 +149,11 @@ export type ServiceTypeCountAggregateInputType = {
   description?: true
   showType?: true
   gallery?: true
+  acceptsPreorders?: true
+  allowMixedCart?: true
+  bookingMode?: true
+  bookingCapacity?: true
+  prepaymentEnabled?: true
   _all?: true
 }
 
@@ -220,6 +254,11 @@ export type ServiceTypeGroupByOutputType = {
   description: string | null
   showType: string | null
   gallery: string[]
+  acceptsPreorders: boolean
+  allowMixedCart: boolean
+  bookingMode: $Enums.BookingMode
+  bookingCapacity: number
+  prepaymentEnabled: boolean
   _count: ServiceTypeCountAggregateOutputType | null
   _avg: ServiceTypeAvgAggregateOutputType | null
   _sum: ServiceTypeSumAggregateOutputType | null
@@ -256,6 +295,12 @@ export type ServiceTypeWhereInput = {
   description?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   showType?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   gallery?: Prisma.StringNullableListFilter<"ServiceType">
+  acceptsPreorders?: Prisma.BoolFilter<"ServiceType"> | boolean
+  allowMixedCart?: Prisma.BoolFilter<"ServiceType"> | boolean
+  bookingMode?: Prisma.EnumBookingModeFilter<"ServiceType"> | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFilter<"ServiceType"> | number
+  prepaymentEnabled?: Prisma.BoolFilter<"ServiceType"> | boolean
+  preorderItems?: Prisma.PreorderItemListRelationFilter
 }
 
 export type ServiceTypeOrderByWithRelationInput = {
@@ -269,6 +314,12 @@ export type ServiceTypeOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   showType?: Prisma.SortOrderInput | Prisma.SortOrder
   gallery?: Prisma.SortOrder
+  acceptsPreorders?: Prisma.SortOrder
+  allowMixedCart?: Prisma.SortOrder
+  bookingMode?: Prisma.SortOrder
+  bookingCapacity?: Prisma.SortOrder
+  prepaymentEnabled?: Prisma.SortOrder
+  preorderItems?: Prisma.PreorderItemOrderByRelationAggregateInput
 }
 
 export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
@@ -285,6 +336,12 @@ export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   showType?: Prisma.StringNullableFilter<"ServiceType"> | string | null
   gallery?: Prisma.StringNullableListFilter<"ServiceType">
+  acceptsPreorders?: Prisma.BoolFilter<"ServiceType"> | boolean
+  allowMixedCart?: Prisma.BoolFilter<"ServiceType"> | boolean
+  bookingMode?: Prisma.EnumBookingModeFilter<"ServiceType"> | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFilter<"ServiceType"> | number
+  prepaymentEnabled?: Prisma.BoolFilter<"ServiceType"> | boolean
+  preorderItems?: Prisma.PreorderItemListRelationFilter
 }, "id">
 
 export type ServiceTypeOrderByWithAggregationInput = {
@@ -298,6 +355,11 @@ export type ServiceTypeOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   showType?: Prisma.SortOrderInput | Prisma.SortOrder
   gallery?: Prisma.SortOrder
+  acceptsPreorders?: Prisma.SortOrder
+  allowMixedCart?: Prisma.SortOrder
+  bookingMode?: Prisma.SortOrder
+  bookingCapacity?: Prisma.SortOrder
+  prepaymentEnabled?: Prisma.SortOrder
   _count?: Prisma.ServiceTypeCountOrderByAggregateInput
   _avg?: Prisma.ServiceTypeAvgOrderByAggregateInput
   _max?: Prisma.ServiceTypeMaxOrderByAggregateInput
@@ -319,6 +381,11 @@ export type ServiceTypeScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
   showType?: Prisma.StringNullableWithAggregatesFilter<"ServiceType"> | string | null
   gallery?: Prisma.StringNullableListFilter<"ServiceType">
+  acceptsPreorders?: Prisma.BoolWithAggregatesFilter<"ServiceType"> | boolean
+  allowMixedCart?: Prisma.BoolWithAggregatesFilter<"ServiceType"> | boolean
+  bookingMode?: Prisma.EnumBookingModeWithAggregatesFilter<"ServiceType"> | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntWithAggregatesFilter<"ServiceType"> | number
+  prepaymentEnabled?: Prisma.BoolWithAggregatesFilter<"ServiceType"> | boolean
 }
 
 export type ServiceTypeCreateInput = {
@@ -331,6 +398,12 @@ export type ServiceTypeCreateInput = {
   description?: string | null
   showType?: string | null
   gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: $Enums.BookingMode
+  bookingCapacity?: number
+  prepaymentEnabled?: boolean
+  preorderItems?: Prisma.PreorderItemCreateNestedManyWithoutServiceTypeInput
 }
 
 export type ServiceTypeUncheckedCreateInput = {
@@ -344,6 +417,12 @@ export type ServiceTypeUncheckedCreateInput = {
   description?: string | null
   showType?: string | null
   gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: $Enums.BookingMode
+  bookingCapacity?: number
+  prepaymentEnabled?: boolean
+  preorderItems?: Prisma.PreorderItemUncheckedCreateNestedManyWithoutServiceTypeInput
 }
 
 export type ServiceTypeUpdateInput = {
@@ -356,6 +435,12 @@ export type ServiceTypeUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
+  acceptsPreorders?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowMixedCart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bookingMode?: Prisma.EnumBookingModeFieldUpdateOperationsInput | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderItems?: Prisma.PreorderItemUpdateManyWithoutServiceTypeNestedInput
 }
 
 export type ServiceTypeUncheckedUpdateInput = {
@@ -369,6 +454,12 @@ export type ServiceTypeUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
+  acceptsPreorders?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowMixedCart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bookingMode?: Prisma.EnumBookingModeFieldUpdateOperationsInput | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderItems?: Prisma.PreorderItemUncheckedUpdateManyWithoutServiceTypeNestedInput
 }
 
 export type ServiceTypeCreateManyInput = {
@@ -382,6 +473,11 @@ export type ServiceTypeCreateManyInput = {
   description?: string | null
   showType?: string | null
   gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: $Enums.BookingMode
+  bookingCapacity?: number
+  prepaymentEnabled?: boolean
 }
 
 export type ServiceTypeUpdateManyMutationInput = {
@@ -394,6 +490,11 @@ export type ServiceTypeUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
+  acceptsPreorders?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowMixedCart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bookingMode?: Prisma.EnumBookingModeFieldUpdateOperationsInput | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ServiceTypeUncheckedUpdateManyInput = {
@@ -407,6 +508,11 @@ export type ServiceTypeUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
+  acceptsPreorders?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowMixedCart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bookingMode?: Prisma.EnumBookingModeFieldUpdateOperationsInput | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type StringNullableListFilter<$PrismaModel = never> = {
@@ -428,11 +534,17 @@ export type ServiceTypeCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   showType?: Prisma.SortOrder
   gallery?: Prisma.SortOrder
+  acceptsPreorders?: Prisma.SortOrder
+  allowMixedCart?: Prisma.SortOrder
+  bookingMode?: Prisma.SortOrder
+  bookingCapacity?: Prisma.SortOrder
+  prepaymentEnabled?: Prisma.SortOrder
 }
 
 export type ServiceTypeAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
+  bookingCapacity?: Prisma.SortOrder
 }
 
 export type ServiceTypeMaxOrderByAggregateInput = {
@@ -445,6 +557,11 @@ export type ServiceTypeMaxOrderByAggregateInput = {
   photo?: Prisma.SortOrder
   description?: Prisma.SortOrder
   showType?: Prisma.SortOrder
+  acceptsPreorders?: Prisma.SortOrder
+  allowMixedCart?: Prisma.SortOrder
+  bookingMode?: Prisma.SortOrder
+  bookingCapacity?: Prisma.SortOrder
+  prepaymentEnabled?: Prisma.SortOrder
 }
 
 export type ServiceTypeMinOrderByAggregateInput = {
@@ -457,11 +574,22 @@ export type ServiceTypeMinOrderByAggregateInput = {
   photo?: Prisma.SortOrder
   description?: Prisma.SortOrder
   showType?: Prisma.SortOrder
+  acceptsPreorders?: Prisma.SortOrder
+  allowMixedCart?: Prisma.SortOrder
+  bookingMode?: Prisma.SortOrder
+  bookingCapacity?: Prisma.SortOrder
+  prepaymentEnabled?: Prisma.SortOrder
 }
 
 export type ServiceTypeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
+  bookingCapacity?: Prisma.SortOrder
+}
+
+export type ServiceTypeScalarRelationFilter = {
+  is?: Prisma.ServiceTypeWhereInput
+  isNot?: Prisma.ServiceTypeWhereInput
 }
 
 export type ServiceTypeCreategalleryInput = {
@@ -477,6 +605,139 @@ export type ServiceTypeUpdategalleryInput = {
   push?: string | string[]
 }
 
+export type EnumBookingModeFieldUpdateOperationsInput = {
+  set?: $Enums.BookingMode
+}
+
+export type ServiceTypeCreateNestedOneWithoutPreorderItemsInput = {
+  create?: Prisma.XOR<Prisma.ServiceTypeCreateWithoutPreorderItemsInput, Prisma.ServiceTypeUncheckedCreateWithoutPreorderItemsInput>
+  connectOrCreate?: Prisma.ServiceTypeCreateOrConnectWithoutPreorderItemsInput
+  connect?: Prisma.ServiceTypeWhereUniqueInput
+}
+
+export type ServiceTypeUpdateOneRequiredWithoutPreorderItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceTypeCreateWithoutPreorderItemsInput, Prisma.ServiceTypeUncheckedCreateWithoutPreorderItemsInput>
+  connectOrCreate?: Prisma.ServiceTypeCreateOrConnectWithoutPreorderItemsInput
+  upsert?: Prisma.ServiceTypeUpsertWithoutPreorderItemsInput
+  connect?: Prisma.ServiceTypeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceTypeUpdateToOneWithWhereWithoutPreorderItemsInput, Prisma.ServiceTypeUpdateWithoutPreorderItemsInput>, Prisma.ServiceTypeUncheckedUpdateWithoutPreorderItemsInput>
+}
+
+export type ServiceTypeCreateWithoutPreorderItemsInput = {
+  sortOrder?: number
+  name: string
+  showInMain?: boolean
+  phone?: string | null
+  secondPhone?: string | null
+  photo?: string | null
+  description?: string | null
+  showType?: string | null
+  gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: $Enums.BookingMode
+  bookingCapacity?: number
+  prepaymentEnabled?: boolean
+}
+
+export type ServiceTypeUncheckedCreateWithoutPreorderItemsInput = {
+  id?: number
+  sortOrder?: number
+  name: string
+  showInMain?: boolean
+  phone?: string | null
+  secondPhone?: string | null
+  photo?: string | null
+  description?: string | null
+  showType?: string | null
+  gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: $Enums.BookingMode
+  bookingCapacity?: number
+  prepaymentEnabled?: boolean
+}
+
+export type ServiceTypeCreateOrConnectWithoutPreorderItemsInput = {
+  where: Prisma.ServiceTypeWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceTypeCreateWithoutPreorderItemsInput, Prisma.ServiceTypeUncheckedCreateWithoutPreorderItemsInput>
+}
+
+export type ServiceTypeUpsertWithoutPreorderItemsInput = {
+  update: Prisma.XOR<Prisma.ServiceTypeUpdateWithoutPreorderItemsInput, Prisma.ServiceTypeUncheckedUpdateWithoutPreorderItemsInput>
+  create: Prisma.XOR<Prisma.ServiceTypeCreateWithoutPreorderItemsInput, Prisma.ServiceTypeUncheckedCreateWithoutPreorderItemsInput>
+  where?: Prisma.ServiceTypeWhereInput
+}
+
+export type ServiceTypeUpdateToOneWithWhereWithoutPreorderItemsInput = {
+  where?: Prisma.ServiceTypeWhereInput
+  data: Prisma.XOR<Prisma.ServiceTypeUpdateWithoutPreorderItemsInput, Prisma.ServiceTypeUncheckedUpdateWithoutPreorderItemsInput>
+}
+
+export type ServiceTypeUpdateWithoutPreorderItemsInput = {
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
+  acceptsPreorders?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowMixedCart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bookingMode?: Prisma.EnumBookingModeFieldUpdateOperationsInput | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+export type ServiceTypeUncheckedUpdateWithoutPreorderItemsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
+  acceptsPreorders?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowMixedCart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bookingMode?: Prisma.EnumBookingModeFieldUpdateOperationsInput | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+
+/**
+ * Count Type ServiceTypeCountOutputType
+ */
+
+export type ServiceTypeCountOutputType = {
+  preorderItems: number
+}
+
+export type ServiceTypeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  preorderItems?: boolean | ServiceTypeCountOutputTypeCountPreorderItemsArgs
+}
+
+/**
+ * ServiceTypeCountOutputType without action
+ */
+export type ServiceTypeCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServiceTypeCountOutputType
+   */
+  select?: Prisma.ServiceTypeCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ServiceTypeCountOutputType without action
+ */
+export type ServiceTypeCountOutputTypeCountPreorderItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PreorderItemWhereInput
+}
 
 
 export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -490,6 +751,13 @@ export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   description?: boolean
   showType?: boolean
   gallery?: boolean
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: boolean
+  bookingCapacity?: boolean
+  prepaymentEnabled?: boolean
+  preorderItems?: boolean | Prisma.ServiceType$preorderItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.ServiceTypeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["serviceType"]>
 
 export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -503,6 +771,11 @@ export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   description?: boolean
   showType?: boolean
   gallery?: boolean
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: boolean
+  bookingCapacity?: boolean
+  prepaymentEnabled?: boolean
 }, ExtArgs["result"]["serviceType"]>
 
 export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -516,6 +789,11 @@ export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   description?: boolean
   showType?: boolean
   gallery?: boolean
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: boolean
+  bookingCapacity?: boolean
+  prepaymentEnabled?: boolean
 }, ExtArgs["result"]["serviceType"]>
 
 export type ServiceTypeSelectScalar = {
@@ -529,13 +807,26 @@ export type ServiceTypeSelectScalar = {
   description?: boolean
   showType?: boolean
   gallery?: boolean
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: boolean
+  bookingCapacity?: boolean
+  prepaymentEnabled?: boolean
 }
 
-export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sortOrder" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description" | "showType" | "gallery", ExtArgs["result"]["serviceType"]>
+export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sortOrder" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description" | "showType" | "gallery" | "acceptsPreorders" | "allowMixedCart" | "bookingMode" | "bookingCapacity" | "prepaymentEnabled", ExtArgs["result"]["serviceType"]>
+export type ServiceTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  preorderItems?: boolean | Prisma.ServiceType$preorderItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.ServiceTypeCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type ServiceTypeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ServiceTypeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $ServiceTypePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ServiceType"
-  objects: {}
+  objects: {
+    preorderItems: Prisma.$PreorderItemPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     sortOrder: number
@@ -547,6 +838,11 @@ export type $ServiceTypePayload<ExtArgs extends runtime.Types.Extensions.Interna
     description: string | null
     showType: string | null
     gallery: string[]
+    acceptsPreorders: boolean
+    allowMixedCart: boolean
+    bookingMode: $Enums.BookingMode
+    bookingCapacity: number
+    prepaymentEnabled: boolean
   }, ExtArgs["result"]["serviceType"]>
   composites: {}
 }
@@ -941,6 +1237,7 @@ readonly fields: ServiceTypeFieldRefs;
  */
 export interface Prisma__ServiceTypeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  preorderItems<T extends Prisma.ServiceType$preorderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceType$preorderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PreorderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -980,6 +1277,11 @@ export interface ServiceTypeFieldRefs {
   readonly description: Prisma.FieldRef<"ServiceType", 'String'>
   readonly showType: Prisma.FieldRef<"ServiceType", 'String'>
   readonly gallery: Prisma.FieldRef<"ServiceType", 'String[]'>
+  readonly acceptsPreorders: Prisma.FieldRef<"ServiceType", 'Boolean'>
+  readonly allowMixedCart: Prisma.FieldRef<"ServiceType", 'Boolean'>
+  readonly bookingMode: Prisma.FieldRef<"ServiceType", 'BookingMode'>
+  readonly bookingCapacity: Prisma.FieldRef<"ServiceType", 'Int'>
+  readonly prepaymentEnabled: Prisma.FieldRef<"ServiceType", 'Boolean'>
 }
     
 
@@ -996,6 +1298,10 @@ export type ServiceTypeFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the ServiceType
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
   /**
    * Filter, which ServiceType to fetch.
    */
@@ -1015,6 +1321,10 @@ export type ServiceTypeFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
+  /**
    * Filter, which ServiceType to fetch.
    */
   where: Prisma.ServiceTypeWhereUniqueInput
@@ -1032,6 +1342,10 @@ export type ServiceTypeFindFirstArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the ServiceType
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
   /**
    * Filter, which ServiceType to fetch.
    */
@@ -1081,6 +1395,10 @@ export type ServiceTypeFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
+  /**
    * Filter, which ServiceType to fetch.
    */
   where?: Prisma.ServiceTypeWhereInput
@@ -1129,6 +1447,10 @@ export type ServiceTypeFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
+  /**
    * Filter, which ServiceTypes to fetch.
    */
   where?: Prisma.ServiceTypeWhereInput
@@ -1171,6 +1493,10 @@ export type ServiceTypeCreateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the ServiceType
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
   /**
    * The data needed to create a ServiceType.
    */
@@ -1219,6 +1545,10 @@ export type ServiceTypeUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the ServiceType
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
   /**
    * The data needed to update a ServiceType.
    */
@@ -1286,6 +1616,10 @@ export type ServiceTypeUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
+  /**
    * The filter to search for the ServiceType to update in case it exists.
    */
   where: Prisma.ServiceTypeWhereUniqueInput
@@ -1312,6 +1646,10 @@ export type ServiceTypeDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
+  /**
    * Filter which ServiceType to delete.
    */
   where: Prisma.ServiceTypeWhereUniqueInput
@@ -1332,6 +1670,30 @@ export type ServiceTypeDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
+ * ServiceType.preorderItems
+ */
+export type ServiceType$preorderItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PreorderItem
+   */
+  select?: Prisma.PreorderItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PreorderItem
+   */
+  omit?: Prisma.PreorderItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PreorderItemInclude<ExtArgs> | null
+  where?: Prisma.PreorderItemWhereInput
+  orderBy?: Prisma.PreorderItemOrderByWithRelationInput | Prisma.PreorderItemOrderByWithRelationInput[]
+  cursor?: Prisma.PreorderItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PreorderItemScalarFieldEnum | Prisma.PreorderItemScalarFieldEnum[]
+}
+
+/**
  * ServiceType without action
  */
 export type ServiceTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1343,4 +1705,8 @@ export type ServiceTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the ServiceType
    */
   omit?: Prisma.ServiceTypeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceTypeInclude<ExtArgs> | null
 }

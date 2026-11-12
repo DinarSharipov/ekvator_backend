@@ -332,6 +332,81 @@ test("registration, authentication and administrative access over HTTP with Post
       },
     );
     await t.test(
+      "customer checkout, schedule confirmation, postponement and archiving work over HTTP",
+      async () => {
+        const service = await prisma.serviceType.create({
+          data: {
+            name: `${prefix} preorder service`,
+            acceptsPreorders: true,
+            allowMixedCart: true,
+            bookingMode: "appointment",
+          },
+        });
+        const element = await prisma.serviceElement.create({
+          data: {
+            name: `${prefix} preorder item`,
+            price: 250,
+            type: service.id,
+            preorderAvailable: true,
+          },
+        });
+        const desired = new Date(Date.now() + 2 * 60 * 60 * 1000);
+        await http
+          .post("/cart/items")
+          .auth(token, { type: "bearer" })
+          .send({ serviceElementId: element.id, quantity: 2 })
+          .expect(201);
+        const created = await http
+          .post("/orders")
+          .auth(token, { type: "bearer" })
+          .send({ desiredStartAt: desired.toISOString() })
+          .expect(201);
+        assert.equal(created.body.status, "pending");
+        assert.equal(created.body.total, 500);
+        const orderId = created.body.id;
+        const proposed = new Date(Date.now() + 3 * 60 * 60 * 1000);
+        await http
+          .post(`/admin/orders/${orderId}/propose-schedule`)
+          .auth(adminToken, { type: "bearer" })
+          .send({ scheduledStartAt: proposed.toISOString(), note: "Please confirm" })
+          .expect(201);
+        await http
+          .post(`/orders/${orderId}/accept-proposal`)
+          .auth(token, { type: "bearer" })
+          .expect(201);
+        await http
+          .patch(`/admin/orders/${orderId}/status`)
+          .auth(adminToken, { type: "bearer" })
+          .send({ status: "ready" })
+          .expect(200);
+        const postponed = new Date(Date.now() + 4 * 60 * 60 * 1000);
+        await http
+          .post(`/orders/${orderId}/postpone`)
+          .auth(token, { type: "bearer" })
+          .send({ until: postponed.toISOString() })
+          .expect(201);
+        await http
+          .post(`/orders/${orderId}/confirm-completion`)
+          .auth(token, { type: "bearer" })
+          .expect(201);
+        await http
+          .patch(`/admin/orders/${orderId}/archive`)
+          .auth(adminToken, { type: "bearer" })
+          .send({ isArchived: true })
+          .expect(200);
+
+        const durationService = await prisma.serviceType.create({
+          data: { name: `${prefix} duration service`, acceptsPreorders: true, allowMixedCart: false, bookingMode: "duration" },
+        });
+        const durationItem = await prisma.serviceElement.create({
+          data: { name: `${prefix} duration item`, price: 100, type: durationService.id, preorderAvailable: true },
+        });
+        await http.post("/cart/items").auth(token, { type: "bearer" }).send({ serviceElementId: durationItem.id, quantity: 1 }).expect(201);
+        await http.post("/orders").auth(token, { type: "bearer" }).send({ desiredStartAt: desired.toISOString() }).expect(400);
+        await http.post("/orders").auth(token, { type: "bearer" }).send({ desiredStartAt: desired.toISOString(), desiredEndAt: new Date(desired.getTime() + 2 * 60 * 60 * 1000).toISOString() }).expect(201);
+      },
+    );
+    await t.test(
       "deleted accounts lose access even with an unexpired JWT",
       async () => {
         await prisma.user.delete({ where: { id: userId } });
@@ -345,6 +420,11 @@ test("registration, authentication and administrative access over HTTP with Post
       );
     });
   } finally {
+    await prisma.preorder.deleteMany({
+      where: { items: { some: { name: { startsWith: prefix } } } },
+    });
+    await prisma.serviceElement.deleteMany({ where: { name: { startsWith: prefix } } });
+    await prisma.serviceType.deleteMany({ where: { name: { startsWith: prefix } } });
     await prisma.user.deleteMany({ where: { login: { startsWith: prefix } } });
     await app.close();
     await prisma.$disconnect();

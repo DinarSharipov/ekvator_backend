@@ -41,5 +41,10 @@ export class CreateServiceElementDto {
   @IsBoolean()
   @IsOptional()
   isArchive?: boolean;
+
+  @ApiPropertyOptional({ description: "Доступно для добавления в предзаказ", default: false })
+  @IsBoolean()
+  @IsOptional()
+  preorderAvailable?: boolean;
 }
 

@@ -53,7 +53,11 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   ServiceType: 'ServiceType',
-  ServiceElement: 'ServiceElement'
+  ServiceElement: 'ServiceElement',
+  Cart: 'Cart',
+  CartItem: 'CartItem',
+  Preorder: 'Preorder',
+  PreorderItem: 'PreorderItem'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -100,7 +104,12 @@ export const ServiceTypeScalarFieldEnum = {
   photo: 'photo',
   description: 'description',
   showType: 'showType',
-  gallery: 'gallery'
+  gallery: 'gallery',
+  acceptsPreorders: 'acceptsPreorders',
+  allowMixedCart: 'allowMixedCart',
+  bookingMode: 'bookingMode',
+  bookingCapacity: 'bookingCapacity',
+  prepaymentEnabled: 'prepaymentEnabled'
 } as const
 
 export type ServiceTypeScalarFieldEnum = (typeof ServiceTypeScalarFieldEnum)[keyof typeof ServiceTypeScalarFieldEnum]
@@ -114,10 +123,72 @@ export const ServiceElementScalarFieldEnum = {
   photos: 'photos',
   type: 'type',
   createdDate: 'createdDate',
-  isArchive: 'isArchive'
+  isArchive: 'isArchive',
+  preorderAvailable: 'preorderAvailable'
 } as const
 
 export type ServiceElementScalarFieldEnum = (typeof ServiceElementScalarFieldEnum)[keyof typeof ServiceElementScalarFieldEnum]
+
+
+export const CartScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CartScalarFieldEnum = (typeof CartScalarFieldEnum)[keyof typeof CartScalarFieldEnum]
+
+
+export const CartItemScalarFieldEnum = {
+  id: 'id',
+  cartId: 'cartId',
+  serviceElementId: 'serviceElementId',
+  quantity: 'quantity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CartItemScalarFieldEnum = (typeof CartItemScalarFieldEnum)[keyof typeof CartItemScalarFieldEnum]
+
+
+export const PreorderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  status: 'status',
+  desiredStartAt: 'desiredStartAt',
+  desiredEndAt: 'desiredEndAt',
+  scheduledStartAt: 'scheduledStartAt',
+  scheduledEndAt: 'scheduledEndAt',
+  completionDueAt: 'completionDueAt',
+  postponedUntil: 'postponedUntil',
+  postponementUsed: 'postponementUsed',
+  customerNote: 'customerNote',
+  adminNote: 'adminNote',
+  proposedStartAt: 'proposedStartAt',
+  proposedEndAt: 'proposedEndAt',
+  proposalNote: 'proposalNote',
+  paymentStatus: 'paymentStatus',
+  paymentFeatureEnabled: 'paymentFeatureEnabled',
+  isArchived: 'isArchived',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PreorderScalarFieldEnum = (typeof PreorderScalarFieldEnum)[keyof typeof PreorderScalarFieldEnum]
+
+
+export const PreorderItemScalarFieldEnum = {
+  id: 'id',
+  preorderId: 'preorderId',
+  serviceElementId: 'serviceElementId',
+  serviceTypeId: 'serviceTypeId',
+  name: 'name',
+  price: 'price',
+  quantity: 'quantity'
+} as const
+
+export type PreorderItemScalarFieldEnum = (typeof PreorderItemScalarFieldEnum)[keyof typeof PreorderItemScalarFieldEnum]
 
 
 export const SortOrder = {
