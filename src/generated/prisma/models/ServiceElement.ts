@@ -476,10 +476,6 @@ export type ServiceElementUpdatephotosInput = {
   push?: string | string[]
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
 export type ServiceElementCreateNestedOneWithoutCartItemsInput = {
   create?: Prisma.XOR<Prisma.ServiceElementCreateWithoutCartItemsInput, Prisma.ServiceElementUncheckedCreateWithoutCartItemsInput>
   connectOrCreate?: Prisma.ServiceElementCreateOrConnectWithoutCartItemsInput

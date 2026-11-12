@@ -39,7 +39,7 @@ export class ServiceTypesController {
   @Post()
   @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: "Создать новый тип сервиса" })
+  @ApiOperation({ summary: "Создать новый тип сервиса", description: "Создаёт сервис Экватора и его настройки отображения, предзаказов и бронирования." })
   @ApiResponse({ status: 201, description: "Сервис успешно создан" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -119,7 +119,7 @@ export class ServiceTypesController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Получить список всех сервисов" })
+  @ApiOperation({ summary: "Получить список всех сервисов", description: "Возвращает сервисы Экватора в сохранённом порядке." })
   @ApiResponse({ status: 200, description: "Список сервисов" })
   findAll() {
     return this.serviceTypeService.findAll();
@@ -127,13 +127,13 @@ export class ServiceTypesController {
 
   @Get("order-permission")
   @UseGuards(AuthGuard, AdminGuard)
-  @ApiOperation({ summary: "Проверить доступ к изменению порядка (только администраторы)" })
+  @ApiOperation({ summary: "Проверить доступ к изменению порядка", description: "Служебная проверка права системного администратора на изменение порядка сервисов." })
   orderPermission() { return { canReorder: true }; }
 
   @Put("order")
   @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: "Сохранить порядок всех сервисов" })
+  @ApiOperation({ summary: "Сохранить порядок всех сервисов", description: "Атомарно заменяет порядок полного списка сервисов; защищён от устаревшего или неполного списка." })
   @ApiResponse({ status: 204, description: "Порядок сохранён" })
   @ApiResponse({ status: 409, description: "Передан устаревший или неполный список ID" })
   reorder(@Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) dto: ReorderServicesDto) {
@@ -141,7 +141,7 @@ export class ServiceTypesController {
   }
 
   @Get(":id")
-  @ApiOperation({ summary: "Получить сервис по ID" })
+  @ApiOperation({ summary: "Получить сервис по ID", description: "Возвращает настройки одного сервиса Экватора." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
   @ApiResponse({ status: 200, description: "Сервис не найден" })
   @ApiResponse({ status: 404, description: "Сервис не найден" })
@@ -152,7 +152,7 @@ export class ServiceTypesController {
   @Delete(":id")
   @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: "Удалить сервис по ID" })
+  @ApiOperation({ summary: "Удалить сервис по ID", description: "Удаляет сервис. Операция может быть отклонена БД при наличии связанных исторических данных." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
   @ApiResponse({ status: 204, description: "Сервис удален" })
   remove(@Param("id", ParseIntPipe) id: number) {
@@ -162,7 +162,7 @@ export class ServiceTypesController {
   @Put(":id")
   @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: "Обновить сервис по ID" })
+  @ApiOperation({ summary: "Обновить сервис по ID", description: "Обновляет данные и настройки сервиса Экватора." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
   @ApiResponse({ status: 201, description: "Сервис изменен" })
   @ApiConsumes("multipart/form-data")

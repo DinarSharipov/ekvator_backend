@@ -49,3 +49,31 @@ export const PaymentStatus = {
 } as const
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const CompanyMemberRole = {
+  owner: 'owner',
+  employee: 'employee'
+} as const
+
+export type CompanyMemberRole = (typeof CompanyMemberRole)[keyof typeof CompanyMemberRole]
+
+
+export const CompanyTopUpStatus = {
+  pending: 'pending',
+  confirmed: 'confirmed',
+  cancelled: 'cancelled'
+} as const
+
+export type CompanyTopUpStatus = (typeof CompanyTopUpStatus)[keyof typeof CompanyTopUpStatus]
+
+
+export const CompanyLedgerKind = {
+  top_up: 'top_up',
+  allocation: 'allocation',
+  release: 'release',
+  spend: 'spend',
+  refund: 'refund'
+} as const
+
+export type CompanyLedgerKind = (typeof CompanyLedgerKind)[keyof typeof CompanyLedgerKind]

@@ -41,7 +41,7 @@ export class ServiceElementsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.admin, UserRole.manager)
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: "Создать новую услугу" })
+  @ApiOperation({ summary: "Создать новую услугу", description: "Создаёт товар или услугу в указанном сервисе; менеджер ограничен назначенными сервисами." })
   @ApiResponse({ status: 201, description: "Услуга успешно создан" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -97,7 +97,7 @@ export class ServiceElementsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.admin, UserRole.manager)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: "Изменить услугу" })
+  @ApiOperation({ summary: "Изменить услугу", description: "Обновляет каталоговую позицию и флаги доступности предзаказа." })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
   @ApiResponse({ status: 201, description: "Услуга успешно изменена" })
   @ApiConsumes("multipart/form-data")
@@ -153,14 +153,14 @@ export class ServiceElementsController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Получить список всех услуг" })
+  @ApiOperation({ summary: "Получить список всех услуг", description: "Возвращает все каталоговые позиции." })
   @ApiResponse({ status: 200, description: "Список услуг" })
   findAll() {
     return this.serviceElementService.findAll();
   }
 
   @Get("byId/:id")
-  @ApiOperation({ summary: "Получить список по типу сервиса" })
+  @ApiOperation({ summary: "Получить список по типу сервиса", description: "Возвращает каталоговые позиции одного сервиса." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
   @ApiResponse({ status: 200, description: "Список услуг" })
   findAllByServiceId(@Param("id", ParseIntPipe) id: number) {
@@ -168,7 +168,7 @@ export class ServiceElementsController {
   }
 
   @Get(":id")
-  @ApiOperation({ summary: "Получить услугу по ID" })
+  @ApiOperation({ summary: "Получить услугу по ID", description: "Возвращает одну каталоговую позицию по идентификатору." })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
   @ApiResponse({ status: 200, description: "Услуга не найден" })
   @ApiResponse({ status: 404, description: "Услуга не найден" })
@@ -180,7 +180,7 @@ export class ServiceElementsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.admin, UserRole.manager)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: "Удалить услугу по ID" })
+  @ApiOperation({ summary: "Удалить услугу по ID", description: "Удаляет каталоговую позицию при наличии прав на её сервис." })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
   @ApiResponse({ status: 204, description: "Услуга удалена" })
   async remove(@Request() request: { user: AuthenticatedUser }, @Param("id", ParseIntPipe) id: string) {

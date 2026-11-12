@@ -38,6 +38,7 @@ import { ServiceAccessService } from "./service-access.service";
   exports: [
     AuthService,
     AuthTokensService,
+    PrismaService,
     AuthGuard,
     AdminGuard,
     RolesGuard,

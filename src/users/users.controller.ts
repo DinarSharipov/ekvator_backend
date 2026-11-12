@@ -41,7 +41,7 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.admin, UserRole.manager)
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: "Создать нового пользователя" })
+  @ApiOperation({ summary: "Создать нового пользователя", description: "Администратор создаёт любую роль; менеджер может создавать только сотрудников своих сервисов." })
   @ApiResponse({ status: 201, description: "Пользователь успешно создан" })
   create(@Request() request: { user: AuthenticatedUser }, @Body() createUserDto: CreateUserDto) {
     return this.usersService.create(request.user, createUserDto);
@@ -51,7 +51,7 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.admin, UserRole.manager)
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: "Изменить пользователя" })
+  @ApiOperation({ summary: "Изменить пользователя", description: "Изменяет профиль, роль и назначения с проверкой полномочий текущего пользователя." })
   @ApiResponse({ status: 201, description: "Пользователь успешно изменен" })
   update(
     @Request() request: { user: AuthenticatedUser },
@@ -64,7 +64,7 @@ export class UsersController {
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.admin, UserRole.manager)
-  @ApiOperation({ summary: "Получить список всех пользователей" })
+  @ApiOperation({ summary: "Получить список всех пользователей", description: "Администратор видит всех пользователей; менеджер — только сотрудников своих сервисов." })
   @ApiResponse({ status: 200, description: "Список пользователей" })
   findAll(@Request() request: { user: AuthenticatedUser }) {
     return this.usersService.findAll(request.user);
@@ -73,7 +73,7 @@ export class UsersController {
   @Get(":id")
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.admin, UserRole.manager)
-  @ApiOperation({ summary: "Получить пользователя по ID" })
+  @ApiOperation({ summary: "Получить пользователя по ID", description: "Возвращает доступный текущему пользователю профиль." })
   @ApiParam({ name: "id", type: "number", description: "ID пользователя" })
   @ApiResponse({ status: 200, description: "Пользователь найден" })
   @ApiResponse({ status: 404, description: "Пользователь не найден" })
@@ -83,7 +83,7 @@ export class UsersController {
 
   @Delete(":id")
   @UseGuards(AuthGuard, AdminGuard)
-  @ApiOperation({ summary: "Получить пользователя по ID" })
+  @ApiOperation({ summary: "Удалить пользователя", description: "Безвозвратно удаляет пользователя. Доступно только системному администратору." })
   @ApiParam({ name: "id", type: "number", description: "ID пользователя" })
   @ApiResponse({ status: 200, description: "Пользователь удален" })
   delete(@Param("id", ParseIntPipe) id: number) {

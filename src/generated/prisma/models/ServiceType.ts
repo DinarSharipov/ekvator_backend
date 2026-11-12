@@ -617,10 +617,6 @@ export type ServiceTypeCreategalleryInput = {
   set: string[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type ServiceTypeUpdategalleryInput = {
   set?: string[]
   push?: string | string[]

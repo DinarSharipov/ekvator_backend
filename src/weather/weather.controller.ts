@@ -10,7 +10,7 @@ export class WeatherController {
   constructor(private readonly weather: WeatherService) {}
 
   @Get()
-  @ApiOperation({ summary: "Get a weather forecast through the server-side Open-Meteo proxy" })
+  @ApiOperation({ summary: "Получить прогноз погоды через серверный Open-Meteo proxy", description: "Публичный маршрут. Проверяет координаты и дату, кэширует ответ и не раскрывает провайдер клиентскому приложению." })
   @ApiOkResponse({ type: WeatherResponseDto })
   @ApiBadRequestResponse({ description: "Invalid coordinates or UTC date range", type: WeatherValidationErrorDto })
   @ApiNotFoundResponse({ description: "Forecast is not available for the selected date", type: WeatherErrorDto })

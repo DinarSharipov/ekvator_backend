@@ -16,7 +16,8 @@
     "test:preorders": "npm run build && node --test tests/preorders.e2e.cjs",
     "test:roles": "npm run build && node --test tests/roles.e2e.cjs",
     "test:weather": "npm run build && node --test tests/weather.e2e.cjs",
-    "test:e2e": "npm run build && node --test tests/auth.integration.cjs tests/preorders.e2e.cjs tests/roles.e2e.cjs tests/weather.e2e.cjs"
+    "test:e2e": "npm run build && node --test tests/auth.integration.cjs tests/preorders.e2e.cjs tests/roles.e2e.cjs tests/weather.e2e.cjs tests/companies.e2e.cjs",
+    "test:companies": "npm run build && node --test tests/companies.e2e.cjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

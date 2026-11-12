@@ -37,6 +37,25 @@ enum PaymentStatus {
   refunded
 }
 
+enum CompanyMemberRole {
+  owner
+  employee
+}
+
+enum CompanyTopUpStatus {
+  pending
+  confirmed
+  cancelled
+}
+
+enum CompanyLedgerKind {
+  top_up
+  allocation
+  release
+  spend
+  refund
+}
+
 model User {
   id Int @id @default(autoincrement())
   name String 
@@ -53,6 +72,77 @@ model User {
   serviceAssignments UserServiceAssignment[]
   carts Cart[]
   preorders Preorder[]
+  companiesCreated Company[] @relation("CompanyCreator")
+  companyMemberships CompanyMember[]
+  companyTopUpsCreated CompanyTopUp[] @relation("CompanyTopUpCreator")
+  companyTopUpsConfirmed CompanyTopUp[] @relation("CompanyTopUpConfirmer")
+  companyLedgerEntries CompanyLedgerEntry[] @relation("CompanyLedgerActor")
+}
+
+model Company {
+  id Int @id @default(autoincrement())
+  name String
+  inn String?
+  balanceMinor Int @default(0)
+  createdById Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy User @relation("CompanyCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  members CompanyMember[]
+  topUps CompanyTopUp[]
+  ledgerEntries CompanyLedgerEntry[]
+  @@index([createdById])
+}
+
+model CompanyMember {
+  id Int @id @default(autoincrement())
+  companyId Int
+  userId Int
+  role CompanyMemberRole @default(employee)
+  balanceMinor Int @default(0)
+  qrToken String @unique
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  ledgerEntries CompanyLedgerEntry[]
+  @@unique([companyId, userId])
+  @@index([userId, isActive])
+}
+
+model CompanyTopUp {
+  id Int @id @default(autoincrement())
+  companyId Int
+  amountMinor Int
+  status CompanyTopUpStatus @default(pending)
+  createdById Int
+  confirmedById Int?
+  confirmedAt DateTime?
+  note String?
+  createdAt DateTime @default(now())
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  createdBy User @relation("CompanyTopUpCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  confirmedBy User? @relation("CompanyTopUpConfirmer", fields: [confirmedById], references: [id], onDelete: Restrict)
+  @@index([companyId, status, createdAt])
+}
+
+model CompanyLedgerEntry {
+  id Int @id @default(autoincrement())
+  companyId Int
+  companyMemberId Int?
+  kind CompanyLedgerKind
+  amountMinor Int
+  transferId String?
+  reference String?
+  createdById Int?
+  createdAt DateTime @default(now())
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  companyMember CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Restrict)
+  createdBy User? @relation("CompanyLedgerActor", fields: [createdById], references: [id], onDelete: SetNull)
+  @@index([companyId, createdAt])
+  @@index([companyMemberId, createdAt])
+  @@index([transferId])
 }
 
 model UserServiceAssignment {

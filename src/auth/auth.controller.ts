@@ -40,14 +40,14 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post("login")
-  @ApiOperation({ summary: "Вход по логину или телефону и паролю" })
+  @ApiOperation({ summary: "Вход по логину или телефону и паролю", description: "Принимает логин либо нормализованный номер телефона и пароль; возвращает JWT." })
   @ApiResponse({ status: 200, description: "JWT и профиль пользователя" })
   signIn(@Body() dto: LoginDto) {
     return this.authService.signIn(dto);
   }
 
   @Post("register")
-  @ApiOperation({ summary: "Зарегистрировать обычного пользователя" })
+  @ApiOperation({ summary: "Зарегистрировать обычного пользователя", description: "Создаёт пользователя с ролью user. SMS-подтверждение управляется feature flag." })
   @ApiResponse({
     status: 201,
     description: "Пользователь создан, возвращены JWT и профиль",
@@ -67,13 +67,13 @@ export class AuthController {
   @Get("me")
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: "Получить собственный профиль и роль доступа" })
+  @ApiOperation({ summary: "Получить собственный профиль и роль доступа", description: "Возвращает актуальные данные пользователя из БД, включая действующие назначения сервисов." })
   me(@Req() request: { user: Awaited<ReturnType<UsersService["findOne"]>> }) {
     return request.user;
   }
 
   @Get("features")
-  @ApiOperation({ summary: "Получить публичные настройки авторизации" })
+  @ApiOperation({ summary: "Получить публичные настройки авторизации", description: "Возвращает флаги, по которым клиент включает сценарии авторизации." })
   features() {
     return { smsVerificationEnabled: this.smsVerification.enabled };
   }
