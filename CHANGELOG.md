@@ -2,6 +2,9 @@
 
 ## 2026-11-12
 
+- Added privacy-conscious site activity analytics: idempotent visitor events, daily unique-visitor and interaction summaries, service attribution, and administrator-only reporting endpoints.
+- Added frontend integration guidance for activity analytics, including stable anonymous visitor identifiers and semantic click targets without personal data in URLs.
+- Completed OpenAPI response contracts for corporate accounts, carts, preorders, administrator calendar, and filter endpoints. Corporate responses now expose safe participant, top-up, QR, allocation, and ledger representations without leaking QR credentials in general company payloads.
 - Added a public server-side Open-Meteo weather endpoint with UTC date validation, normalized forecast responses, timeout protection, and a short successful-response cache.
 - Added extensible role-based access for administrators, managers, employees, and customers. Administrators can assign roles and multiple services; managers can manage employees and orders only within their assigned services.
 - Added service-scoped access to order management, calendar events, filter options, and catalogue items, plus end-to-end coverage for cross-service isolation and privilege boundaries.

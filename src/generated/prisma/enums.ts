@@ -77,3 +77,11 @@ export const CompanyLedgerKind = {
 } as const
 
 export type CompanyLedgerKind = (typeof CompanyLedgerKind)[keyof typeof CompanyLedgerKind]
+
+
+export const AnalyticsEventType = {
+  page_view: 'page_view',
+  click: 'click'
+} as const
+
+export type AnalyticsEventType = (typeof AnalyticsEventType)[keyof typeof AnalyticsEventType]

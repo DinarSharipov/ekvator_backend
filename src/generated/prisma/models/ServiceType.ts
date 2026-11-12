@@ -302,6 +302,7 @@ export type ServiceTypeWhereInput = {
   prepaymentEnabled?: Prisma.BoolFilter<"ServiceType"> | boolean
   preorderItems?: Prisma.PreorderItemListRelationFilter
   userAssignments?: Prisma.UserServiceAssignmentListRelationFilter
+  analyticsEvents?: Prisma.AnalyticsEventListRelationFilter
 }
 
 export type ServiceTypeOrderByWithRelationInput = {
@@ -322,6 +323,7 @@ export type ServiceTypeOrderByWithRelationInput = {
   prepaymentEnabled?: Prisma.SortOrder
   preorderItems?: Prisma.PreorderItemOrderByRelationAggregateInput
   userAssignments?: Prisma.UserServiceAssignmentOrderByRelationAggregateInput
+  analyticsEvents?: Prisma.AnalyticsEventOrderByRelationAggregateInput
 }
 
 export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
@@ -345,6 +347,7 @@ export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
   prepaymentEnabled?: Prisma.BoolFilter<"ServiceType"> | boolean
   preorderItems?: Prisma.PreorderItemListRelationFilter
   userAssignments?: Prisma.UserServiceAssignmentListRelationFilter
+  analyticsEvents?: Prisma.AnalyticsEventListRelationFilter
 }, "id">
 
 export type ServiceTypeOrderByWithAggregationInput = {
@@ -408,6 +411,7 @@ export type ServiceTypeCreateInput = {
   prepaymentEnabled?: boolean
   preorderItems?: Prisma.PreorderItemCreateNestedManyWithoutServiceTypeInput
   userAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutServiceTypeInput
+  analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutServiceTypeInput
 }
 
 export type ServiceTypeUncheckedCreateInput = {
@@ -428,6 +432,7 @@ export type ServiceTypeUncheckedCreateInput = {
   prepaymentEnabled?: boolean
   preorderItems?: Prisma.PreorderItemUncheckedCreateNestedManyWithoutServiceTypeInput
   userAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutServiceTypeInput
+  analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutServiceTypeInput
 }
 
 export type ServiceTypeUpdateInput = {
@@ -447,6 +452,7 @@ export type ServiceTypeUpdateInput = {
   prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preorderItems?: Prisma.PreorderItemUpdateManyWithoutServiceTypeNestedInput
   userAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutServiceTypeNestedInput
+  analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutServiceTypeNestedInput
 }
 
 export type ServiceTypeUncheckedUpdateInput = {
@@ -467,6 +473,7 @@ export type ServiceTypeUncheckedUpdateInput = {
   prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preorderItems?: Prisma.PreorderItemUncheckedUpdateManyWithoutServiceTypeNestedInput
   userAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutServiceTypeNestedInput
+  analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutServiceTypeNestedInput
 }
 
 export type ServiceTypeCreateManyInput = {
@@ -599,6 +606,11 @@ export type ServiceTypeSumOrderByAggregateInput = {
   bookingCapacity?: Prisma.SortOrder
 }
 
+export type ServiceTypeNullableScalarRelationFilter = {
+  is?: Prisma.ServiceTypeWhereInput | null
+  isNot?: Prisma.ServiceTypeWhereInput | null
+}
+
 export type ServiceTypeCreateNestedOneWithoutUserAssignmentsInput = {
   create?: Prisma.XOR<Prisma.ServiceTypeCreateWithoutUserAssignmentsInput, Prisma.ServiceTypeUncheckedCreateWithoutUserAssignmentsInput>
   connectOrCreate?: Prisma.ServiceTypeCreateOrConnectWithoutUserAssignmentsInput
@@ -624,6 +636,22 @@ export type ServiceTypeUpdategalleryInput = {
 
 export type EnumBookingModeFieldUpdateOperationsInput = {
   set?: $Enums.BookingMode
+}
+
+export type ServiceTypeCreateNestedOneWithoutAnalyticsEventsInput = {
+  create?: Prisma.XOR<Prisma.ServiceTypeCreateWithoutAnalyticsEventsInput, Prisma.ServiceTypeUncheckedCreateWithoutAnalyticsEventsInput>
+  connectOrCreate?: Prisma.ServiceTypeCreateOrConnectWithoutAnalyticsEventsInput
+  connect?: Prisma.ServiceTypeWhereUniqueInput
+}
+
+export type ServiceTypeUpdateOneWithoutAnalyticsEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceTypeCreateWithoutAnalyticsEventsInput, Prisma.ServiceTypeUncheckedCreateWithoutAnalyticsEventsInput>
+  connectOrCreate?: Prisma.ServiceTypeCreateOrConnectWithoutAnalyticsEventsInput
+  upsert?: Prisma.ServiceTypeUpsertWithoutAnalyticsEventsInput
+  disconnect?: Prisma.ServiceTypeWhereInput | boolean
+  delete?: Prisma.ServiceTypeWhereInput | boolean
+  connect?: Prisma.ServiceTypeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceTypeUpdateToOneWithWhereWithoutAnalyticsEventsInput, Prisma.ServiceTypeUpdateWithoutAnalyticsEventsInput>, Prisma.ServiceTypeUncheckedUpdateWithoutAnalyticsEventsInput>
 }
 
 export type ServiceTypeCreateNestedOneWithoutPreorderItemsInput = {
@@ -656,6 +684,7 @@ export type ServiceTypeCreateWithoutUserAssignmentsInput = {
   bookingCapacity?: number
   prepaymentEnabled?: boolean
   preorderItems?: Prisma.PreorderItemCreateNestedManyWithoutServiceTypeInput
+  analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutServiceTypeInput
 }
 
 export type ServiceTypeUncheckedCreateWithoutUserAssignmentsInput = {
@@ -675,6 +704,7 @@ export type ServiceTypeUncheckedCreateWithoutUserAssignmentsInput = {
   bookingCapacity?: number
   prepaymentEnabled?: boolean
   preorderItems?: Prisma.PreorderItemUncheckedCreateNestedManyWithoutServiceTypeInput
+  analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutServiceTypeInput
 }
 
 export type ServiceTypeCreateOrConnectWithoutUserAssignmentsInput = {
@@ -709,6 +739,7 @@ export type ServiceTypeUpdateWithoutUserAssignmentsInput = {
   bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preorderItems?: Prisma.PreorderItemUpdateManyWithoutServiceTypeNestedInput
+  analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutServiceTypeNestedInput
 }
 
 export type ServiceTypeUncheckedUpdateWithoutUserAssignmentsInput = {
@@ -728,6 +759,101 @@ export type ServiceTypeUncheckedUpdateWithoutUserAssignmentsInput = {
   bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preorderItems?: Prisma.PreorderItemUncheckedUpdateManyWithoutServiceTypeNestedInput
+  analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutServiceTypeNestedInput
+}
+
+export type ServiceTypeCreateWithoutAnalyticsEventsInput = {
+  sortOrder?: number
+  name: string
+  showInMain?: boolean
+  phone?: string | null
+  secondPhone?: string | null
+  photo?: string | null
+  description?: string | null
+  showType?: string | null
+  gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: $Enums.BookingMode
+  bookingCapacity?: number
+  prepaymentEnabled?: boolean
+  preorderItems?: Prisma.PreorderItemCreateNestedManyWithoutServiceTypeInput
+  userAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutServiceTypeInput
+}
+
+export type ServiceTypeUncheckedCreateWithoutAnalyticsEventsInput = {
+  id?: number
+  sortOrder?: number
+  name: string
+  showInMain?: boolean
+  phone?: string | null
+  secondPhone?: string | null
+  photo?: string | null
+  description?: string | null
+  showType?: string | null
+  gallery?: Prisma.ServiceTypeCreategalleryInput | string[]
+  acceptsPreorders?: boolean
+  allowMixedCart?: boolean
+  bookingMode?: $Enums.BookingMode
+  bookingCapacity?: number
+  prepaymentEnabled?: boolean
+  preorderItems?: Prisma.PreorderItemUncheckedCreateNestedManyWithoutServiceTypeInput
+  userAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutServiceTypeInput
+}
+
+export type ServiceTypeCreateOrConnectWithoutAnalyticsEventsInput = {
+  where: Prisma.ServiceTypeWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceTypeCreateWithoutAnalyticsEventsInput, Prisma.ServiceTypeUncheckedCreateWithoutAnalyticsEventsInput>
+}
+
+export type ServiceTypeUpsertWithoutAnalyticsEventsInput = {
+  update: Prisma.XOR<Prisma.ServiceTypeUpdateWithoutAnalyticsEventsInput, Prisma.ServiceTypeUncheckedUpdateWithoutAnalyticsEventsInput>
+  create: Prisma.XOR<Prisma.ServiceTypeCreateWithoutAnalyticsEventsInput, Prisma.ServiceTypeUncheckedCreateWithoutAnalyticsEventsInput>
+  where?: Prisma.ServiceTypeWhereInput
+}
+
+export type ServiceTypeUpdateToOneWithWhereWithoutAnalyticsEventsInput = {
+  where?: Prisma.ServiceTypeWhereInput
+  data: Prisma.XOR<Prisma.ServiceTypeUpdateWithoutAnalyticsEventsInput, Prisma.ServiceTypeUncheckedUpdateWithoutAnalyticsEventsInput>
+}
+
+export type ServiceTypeUpdateWithoutAnalyticsEventsInput = {
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
+  acceptsPreorders?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowMixedCart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bookingMode?: Prisma.EnumBookingModeFieldUpdateOperationsInput | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderItems?: Prisma.PreorderItemUpdateManyWithoutServiceTypeNestedInput
+  userAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutServiceTypeNestedInput
+}
+
+export type ServiceTypeUncheckedUpdateWithoutAnalyticsEventsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gallery?: Prisma.ServiceTypeUpdategalleryInput | string[]
+  acceptsPreorders?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowMixedCart?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bookingMode?: Prisma.EnumBookingModeFieldUpdateOperationsInput | $Enums.BookingMode
+  bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
+  prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderItems?: Prisma.PreorderItemUncheckedUpdateManyWithoutServiceTypeNestedInput
+  userAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutServiceTypeNestedInput
 }
 
 export type ServiceTypeCreateWithoutPreorderItemsInput = {
@@ -746,6 +872,7 @@ export type ServiceTypeCreateWithoutPreorderItemsInput = {
   bookingCapacity?: number
   prepaymentEnabled?: boolean
   userAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutServiceTypeInput
+  analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutServiceTypeInput
 }
 
 export type ServiceTypeUncheckedCreateWithoutPreorderItemsInput = {
@@ -765,6 +892,7 @@ export type ServiceTypeUncheckedCreateWithoutPreorderItemsInput = {
   bookingCapacity?: number
   prepaymentEnabled?: boolean
   userAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutServiceTypeInput
+  analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutServiceTypeInput
 }
 
 export type ServiceTypeCreateOrConnectWithoutPreorderItemsInput = {
@@ -799,6 +927,7 @@ export type ServiceTypeUpdateWithoutPreorderItemsInput = {
   bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutServiceTypeNestedInput
+  analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutServiceTypeNestedInput
 }
 
 export type ServiceTypeUncheckedUpdateWithoutPreorderItemsInput = {
@@ -818,6 +947,7 @@ export type ServiceTypeUncheckedUpdateWithoutPreorderItemsInput = {
   bookingCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   prepaymentEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutServiceTypeNestedInput
+  analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutServiceTypeNestedInput
 }
 
 
@@ -828,11 +958,13 @@ export type ServiceTypeUncheckedUpdateWithoutPreorderItemsInput = {
 export type ServiceTypeCountOutputType = {
   preorderItems: number
   userAssignments: number
+  analyticsEvents: number
 }
 
 export type ServiceTypeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   preorderItems?: boolean | ServiceTypeCountOutputTypeCountPreorderItemsArgs
   userAssignments?: boolean | ServiceTypeCountOutputTypeCountUserAssignmentsArgs
+  analyticsEvents?: boolean | ServiceTypeCountOutputTypeCountAnalyticsEventsArgs
 }
 
 /**
@@ -859,6 +991,13 @@ export type ServiceTypeCountOutputTypeCountUserAssignmentsArgs<ExtArgs extends r
   where?: Prisma.UserServiceAssignmentWhereInput
 }
 
+/**
+ * ServiceTypeCountOutputType without action
+ */
+export type ServiceTypeCountOutputTypeCountAnalyticsEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AnalyticsEventWhereInput
+}
+
 
 export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -878,6 +1017,7 @@ export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   prepaymentEnabled?: boolean
   preorderItems?: boolean | Prisma.ServiceType$preorderItemsArgs<ExtArgs>
   userAssignments?: boolean | Prisma.ServiceType$userAssignmentsArgs<ExtArgs>
+  analyticsEvents?: boolean | Prisma.ServiceType$analyticsEventsArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceTypeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["serviceType"]>
 
@@ -939,6 +1079,7 @@ export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type ServiceTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   preorderItems?: boolean | Prisma.ServiceType$preorderItemsArgs<ExtArgs>
   userAssignments?: boolean | Prisma.ServiceType$userAssignmentsArgs<ExtArgs>
+  analyticsEvents?: boolean | Prisma.ServiceType$analyticsEventsArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceTypeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServiceTypeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -949,6 +1090,7 @@ export type $ServiceTypePayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     preorderItems: Prisma.$PreorderItemPayload<ExtArgs>[]
     userAssignments: Prisma.$UserServiceAssignmentPayload<ExtArgs>[]
+    analyticsEvents: Prisma.$AnalyticsEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1362,6 +1504,7 @@ export interface Prisma__ServiceTypeClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   preorderItems<T extends Prisma.ServiceType$preorderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceType$preorderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PreorderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   userAssignments<T extends Prisma.ServiceType$userAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceType$userAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserServiceAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  analyticsEvents<T extends Prisma.ServiceType$analyticsEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceType$analyticsEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AnalyticsEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1839,6 +1982,30 @@ export type ServiceType$userAssignmentsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.UserServiceAssignmentScalarFieldEnum | Prisma.UserServiceAssignmentScalarFieldEnum[]
+}
+
+/**
+ * ServiceType.analyticsEvents
+ */
+export type ServiceType$analyticsEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AnalyticsEvent
+   */
+  select?: Prisma.AnalyticsEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AnalyticsEvent
+   */
+  omit?: Prisma.AnalyticsEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AnalyticsEventInclude<ExtArgs> | null
+  where?: Prisma.AnalyticsEventWhereInput
+  orderBy?: Prisma.AnalyticsEventOrderByWithRelationInput | Prisma.AnalyticsEventOrderByWithRelationInput[]
+  cursor?: Prisma.AnalyticsEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AnalyticsEventScalarFieldEnum | Prisma.AnalyticsEventScalarFieldEnum[]
 }
 
 /**

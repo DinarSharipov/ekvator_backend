@@ -7,9 +7,10 @@ import { AuthModule } from './auth/auth.module';
 import { OrdersModule } from "./orders/orders.module";
 import { WeatherModule } from "./weather/weather.module";
 import { CompaniesModule } from "./companies/companies.module";
+import { AnalyticsModule } from "./analytics/analytics.module";
 
 @Module({
-  imports: [UsersModule, ServiceTypesModule, ServiceElementModule, AuthModule, OrdersModule, WeatherModule, CompaniesModule],
+  imports: [UsersModule, ServiceTypesModule, ServiceElementModule, AuthModule, OrdersModule, WeatherModule, CompaniesModule, AnalyticsModule],
   controllers: [],
   providers: [PrismaService],
 })

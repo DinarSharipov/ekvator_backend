@@ -56,6 +56,11 @@ enum CompanyLedgerKind {
   refund
 }
 
+enum AnalyticsEventType {
+  page_view
+  click
+}
+
 model User {
   id Int @id @default(autoincrement())
   name String 
@@ -77,6 +82,7 @@ model User {
   companyTopUpsCreated CompanyTopUp[] @relation("CompanyTopUpCreator")
   companyTopUpsConfirmed CompanyTopUp[] @relation("CompanyTopUpConfirmer")
   companyLedgerEntries CompanyLedgerEntry[] @relation("CompanyLedgerActor")
+  analyticsEvents AnalyticsEvent[]
 }
 
 model Company {
@@ -173,6 +179,25 @@ model ServiceType {
   prepaymentEnabled Boolean @default(false)
   preorderItems PreorderItem[]
   userAssignments UserServiceAssignment[]
+  analyticsEvents AnalyticsEvent[]
+}
+
+model AnalyticsEvent {
+  id Int @id @default(autoincrement())
+  eventId String @unique @db.Uuid
+  visitorId String @db.Uuid
+  userId Int?
+  type AnalyticsEventType
+  path String
+  target String?
+  serviceTypeId Int?
+  occurredAt DateTime
+  createdAt DateTime @default(now())
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  serviceType ServiceType? @relation(fields: [serviceTypeId], references: [id], onDelete: SetNull)
+  @@index([occurredAt, visitorId])
+  @@index([type, occurredAt])
+  @@index([serviceTypeId, occurredAt])
 }
 
 model ServiceElement {
