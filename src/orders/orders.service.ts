@@ -122,12 +122,12 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
     return Promise.all((await this.prisma.preorder.findMany({ where: { userId }, include: orderInclude, orderBy: { createdAt: "desc" } })).map((order) => this.present(order)));
   }
 
-  async adminOrders(includeArchived: boolean) {
+  async adminOrders(includeArchived: boolean, serviceTypeIds?: number[]) {
     await this.completeOverdueOrders();
-    return Promise.all((await this.prisma.preorder.findMany({ where: includeArchived ? {} : { isArchived: false }, include: orderInclude, orderBy: { createdAt: "desc" } })).map((order) => this.present(order)));
+    return Promise.all((await this.prisma.preorder.findMany({ where: { ...(includeArchived ? {} : { isArchived: false }), ...this.serviceScope(serviceTypeIds) }, include: orderInclude, orderBy: { createdAt: "desc" } })).map((order) => this.present(order)));
   }
 
-  async calendarEvents(query: CalendarEventsQueryDto) {
+  async calendarEvents(query: CalendarEventsQueryDto, serviceTypeIds?: number[]) {
     await this.completeOverdueOrders();
     const from = new Date(query.from);
     const to = new Date(query.to);
@@ -148,6 +148,7 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
         ...(query.includeArchived ? {} : { isArchived: false }),
         ...(query.userIds?.length ? { userId: { in: query.userIds } } : {}),
         ...(query.serviceTypeIds?.length || query.serviceElementIds?.length ? { items: { some: itemWhere } } : {}),
+        ...this.serviceScope(serviceTypeIds),
         OR: [
           { status: PreorderStatus.needs_confirmation, proposedStartAt: { not: null }, ...overlaps("proposedStartAt", "proposedEndAt") },
           { status: { not: PreorderStatus.needs_confirmation }, ...overlaps("scheduledStartAt", "scheduledEndAt") },
@@ -181,18 +182,21 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  async calendarFilterOptions() {
+  async calendarFilterOptions(serviceTypeIds?: number[]) {
     const [services, serviceElements] = await this.prisma.$transaction([
-      this.prisma.serviceType.findMany({ orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { id: true, name: true, sortOrder: true, bookingMode: true, bookingCapacity: true, acceptsPreorders: true } }),
-      this.prisma.serviceElement.findMany({ orderBy: [{ type: "asc" }, { name: "asc" }], select: { id: true, name: true, type: true, isArchive: true, preorderAvailable: true } }),
+      this.prisma.serviceType.findMany({ where: serviceTypeIds ? { id: { in: serviceTypeIds } } : undefined, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { id: true, name: true, sortOrder: true, bookingMode: true, bookingCapacity: true, acceptsPreorders: true } }),
+      this.prisma.serviceElement.findMany({ where: serviceTypeIds ? { type: { in: serviceTypeIds } } : undefined, orderBy: [{ type: "asc" }, { name: "asc" }], select: { id: true, name: true, type: true, isArchive: true, preorderAvailable: true } }),
     ]);
     return { services, serviceElements, statuses: Object.values(PreorderStatus) };
   }
 
-  async userFilterOptions(query?: string) {
+  async userFilterOptions(query?: string, serviceTypeIds?: number[]) {
     const search = query || undefined;
     const users = await this.prisma.user.findMany({
-      where: search ? { OR: ["name", "surname", "login", "phone", "email", "telegram"].map((field) => ({ [field]: { contains: search, mode: "insensitive" } })) } : undefined,
+      where: {
+        ...(search ? { OR: ["name", "surname", "login", "phone", "email", "telegram"].map((field) => ({ [field]: { contains: search, mode: "insensitive" } })) } : {}),
+        ...(serviceTypeIds ? { preorders: { some: this.serviceScope(serviceTypeIds) } } : {}),
+      },
       orderBy: [{ name: "asc" }, { surname: "asc" }, { id: "asc" }],
       select: { id: true, name: true, surname: true, login: true, phone: true, email: true, telegram: true, role: true, userRole: true },
     });
@@ -268,6 +272,13 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
     await this.prisma.preorder.updateMany({ where: { status: { in: [PreorderStatus.accepted, PreorderStatus.in_progress, PreorderStatus.ready] }, completionDueAt: { lte: new Date() } }, data: { status: PreorderStatus.completed } });
   }
 
+  async assertOrderAccess(id: number, serviceTypeIds?: number[]) {
+    if (!serviceTypeIds) return;
+    const order = await this.prisma.preorder.findUnique({ where: { id }, select: { items: { select: { serviceTypeId: true } } } });
+    if (!order) throw new NotFoundException("Заказ не найден");
+    if (!order.items.length || order.items.some((item) => !serviceTypeIds.includes(item.serviceTypeId))) throw new ForbiddenException("Нет доступа к заказу");
+  }
+
   private async lockCart(tx: Prisma.TransactionClient, userId: number) { await tx.$executeRaw`SELECT pg_advisory_xact_lock(${cartLockNamespace}, ${userId})`; }
   private async requireCart(db: DbClient, userId: number) { const cart = await db.cart.findUnique({ where: { userId } }); if (!cart) throw new NotFoundException("Корзина пуста"); return cart; }
   private async requireOrder(db: DbClient, id: number) { const order = await db.preorder.findUnique({ where: { id }, include: orderInclude }); if (!order) throw new NotFoundException("Заказ не найден"); return order; }
@@ -291,6 +302,9 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
     if (Number(rows[0]?.reserved ?? 0) >= serviceType.bookingCapacity) throw new ConflictException("На выбранный период свободных мест больше нет");
   }
   private async requireOwnedOrder(userId: number, id: number) { const order = await this.requireOrder(this.prisma, id); if (order.userId !== userId) throw new ForbiddenException(); return order; }
+  private serviceScope(serviceTypeIds?: number[]): Prisma.PreorderWhereInput {
+    return serviceTypeIds === undefined ? {} : { AND: [{ items: { every: { serviceTypeId: { in: serviceTypeIds } } } }] };
+  }
   private assertMutable(status: PreorderStatus) { if (terminalStatuses.has(status)) throw new ConflictException("Заказ уже завершён или отменён"); }
   private asFutureDate(value: string, message: string) { const date = new Date(value); if (Number.isNaN(date.getTime()) || date <= new Date()) throw new BadRequestException(message); return date; }
   private present<T extends { items: { price: number; quantity: number }[] }>(order: T) { return { ...order, total: order.items.reduce((sum, item) => sum + item.price * item.quantity, 0) }; }

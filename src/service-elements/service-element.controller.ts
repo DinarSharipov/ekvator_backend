@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Request,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -23,18 +24,22 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import * as sharp from "sharp";
-import { AdminGuard } from "../auth/admin.guard";
 import { AuthGuard } from "../auth/auth.guard";
+import { Roles } from "../auth/roles.decorator";
+import { RolesGuard } from "../auth/roles.guard";
+import { AuthenticatedUser, ServiceAccessService } from "../auth/service-access.service";
+import { UserRole } from "../generated/prisma/enums";
 import { CreateServiceElementDto } from "./dto/create.service-element.dto";
 import { ServiceElementService } from "./service-element.service";
 
 @ApiTags("service-elements")
 @Controller("service-elements")
 export class ServiceElementsController {
-  constructor(private readonly serviceElementService: ServiceElementService) {}
+  constructor(private readonly serviceElementService: ServiceElementService, private readonly serviceAccess: ServiceAccessService) {}
 
   @Post()
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.admin, UserRole.manager)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать новую услугу" })
   @ApiResponse({ status: 201, description: "Услуга успешно создан" })
@@ -62,9 +67,11 @@ export class ServiceElementsController {
   })
   @UseInterceptors(FilesInterceptor("photos"))
   async create(
+    @Request() request: { user: AuthenticatedUser },
     @Body() createServiceElement: CreateServiceElementDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
+    this.serviceAccess.assertCanAccessServices(request.user, [Number(createServiceElement.type)]);
     const base64Photos = files?.length
       ? await Promise.all(
           files.map(async (file) => {
@@ -87,7 +94,8 @@ export class ServiceElementsController {
   }
 
   @Put(":id")
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.admin, UserRole.manager)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Изменить услугу" })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
@@ -116,10 +124,14 @@ export class ServiceElementsController {
   })
   @UseInterceptors(FilesInterceptor("photos"))
   async update(
+    @Request() request: { user: AuthenticatedUser },
     @Param("id", ParseIntPipe) id: number,
     @Body() createServiceElement: CreateServiceElementDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
+    const current = await this.serviceElementService.findOne(id);
+    if (!current) return null;
+    this.serviceAccess.assertCanAccessServices(request.user, [current.type, Number(createServiceElement.type)]);
     const base64Photos = files?.length
       ? await Promise.all(
           files.map(async (file) => {
@@ -165,12 +177,16 @@ export class ServiceElementsController {
   }
 
   @Delete(":id")
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.admin, UserRole.manager)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Удалить услугу по ID" })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
   @ApiResponse({ status: 204, description: "Услуга удалена" })
-  remove(@Param("id", ParseIntPipe) id: string) {
+  async remove(@Request() request: { user: AuthenticatedUser }, @Param("id", ParseIntPipe) id: string) {
+    const current = await this.serviceElementService.findOne(+id);
+    if (!current) return null;
+    this.serviceAccess.assertCanAccessServices(request.user, [current.type]);
     return this.serviceElementService.remove(+id);
   }
 }

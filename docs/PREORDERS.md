@@ -6,7 +6,7 @@ All cart and customer-order routes require a bearer token for an ordinary user o
 - `POST /orders` creates an order from the current cart and clears that cart.
 - `GET /orders/me` shows the customer's orders.
 - A customer can accept/reject an administrator's schedule proposal, confirm completion, or postpone once.
-- `GET /admin/orders`, `POST /admin/orders/:id/propose-schedule`, `PATCH /admin/orders/:id/status`, and `PATCH /admin/orders/:id/archive` are administrator-only.
+- `GET /admin/orders` and calendar views are available to administrators, managers, and employees within their assigned services. Managers can reschedule and archive assigned orders; employees can update an assigned order's status. Administrators retain unrestricted access.
 
 ## Availability and booking modes
 

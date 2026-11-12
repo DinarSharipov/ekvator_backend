@@ -11,6 +11,8 @@ import { PrismaService } from "../prisma/prisma.service";
 import { AuthGuard } from "./auth.guard";
 import { AdminGuard } from "./admin.guard";
 import { SmsVerificationService } from "./sms-verification.service";
+import { RolesGuard } from "./roles.guard";
+import { ServiceAccessService } from "./service-access.service";
 
 @Global()
 @Module({
@@ -29,6 +31,8 @@ import { SmsVerificationService } from "./sms-verification.service";
     PrismaService,
     AuthGuard,
     AdminGuard,
+    RolesGuard,
+    ServiceAccessService,
     SmsVerificationService,
   ],
   exports: [
@@ -36,6 +40,8 @@ import { SmsVerificationService } from "./sms-verification.service";
     AuthTokensService,
     AuthGuard,
     AdminGuard,
+    RolesGuard,
+    ServiceAccessService,
     SmsVerificationService,
   ],
 })

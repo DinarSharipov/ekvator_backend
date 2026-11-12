@@ -5,7 +5,7 @@
 `User.userRole` is the access role: `admin` or `user`. The database default is `user`.
 The registration migration assigns `admin` to every existing account. The legacy
 `role` field is preserved for compatibility and is not used for access decisions.
-An administrator can continue creating administrators through `POST /users`;
+An administrator can create any role through `POST /users`; see [roles-and-access.md](./roles-and-access.md) for role and service-assignment rules.
 its default access role is `admin`, with an optional explicit `userRole` override.
 Only administrators can list, create, update or delete users and mutate services,
 service elements or their order. Public catalogue reads remain public.

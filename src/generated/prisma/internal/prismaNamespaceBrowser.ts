@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  UserServiceAssignment: 'UserServiceAssignment',
   ServiceType: 'ServiceType',
   ServiceElement: 'ServiceElement',
   Cart: 'Cart',
@@ -92,6 +93,14 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const UserServiceAssignmentScalarFieldEnum = {
+  userId: 'userId',
+  serviceTypeId: 'serviceTypeId'
+} as const
+
+export type UserServiceAssignmentScalarFieldEnum = (typeof UserServiceAssignmentScalarFieldEnum)[keyof typeof UserServiceAssignmentScalarFieldEnum]
 
 
 export const ServiceTypeScalarFieldEnum = {

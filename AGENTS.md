@@ -4,6 +4,14 @@
 
 These instructions apply only to this repository and all files within it. They do not apply to sibling repositories or any files outside this repository.
 
+## Product Context
+
+This service is built for the roadside camping complex **«Экватор»**, located in Russia, Republic of Tatarstan, on the M-7 highway at kilometre 1085.
+
+The complex provides: vehicle repair, a café, hotel accommodation, banquet-hall rental, guarded parking, truck tyre service, petrol/diesel/gas refuelling, a bathhouse, and automotive-chemical retail.
+
+When designing APIs, data models, interfaces, notifications, and tests, optimise for guests travelling by road and for the staff who operate these services. Preserve availability and booking integrity: a customer must not receive a false confirmation for a room, parking place, service slot, hall, or other capacity-limited resource.
+
 ## Engineering Standards
 
 - Follow current best practices for building modern applications with NestJS 11, Prisma 7, and PostgreSQL 16.

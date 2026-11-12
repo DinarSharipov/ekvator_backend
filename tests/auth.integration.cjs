@@ -231,7 +231,7 @@ test("registration, authentication and administrative access over HTTP with Post
       },
     );
     await t.test(
-      "administrator can create another administrator and update without a password",
+      "administrator can create another administrator explicitly and update without a password",
       async () => {
         const result = await http
           .post("/users")
@@ -243,6 +243,7 @@ test("registration, authentication and administrative access over HTTP with Post
             surname: "Test",
             phone: `+9${phone.slice(2)}`,
             role: "staff",
+            userRole: "admin",
           })
           .expect(201);
         assert.equal(result.body.userRole, "admin");
@@ -258,6 +259,59 @@ test("registration, authentication and administrative access over HTTP with Post
           .expect(200);
       },
     );
+    await t.test("manager can create employees only in assigned services", async () => {
+      const service = await prisma.serviceType.create({
+        data: { name: `${prefix} access service` },
+      });
+      const manager = await http
+        .post("/users")
+        .auth(adminToken, { type: "bearer" })
+        .send({
+          login: `${prefix}-manager`,
+          password: "manager-password",
+          name: "Manager",
+          surname: "Test",
+          phone: "+78000000001",
+          userRole: "manager",
+          serviceTypeIds: [service.id],
+        })
+        .expect(201);
+      assert.deepEqual(manager.body.serviceAssignments, [
+        { serviceTypeId: service.id },
+      ]);
+      const signIn = await http
+        .post("/auth/login")
+        .send({ login: `${prefix}-manager`, password: "manager-password" })
+        .expect(200);
+      const managerToken = signIn.body.access_token;
+      const employee = await http
+        .post("/users")
+        .auth(managerToken, { type: "bearer" })
+        .send({
+          login: `${prefix}-employee`,
+          password: "employee-password",
+          name: "Employee",
+          surname: "Test",
+          phone: "+78000000002",
+          userRole: "employee",
+          serviceTypeIds: [service.id],
+        })
+        .expect(201);
+      assert.equal(employee.body.userRole, "employee");
+      await http
+        .post("/users")
+        .auth(managerToken, { type: "bearer" })
+        .send({
+          login: `${prefix}-escalation`,
+          password: "employee-password",
+          name: "Escalation",
+          surname: "Test",
+          phone: "+78000000003",
+          userRole: "manager",
+          serviceTypeIds: [service.id],
+        })
+        .expect(403);
+    });
     await t.test(
       "role changes take effect immediately for existing tokens",
       async () => {

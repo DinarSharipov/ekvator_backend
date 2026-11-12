@@ -4,6 +4,10 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
+  IsArray,
+  ArrayUnique,
+  IsInt,
+  Min,
   IsString,
 } from "class-validator";
 
@@ -54,5 +58,13 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(UserRole)
   userRole?: UserRole;
+
+  @ApiPropertyOptional({ type: [Number], description: "Сервисы, в которых работает менеджер или сотрудник" })
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @IsInt({ each: true })
+  @Min(1, { each: true })
+  serviceTypeIds?: number[];
 }
 

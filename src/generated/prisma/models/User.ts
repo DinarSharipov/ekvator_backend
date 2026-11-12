@@ -272,6 +272,7 @@ export type UserWhereInput = {
   email?: Prisma.StringNullableFilter<"User"> | string | null
   telegram?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.StringFilter<"User"> | string
+  serviceAssignments?: Prisma.UserServiceAssignmentListRelationFilter
   carts?: Prisma.CartListRelationFilter
   preorders?: Prisma.PreorderListRelationFilter
 }
@@ -289,6 +290,7 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   telegram?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  serviceAssignments?: Prisma.UserServiceAssignmentOrderByRelationAggregateInput
   carts?: Prisma.CartOrderByRelationAggregateInput
   preorders?: Prisma.PreorderOrderByRelationAggregateInput
 }
@@ -309,6 +311,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   email?: Prisma.StringNullableFilter<"User"> | string | null
   telegram?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.StringFilter<"User"> | string
+  serviceAssignments?: Prisma.UserServiceAssignmentListRelationFilter
   carts?: Prisma.CartListRelationFilter
   preorders?: Prisma.PreorderListRelationFilter
 }, "id" | "login" | "phoneNormalized">
@@ -363,6 +366,7 @@ export type UserCreateInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
 }
@@ -380,6 +384,7 @@ export type UserUncheckedCreateInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
 }
@@ -396,6 +401,7 @@ export type UserUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
 }
@@ -413,6 +419,7 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -543,6 +550,20 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type UserCreateNestedOneWithoutServiceAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutServiceAssignmentsInput, Prisma.UserUncheckedCreateWithoutServiceAssignmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutServiceAssignmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutServiceAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutServiceAssignmentsInput, Prisma.UserUncheckedCreateWithoutServiceAssignmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutServiceAssignmentsInput
+  upsert?: Prisma.UserUpsertWithoutServiceAssignmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutServiceAssignmentsInput, Prisma.UserUpdateWithoutServiceAssignmentsInput>, Prisma.UserUncheckedUpdateWithoutServiceAssignmentsInput>
+}
+
 export type UserCreateNestedOneWithoutCartsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCartsInput, Prisma.UserUncheckedCreateWithoutCartsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCartsInput
@@ -571,6 +592,88 @@ export type UserUpdateOneRequiredWithoutPreordersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPreordersInput, Prisma.UserUpdateWithoutPreordersInput>, Prisma.UserUncheckedUpdateWithoutPreordersInput>
 }
 
+export type UserCreateWithoutServiceAssignmentsInput = {
+  name: string
+  login: string
+  password: string
+  surname?: string | null
+  phone?: string | null
+  phoneNormalized?: string | null
+  phoneVerifiedAt?: Date | string | null
+  userRole?: $Enums.UserRole
+  email?: string | null
+  telegram?: string | null
+  role?: string
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutServiceAssignmentsInput = {
+  id?: number
+  name: string
+  login: string
+  password: string
+  surname?: string | null
+  phone?: string | null
+  phoneNormalized?: string | null
+  phoneVerifiedAt?: Date | string | null
+  userRole?: $Enums.UserRole
+  email?: string | null
+  telegram?: string | null
+  role?: string
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutServiceAssignmentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutServiceAssignmentsInput, Prisma.UserUncheckedCreateWithoutServiceAssignmentsInput>
+}
+
+export type UserUpsertWithoutServiceAssignmentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutServiceAssignmentsInput, Prisma.UserUncheckedUpdateWithoutServiceAssignmentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutServiceAssignmentsInput, Prisma.UserUncheckedCreateWithoutServiceAssignmentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutServiceAssignmentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutServiceAssignmentsInput, Prisma.UserUncheckedUpdateWithoutServiceAssignmentsInput>
+}
+
+export type UserUpdateWithoutServiceAssignmentsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  login?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNormalized?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRole?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutServiceAssignmentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  login?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNormalized?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRole?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutCartsInput = {
   name: string
   login: string
@@ -583,6 +686,7 @@ export type UserCreateWithoutCartsInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
 }
 
@@ -599,6 +703,7 @@ export type UserUncheckedCreateWithoutCartsInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -630,6 +735,7 @@ export type UserUpdateWithoutCartsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
 }
 
@@ -646,6 +752,7 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -661,6 +768,7 @@ export type UserCreateWithoutPreordersInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
 }
 
@@ -677,6 +785,7 @@ export type UserUncheckedCreateWithoutPreordersInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -708,6 +817,7 @@ export type UserUpdateWithoutPreordersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
 }
 
@@ -724,6 +834,7 @@ export type UserUncheckedUpdateWithoutPreordersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -733,11 +844,13 @@ export type UserUncheckedUpdateWithoutPreordersInput = {
  */
 
 export type UserCountOutputType = {
+  serviceAssignments: number
   carts: number
   preorders: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  serviceAssignments?: boolean | UserCountOutputTypeCountServiceAssignmentsArgs
   carts?: boolean | UserCountOutputTypeCountCartsArgs
   preorders?: boolean | UserCountOutputTypeCountPreordersArgs
 }
@@ -750,6 +863,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountServiceAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserServiceAssignmentWhereInput
 }
 
 /**
@@ -780,6 +900,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   telegram?: boolean
   role?: boolean
+  serviceAssignments?: boolean | Prisma.User$serviceAssignmentsArgs<ExtArgs>
   carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
   preorders?: boolean | Prisma.User$preordersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -832,6 +953,7 @@ export type UserSelectScalar = {
 
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "login" | "password" | "surname" | "phone" | "phoneNormalized" | "phoneVerifiedAt" | "userRole" | "email" | "telegram" | "role", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  serviceAssignments?: boolean | Prisma.User$serviceAssignmentsArgs<ExtArgs>
   carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
   preorders?: boolean | Prisma.User$preordersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -842,6 +964,7 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
+    serviceAssignments: Prisma.$UserServiceAssignmentPayload<ExtArgs>[]
     carts: Prisma.$CartPayload<ExtArgs>[]
     preorders: Prisma.$PreorderPayload<ExtArgs>[]
   }
@@ -1252,6 +1375,7 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  serviceAssignments<T extends Prisma.User$serviceAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$serviceAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserServiceAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   carts<T extends Prisma.User$cartsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$cartsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   preorders<T extends Prisma.User$preordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$preordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PreorderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1680,6 +1804,30 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Users to delete.
    */
   limit?: number
+}
+
+/**
+ * User.serviceAssignments
+ */
+export type User$serviceAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserServiceAssignment
+   */
+  select?: Prisma.UserServiceAssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserServiceAssignment
+   */
+  omit?: Prisma.UserServiceAssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserServiceAssignmentInclude<ExtArgs> | null
+  where?: Prisma.UserServiceAssignmentWhereInput
+  orderBy?: Prisma.UserServiceAssignmentOrderByWithRelationInput | Prisma.UserServiceAssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.UserServiceAssignmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserServiceAssignmentScalarFieldEnum | Prisma.UserServiceAssignmentScalarFieldEnum[]
 }
 
 /**

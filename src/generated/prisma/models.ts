@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/UserServiceAssignment'
 export type * from './models/ServiceType'
 export type * from './models/ServiceElement'
 export type * from './models/Cart'

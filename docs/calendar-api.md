@@ -17,6 +17,6 @@ Every event contains the order ID, ISO `startAt`/`endAt`, `timeSource` (`schedul
 ## Filter options
 
 - `GET /admin/calendar/filter-options` returns services, catalogue positions, and the complete list of order statuses.
-- `GET /admin/users/filter-options?query=...` returns user options for client filters. The optional case-insensitive query searches name, surname, login, phone, email, and Telegram handle. Each option includes a ready-to-display `label` plus all administrator-visible contact and role fields.
+- `GET /admin/users/filter-options?query=...` returns user options for client filters. The optional case-insensitive query searches name, surname, login, phone, email, and Telegram handle. Each option includes a ready-to-display `label` plus contact and role fields. For managers and employees, calendar data and filters are restricted to their assigned services.
 
 The service-position response uses `type` as the parent service ID. Use it to narrow the position filter after a service is selected.

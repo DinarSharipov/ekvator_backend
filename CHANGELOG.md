@@ -2,6 +2,8 @@
 
 ## 2026-11-12
 
+- Added extensible role-based access for administrators, managers, employees, and customers. Administrators can assign roles and multiple services; managers can manage employees and orders only within their assigned services.
+- Added service-scoped access to order management, calendar events, filter options, and catalogue items, plus end-to-end coverage for cross-service isolation and privilege boundaries.
 - Added repository engineering and commit hygiene guidelines in `AGENTS.md`.
 - Added user registration and authentication by login or phone number, roles, and a disabled-by-default SMS verification feature flag. Existing accounts were migrated to administrators without modifying their credentials.
 - Added carts and preorders: availability controls for services and catalogue items, order lifecycle and schedule confirmation, one-time postponement, archival, and a foundation for future prepayments.
