@@ -18,6 +18,12 @@ import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import {
   ApiBody,
   ApiConsumes,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -30,9 +36,15 @@ import { AuthGuard } from "../auth/auth.guard";
 import { CreateServiceTypeDto } from "./dto/create.service-type.dto";
 import { ServiceTypeService } from "./service-type.service";
 import { ReorderServicesDto } from "./dto/reorder-services.dto";
+import { ApiErrorDto, OrderPermissionResponseDto, ServiceTypeListItemResponseDto, ServiceTypeResponseDto } from "../openapi/response.dto";
 
 @ApiTags("services")
 @Controller("services")
+@ApiExtraModels(ApiErrorDto, ServiceTypeResponseDto, ServiceTypeListItemResponseDto, OrderPermissionResponseDto)
+@ApiResponse({ status: 400, description: "Некорректные параметры, порядок или multipart-данные", type: ApiErrorDto })
+@ApiResponse({ status: 401, description: "Требуется Bearer JWT", type: ApiErrorDto })
+@ApiResponse({ status: 403, description: "Недостаточно прав", type: ApiErrorDto })
+@ApiResponse({ status: 404, description: "Сервис не найден", type: ApiErrorDto })
 export class ServiceTypesController {
   constructor(private readonly serviceTypeService: ServiceTypeService) {}
 
@@ -40,7 +52,7 @@ export class ServiceTypesController {
   @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать новый тип сервиса", description: "Создаёт сервис Экватора и его настройки отображения, предзаказов и бронирования." })
-  @ApiResponse({ status: 201, description: "Сервис успешно создан" })
+  @ApiCreatedResponse({ description: "Сервис успешно создан", type: ServiceTypeResponseDto })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
@@ -120,7 +132,7 @@ export class ServiceTypesController {
 
   @Get()
   @ApiOperation({ summary: "Получить список всех сервисов", description: "Возвращает сервисы Экватора в сохранённом порядке." })
-  @ApiResponse({ status: 200, description: "Список сервисов" })
+  @ApiOkResponse({ description: "Список сервисов", type: ServiceTypeListItemResponseDto, isArray: true })
   findAll() {
     return this.serviceTypeService.findAll();
   }
@@ -128,14 +140,15 @@ export class ServiceTypesController {
   @Get("order-permission")
   @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "Проверить доступ к изменению порядка", description: "Служебная проверка права системного администратора на изменение порядка сервисов." })
+  @ApiOkResponse({ type: OrderPermissionResponseDto })
   orderPermission() { return { canReorder: true }; }
 
   @Put("order")
   @UseGuards(AuthGuard, AdminGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Сохранить порядок всех сервисов", description: "Атомарно заменяет порядок полного списка сервисов; защищён от устаревшего или неполного списка." })
-  @ApiResponse({ status: 204, description: "Порядок сохранён" })
-  @ApiResponse({ status: 409, description: "Передан устаревший или неполный список ID" })
+  @ApiNoContentResponse({ description: "Порядок сохранён; тела ответа нет." })
+  @ApiConflictResponse({ description: "Передан устаревший или неполный список ID", type: ApiErrorDto })
   reorder(@Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) dto: ReorderServicesDto) {
     return this.serviceTypeService.reorder(dto.ids);
   }
@@ -143,8 +156,8 @@ export class ServiceTypesController {
   @Get(":id")
   @ApiOperation({ summary: "Получить сервис по ID", description: "Возвращает настройки одного сервиса Экватора." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
-  @ApiResponse({ status: 200, description: "Сервис не найден" })
-  @ApiResponse({ status: 404, description: "Сервис не найден" })
+  @ApiOkResponse({ description: "Сервис найден", type: ServiceTypeResponseDto })
+  @ApiNotFoundResponse({ description: "Сервис не найден", type: ApiErrorDto })
   findOne(@Param("id", ParseIntPipe) id: number) {
     return this.serviceTypeService.findOne(id);
   }
@@ -154,7 +167,7 @@ export class ServiceTypesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Удалить сервис по ID", description: "Удаляет сервис. Операция может быть отклонена БД при наличии связанных исторических данных." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
-  @ApiResponse({ status: 204, description: "Сервис удален" })
+  @ApiNoContentResponse({ description: "Сервис удален; тела ответа нет." })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.serviceTypeService.remove(id);
   }
@@ -164,7 +177,7 @@ export class ServiceTypesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Обновить сервис по ID", description: "Обновляет данные и настройки сервиса Экватора." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
-  @ApiResponse({ status: 201, description: "Сервис изменен" })
+  @ApiNoContentResponse({ description: "Сервис изменен; тела ответа нет." })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {

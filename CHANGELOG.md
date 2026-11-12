@@ -2,6 +2,7 @@
 
 ## 2026-11-12
 
+- Added complete Swagger response contracts for site analytics and audited every published endpoint so each successful response with a body has an explicit OpenAPI schema. Expanded typed response documentation for authentication, user management, services, and catalogue items.
 - Added privacy-conscious site activity analytics: idempotent visitor events, daily unique-visitor and interaction summaries, service attribution, and administrator-only reporting endpoints.
 - Added frontend integration guidance for activity analytics, including stable anonymous visitor identifiers and semantic click targets without personal data in URLs.
 - Completed OpenAPI response contracts for corporate accounts, carts, preorders, administrator calendar, and filter endpoints. Corporate responses now expose safe participant, top-up, QR, allocation, and ledger representations without leaking QR credentials in general company payloads.

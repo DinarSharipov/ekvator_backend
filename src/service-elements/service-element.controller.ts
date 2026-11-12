@@ -18,6 +18,11 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import {
   ApiBody,
   ApiConsumes,
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -31,9 +36,15 @@ import { AuthenticatedUser, ServiceAccessService } from "../auth/service-access.
 import { UserRole } from "../generated/prisma/enums";
 import { CreateServiceElementDto } from "./dto/create.service-element.dto";
 import { ServiceElementService } from "./service-element.service";
+import { ApiErrorDto, ServiceElementListItemResponseDto, ServiceElementResponseDto } from "../openapi/response.dto";
 
 @ApiTags("service-elements")
 @Controller("service-elements")
+@ApiExtraModels(ApiErrorDto, ServiceElementResponseDto, ServiceElementListItemResponseDto)
+@ApiResponse({ status: 400, description: "Некорректные параметры или multipart-данные", type: ApiErrorDto })
+@ApiResponse({ status: 401, description: "Требуется Bearer JWT", type: ApiErrorDto })
+@ApiResponse({ status: 403, description: "Недостаточно прав на сервис", type: ApiErrorDto })
+@ApiResponse({ status: 404, description: "Услуга или сервис не найдены", type: ApiErrorDto })
 export class ServiceElementsController {
   constructor(private readonly serviceElementService: ServiceElementService, private readonly serviceAccess: ServiceAccessService) {}
 
@@ -42,7 +53,7 @@ export class ServiceElementsController {
   @Roles(UserRole.admin, UserRole.manager)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать новую услугу", description: "Создаёт товар или услугу в указанном сервисе; менеджер ограничен назначенными сервисами." })
-  @ApiResponse({ status: 201, description: "Услуга успешно создан" })
+  @ApiCreatedResponse({ description: "Услуга успешно создана", type: ServiceElementResponseDto })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
@@ -99,7 +110,7 @@ export class ServiceElementsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Изменить услугу", description: "Обновляет каталоговую позицию и флаги доступности предзаказа." })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
-  @ApiResponse({ status: 201, description: "Услуга успешно изменена" })
+  @ApiNoContentResponse({ description: "Услуга успешно изменена; тела ответа нет." })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
@@ -154,7 +165,7 @@ export class ServiceElementsController {
 
   @Get()
   @ApiOperation({ summary: "Получить список всех услуг", description: "Возвращает все каталоговые позиции." })
-  @ApiResponse({ status: 200, description: "Список услуг" })
+  @ApiOkResponse({ description: "Список услуг", type: ServiceElementListItemResponseDto, isArray: true })
   findAll() {
     return this.serviceElementService.findAll();
   }
@@ -162,7 +173,7 @@ export class ServiceElementsController {
   @Get("byId/:id")
   @ApiOperation({ summary: "Получить список по типу сервиса", description: "Возвращает каталоговые позиции одного сервиса." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
-  @ApiResponse({ status: 200, description: "Список услуг" })
+  @ApiOkResponse({ description: "Список услуг", type: ServiceElementResponseDto, isArray: true })
   findAllByServiceId(@Param("id", ParseIntPipe) id: number) {
     return this.serviceElementService.findAllByServiceId(id);
   }
@@ -170,8 +181,8 @@ export class ServiceElementsController {
   @Get(":id")
   @ApiOperation({ summary: "Получить услугу по ID", description: "Возвращает одну каталоговую позицию по идентификатору." })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
-  @ApiResponse({ status: 200, description: "Услуга не найден" })
-  @ApiResponse({ status: 404, description: "Услуга не найден" })
+  @ApiOkResponse({ description: "Услуга найдена", type: ServiceElementResponseDto })
+  @ApiNotFoundResponse({ description: "Услуга не найдена", type: ApiErrorDto })
   findOne(@Param("id", ParseIntPipe) id: number) {
     return this.serviceElementService.findOne(id);
   }
@@ -182,7 +193,7 @@ export class ServiceElementsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Удалить услугу по ID", description: "Удаляет каталоговую позицию при наличии прав на её сервис." })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
-  @ApiResponse({ status: 204, description: "Услуга удалена" })
+  @ApiNoContentResponse({ description: "Услуга удалена; тела ответа нет." })
   async remove(@Request() request: { user: AuthenticatedUser }, @Param("id", ParseIntPipe) id: string) {
     const current = await this.serviceElementService.findOne(+id);
     if (!current) return null;
