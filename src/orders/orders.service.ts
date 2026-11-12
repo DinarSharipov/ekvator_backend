@@ -29,7 +29,7 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
   onModuleDestroy() { if (this.overdueTimer) clearInterval(this.overdueTimer); }
 
   async getCart(userId: number) {
-    return this.prisma.cart.findUnique({ where: { userId }, include: { items: { include: { serviceElement: true }, orderBy: { id: "asc" } } } })
+    return (await this.prisma.cart.findUnique({ where: { userId }, include: { items: { include: { serviceElement: true }, orderBy: { id: "asc" } } } }))
       ?? { id: null, userId, items: [] };
   }
 

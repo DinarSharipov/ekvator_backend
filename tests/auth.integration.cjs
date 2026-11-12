@@ -409,6 +409,7 @@ test("registration, authentication and administrative access over HTTP with Post
     await t.test(
       "deleted accounts lose access even with an unexpired JWT",
       async () => {
+        await prisma.preorder.deleteMany({ where: { userId } });
         await prisma.user.delete({ where: { id: userId } });
         await http.get("/auth/me").auth(token, { type: "bearer" }).expect(401);
       },
