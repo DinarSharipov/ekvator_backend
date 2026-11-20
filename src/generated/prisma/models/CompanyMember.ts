@@ -572,10 +572,6 @@ export type EnumCompanyMemberRoleFieldUpdateOperationsInput = {
   set?: $Enums.CompanyMemberRole
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type CompanyMemberCreateNestedOneWithoutLedgerEntriesInput = {
   create?: Prisma.XOR<Prisma.CompanyMemberCreateWithoutLedgerEntriesInput, Prisma.CompanyMemberUncheckedCreateWithoutLedgerEntriesInput>
   connectOrCreate?: Prisma.CompanyMemberCreateOrConnectWithoutLedgerEntriesInput

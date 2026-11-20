@@ -1,3 +1,4 @@
+import { PrivilegesGuard, RequirePrivileges } from "../auth/privileges.guard";
 import {
   Body,
   Controller,
@@ -30,10 +31,7 @@ import {
 } from "@nestjs/swagger";
 import * as sharp from "sharp";
 import { AuthGuard } from "../auth/auth.guard";
-import { Roles } from "../auth/roles.decorator";
-import { RolesGuard } from "../auth/roles.guard";
 import { AuthenticatedUser, ServiceAccessService } from "../auth/service-access.service";
-import { UserRole } from "../generated/prisma/enums";
 import { CreateServiceElementDto } from "./dto/create.service-element.dto";
 import { ServiceElementService } from "./service-element.service";
 import { ApiErrorDto, ServiceElementListItemResponseDto, ServiceElementResponseDto } from "../openapi/response.dto";
@@ -49,8 +47,8 @@ export class ServiceElementsController {
   constructor(private readonly serviceElementService: ServiceElementService, private readonly serviceAccess: ServiceAccessService) {}
 
   @Post()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.admin, UserRole.manager)
+  @UseGuards(AuthGuard, PrivilegesGuard)
+  @RequirePrivileges("items.create")
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать новую услугу", description: "Создаёт товар или услугу в указанном сервисе; менеджер ограничен назначенными сервисами." })
   @ApiCreatedResponse({ description: "Услуга успешно создана", type: ServiceElementResponseDto })
@@ -82,7 +80,7 @@ export class ServiceElementsController {
     @Body() createServiceElement: CreateServiceElementDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    this.serviceAccess.assertCanAccessServices(request.user, [Number(createServiceElement.type)]);
+    this.serviceAccess.assertCanAccessServices(request.user, [Number(createServiceElement.type)], "items.create");
     const base64Photos = files?.length
       ? await Promise.all(
           files.map(async (file) => {
@@ -105,8 +103,8 @@ export class ServiceElementsController {
   }
 
   @Put(":id")
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.admin, UserRole.manager)
+  @UseGuards(AuthGuard, PrivilegesGuard)
+  @RequirePrivileges("items.update")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Изменить услугу", description: "Обновляет каталоговую позицию и флаги доступности предзаказа." })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
@@ -142,7 +140,7 @@ export class ServiceElementsController {
   ) {
     const current = await this.serviceElementService.findOne(id);
     if (!current) return null;
-    this.serviceAccess.assertCanAccessServices(request.user, [current.type, Number(createServiceElement.type)]);
+    this.serviceAccess.assertCanAccessServices(request.user, [current.type, Number(createServiceElement.type)], "items.update");
     const base64Photos = files?.length
       ? await Promise.all(
           files.map(async (file) => {
@@ -188,8 +186,8 @@ export class ServiceElementsController {
   }
 
   @Delete(":id")
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.admin, UserRole.manager)
+  @UseGuards(AuthGuard, PrivilegesGuard)
+  @RequirePrivileges("items.delete")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Удалить услугу по ID", description: "Удаляет каталоговую позицию при наличии прав на её сервис." })
   @ApiParam({ name: "id", type: "number", description: "ID услуги" })
@@ -197,7 +195,7 @@ export class ServiceElementsController {
   async remove(@Request() request: { user: AuthenticatedUser }, @Param("id", ParseIntPipe) id: string) {
     const current = await this.serviceElementService.findOne(+id);
     if (!current) return null;
-    this.serviceAccess.assertCanAccessServices(request.user, [current.type]);
+    this.serviceAccess.assertCanAccessServices(request.user, [current.type], "items.delete");
     return this.serviceElementService.remove(+id);
   }
 }

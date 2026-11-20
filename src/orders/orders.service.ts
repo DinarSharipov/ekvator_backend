@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { BookingMode, PreorderStatus, Prisma } from "../generated/prisma/client";
+import { BookingMode, PreorderStatus, Prisma, ServiceKind } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AddCartItemDto, UpdateCartItemDto } from "./dto/cart.dto";
 import { CheckoutDto } from "./dto/checkout.dto";
@@ -8,7 +8,7 @@ import { CalendarEventsQueryDto } from "./dto/calendar-query.dto";
 
 const orderInclude = {
   user: { select: { id: true, name: true, surname: true, login: true, phone: true } },
-  items: { orderBy: { id: "asc" }, include: { serviceType: { select: { id: true, name: true, bookingMode: true, bookingCapacity: true } } } },
+  items: { orderBy: { id: "asc" }, include: { serviceType: { select: { id: true, name: true, kind: true, bookingMode: true, bookingCapacity: true } } } },
 } satisfies Prisma.PreorderInclude;
 
 const terminalStatuses = new Set<PreorderStatus>([PreorderStatus.completed, PreorderStatus.rejected, PreorderStatus.cancelled]);
@@ -46,6 +46,7 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
       const types = await tx.serviceType.findMany({ where: { id: { in: typeIds } } });
       this.assertCartCompatibility(types, typeIds.length);
       const itemType = types.find((type) => type.id === item.type)!;
+      this.assertQuantity(itemType.kind, dto.quantity);
       if (!itemType.acceptsPreorders) throw new ConflictException("Сервис сейчас не принимает предзаказы");
       await tx.cartItem.upsert({
         where: { cartId_serviceElementId: { cartId: cart.id, serviceElementId: dto.serviceElementId } },
@@ -60,6 +61,11 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
     await this.prisma.$transaction(async (tx) => {
       await this.lockCart(tx, userId);
       const cart = await this.requireCart(tx, userId);
+      const item = await tx.cartItem.findFirst({ where: { id: itemId, cartId: cart.id }, include: { serviceElement: true } });
+      if (!item) throw new NotFoundException("Позиция черновика заказа не найдена");
+      const type = await tx.serviceType.findUnique({ where: { id: item.serviceElement.type } });
+      if (!type) throw new ConflictException("Сервис больше не существует");
+      this.assertQuantity(type.kind, dto.quantity);
       const result = await tx.cartItem.updateMany({ where: { id: itemId, cartId: cart.id }, data: { quantity: dto.quantity } });
       if (!result.count) throw new NotFoundException("Позиция корзины не найдена");
     });
@@ -84,11 +90,14 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
       const cart = await tx.cart.findUnique({ where: { userId }, include: { items: { include: { serviceElement: true } } } });
       if (!cart?.items.length) throw new BadRequestException("Корзина пуста");
       const serviceTypeIds = [...new Set(cart.items.map((item) => item.serviceElement.type))];
+      // Prevent a concurrent settings edit from changing the meaning of checkout.
+      await tx.$queryRaw`SELECT "id" FROM "ServiceType" WHERE "id" IN (${Prisma.join(serviceTypeIds)}) ORDER BY "id" FOR SHARE`;
       const types = await tx.serviceType.findMany({ where: { id: { in: serviceTypeIds } } });
       if (types.length !== serviceTypeIds.length) throw new ConflictException("Один из сервисов больше не существует");
       const typeById = new Map(types.map((type) => [type.id, type]));
       for (const cartItem of cart.items) {
         const type = typeById.get(cartItem.serviceElement.type)!;
+        this.assertQuantity(type.kind, cartItem.quantity);
         if (cartItem.serviceElement.isArchive || !cartItem.serviceElement.preorderAvailable || !type.acceptsPreorders) {
           throw new ConflictException(`Позиция «${cartItem.serviceElement.name}» сейчас недоступна для предзаказа`);
         }
@@ -184,7 +193,7 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
 
   async calendarFilterOptions(serviceTypeIds?: number[]) {
     const [services, serviceElements] = await this.prisma.$transaction([
-      this.prisma.serviceType.findMany({ where: serviceTypeIds ? { id: { in: serviceTypeIds } } : undefined, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { id: true, name: true, sortOrder: true, bookingMode: true, bookingCapacity: true, acceptsPreorders: true } }),
+      this.prisma.serviceType.findMany({ where: serviceTypeIds ? { id: { in: serviceTypeIds } } : undefined, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { id: true, name: true, sortOrder: true, kind: true, bookingMode: true, bookingCapacity: true, acceptsPreorders: true } }),
       this.prisma.serviceElement.findMany({ where: serviceTypeIds ? { type: { in: serviceTypeIds } } : undefined, orderBy: [{ type: "asc" }, { name: "asc" }], select: { id: true, name: true, type: true, isArchive: true, preorderAvailable: true } }),
     ]);
     return { services, serviceElements, statuses: Object.values(PreorderStatus) };
@@ -280,6 +289,11 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async lockCart(tx: Prisma.TransactionClient, userId: number) { await tx.$executeRaw`SELECT pg_advisory_xact_lock(${cartLockNamespace}, ${userId})`; }
+  private assertQuantity(kind: ServiceKind, quantity: number) {
+    if (kind === ServiceKind.services && quantity !== 1) {
+      throw new BadRequestException("Каждую услугу можно выбрать один раз; количество доступно только для товаров");
+    }
+  }
   private async requireCart(db: DbClient, userId: number) { const cart = await db.cart.findUnique({ where: { userId } }); if (!cart) throw new NotFoundException("Корзина пуста"); return cart; }
   private async requireOrder(db: DbClient, id: number) { const order = await db.preorder.findUnique({ where: { id }, include: orderInclude }); if (!order) throw new NotFoundException("Заказ не найден"); return order; }
   private assertCartCompatibility(types: { id: number; acceptsPreorders: boolean; allowMixedCart: boolean; bookingMode: BookingMode }[], expectedCount: number) {

@@ -1,3 +1,4 @@
+import { PrivilegesGuard } from "./privileges.guard";
 import { Global, Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import "dotenv/config";
@@ -32,6 +33,7 @@ import { ServiceAccessService } from "./service-access.service";
     AuthGuard,
     AdminGuard,
     RolesGuard,
+    PrivilegesGuard,
     ServiceAccessService,
     SmsVerificationService,
   ],
@@ -42,6 +44,7 @@ import { ServiceAccessService } from "./service-access.service";
     AuthGuard,
     AdminGuard,
     RolesGuard,
+    PrivilegesGuard,
     ServiceAccessService,
     SmsVerificationService,
   ],

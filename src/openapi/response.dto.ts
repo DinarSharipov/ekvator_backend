@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { BookingMode, CompanyLedgerKind, CompanyMemberRole, CompanyTopUpStatus, PaymentStatus, PreorderStatus, UserRole } from "../generated/prisma/enums";
+import { BookingMode, CompanyLedgerKind, CompanyMemberRole, CompanyTopUpStatus, PaymentStatus, PreorderStatus, ServiceKind, UserRole } from "../generated/prisma/enums";
+import { RoleGrantDto } from "../roles/dto/access-role.dto";
 
 const money = { type: Number, format: "int32", minimum: 0, maximum: 2_147_483_647, description: "Сумма в копейках (amountMinor): 100 ₽ = 10 000." } as const;
 const date = { type: String, format: "date-time" } as const;
@@ -20,7 +21,18 @@ export class UserSummaryResponseDto {
   @ApiPropertyOptional({ nullable: true, format: "email", example: "driver@example.com" }) email: string | null;
 }
 
+export class AssignedRoleResponseDto {
+  @ApiProperty() id: number;
+  @ApiProperty() name: string;
+  @ApiProperty({ type: () => RoleGrantDto, isArray: true }) grants: RoleGrantDto[];
+}
+export class UserAccessRoleResponseDto {
+  @ApiProperty({ type: () => AssignedRoleResponseDto }) role: AssignedRoleResponseDto;
+}
+
 export class UserResponseDto extends UserSummaryResponseDto {
+  @ApiProperty({ type: () => UserAccessRoleResponseDto, isArray: true }) accessRoles: UserAccessRoleResponseDto[];
+  @ApiPropertyOptional({ type: () => RoleGrantDto, isArray: true, description: "Effective grants in authentication/profile responses; scopes are merged across all roles and the system access level." }) privileges?: RoleGrantDto[];
   @ApiPropertyOptional({ nullable: true, example: "@ivan" }) telegram: string | null;
   @ApiProperty({ enum: UserRole, example: UserRole.user }) userRole: UserRole;
   @ApiProperty({ example: "user", description: "Legacy role field retained for backwards compatibility." }) role: string;
@@ -31,12 +43,14 @@ export class AuthResponseDto { @ApiProperty({ description: "Bearer JWT для з
 export class AuthFeaturesResponseDto { @ApiProperty({ example: false }) smsVerificationEnabled: boolean; }
 
 export class ServiceTypeResponseDto {
+  @ApiProperty({ enum: ServiceKind }) kind: ServiceKind;
   @ApiProperty({ example: 1 }) id: number; @ApiProperty({ example: 0, minimum: 0 }) sortOrder: number; @ApiProperty({ maxLength: 200, example: "Шиномонтаж" }) name: string; @ApiProperty({ example: false }) showInMain: boolean;
   @ApiPropertyOptional({ nullable: true, example: "+79990000000" }) phone: string | null; @ApiPropertyOptional({ nullable: true, example: "+79990000001" }) secondPhone: string | null; @ApiPropertyOptional({ nullable: true, description: "Base64-изображение главной фотографии." }) photo: string | null;
   @ApiPropertyOptional({ nullable: true, maxLength: 5000 }) description: string | null; @ApiPropertyOptional({ nullable: true, example: "table" }) showType: string | null; @ApiProperty({ type: [String], description: "Массив Base64-изображений галереи." }) gallery: string[];
   @ApiProperty({ example: true }) acceptsPreorders: boolean; @ApiProperty({ example: true }) allowMixedCart: boolean; @ApiProperty({ enum: BookingMode, example: BookingMode.appointment }) bookingMode: BookingMode; @ApiProperty({ minimum: 1, example: 1 }) bookingCapacity: number; @ApiProperty({ example: false, description: "Флаг будущей предоплаты." }) prepaymentEnabled: boolean;
 }
 export class ServiceTypeListItemResponseDto {
+  @ApiProperty({ enum: ServiceKind }) kind: ServiceKind;
   @ApiProperty({ example: 1 }) id: number; @ApiProperty({ example: 0, minimum: 0 }) sortOrder: number; @ApiProperty({ example: "Шиномонтаж" }) name: string; @ApiPropertyOptional({ nullable: true }) description: string | null;
   @ApiPropertyOptional({ nullable: true }) phone: string | null; @ApiPropertyOptional({ nullable: true }) secondPhone: string | null; @ApiPropertyOptional({ nullable: true }) photo: string | null; @ApiProperty({ example: false }) showInMain: boolean; @ApiPropertyOptional({ nullable: true }) showType: string | null;
   @ApiProperty({ example: true }) acceptsPreorders: boolean; @ApiProperty({ example: true }) allowMixedCart: boolean; @ApiProperty({ enum: BookingMode }) bookingMode: BookingMode; @ApiProperty({ minimum: 1 }) bookingCapacity: number; @ApiProperty({ example: false }) prepaymentEnabled: boolean;
@@ -147,7 +161,7 @@ export class ServiceElementListItemResponseDto {
 export class CartItemResponseDto { @ApiProperty() id: number; @ApiProperty() cartId: number; @ApiProperty() serviceElementId: number; @ApiProperty({ minimum: 1 }) quantity: number; @ApiProperty(date) createdAt: Date; @ApiProperty(date) updatedAt: Date; @ApiProperty({ type: () => ServiceElementResponseDto }) serviceElement: ServiceElementResponseDto; }
 export class CartResponseDto { @ApiPropertyOptional({ nullable: true }) id: number | null; @ApiProperty() userId: number; @ApiProperty({ type: () => CartItemResponseDto, isArray: true }) items: CartItemResponseDto[]; @ApiPropertyOptional({ ...date, nullable: true }) createdAt?: Date | null; @ApiPropertyOptional({ ...date, nullable: true }) updatedAt?: Date | null; }
 
-export class OrderServiceResponseDto { @ApiProperty() id: number; @ApiProperty() name: string; @ApiProperty({ enum: BookingMode }) bookingMode: BookingMode; @ApiProperty({ minimum: 1 }) bookingCapacity: number; }
+export class OrderServiceResponseDto { @ApiProperty() id: number; @ApiProperty() name: string; @ApiProperty({ enum: ServiceKind }) kind: ServiceKind; @ApiProperty({ enum: BookingMode }) bookingMode: BookingMode; @ApiProperty({ minimum: 1 }) bookingCapacity: number; }
 export class OrderItemResponseDto { @ApiProperty() id: number; @ApiProperty() preorderId: number; @ApiProperty() serviceElementId: number; @ApiProperty() serviceTypeId: number; @ApiProperty() name: string; @ApiProperty() price: number; @ApiProperty({ minimum: 1 }) quantity: number; @ApiProperty({ type: () => OrderServiceResponseDto }) serviceType: OrderServiceResponseDto; }
 export class OrderResponseDto {
   @ApiProperty() id: number; @ApiProperty() userId: number; @ApiProperty({ enum: PreorderStatus }) status: PreorderStatus;
@@ -156,7 +170,7 @@ export class OrderResponseDto {
 }
 export class CalendarItemResponseDto extends OrderItemResponseDto { @ApiProperty({ type: () => OrderServiceResponseDto }) service: OrderServiceResponseDto; }
 export class CalendarEventResponseDto { @ApiProperty() id: string; @ApiProperty() orderId: number; @ApiProperty() title: string; @ApiProperty(date) startAt: Date; @ApiPropertyOptional({ ...date, nullable: true }) endAt: Date | null; @ApiProperty({ enum: ["scheduled", "proposed"] }) timeSource: "scheduled" | "proposed"; @ApiProperty({ enum: PreorderStatus }) status: PreorderStatus; @ApiProperty() isArchived: boolean; @ApiProperty({ type: () => UserSummaryResponseDto }) customer: UserSummaryResponseDto; @ApiProperty({ type: () => CalendarItemResponseDto, isArray: true }) items: CalendarItemResponseDto[]; @ApiPropertyOptional({ nullable: true }) customerNote: string | null; @ApiPropertyOptional({ nullable: true }) adminNote: string | null; @ApiPropertyOptional({ nullable: true }) proposalNote: string | null; @ApiProperty(date) createdAt: Date; @ApiProperty(date) updatedAt: Date; @ApiProperty() total: number; }
-export class CalendarServiceFilterResponseDto { @ApiProperty() id: number; @ApiProperty() name: string; @ApiProperty() sortOrder: number; @ApiProperty({ enum: BookingMode }) bookingMode: BookingMode; @ApiProperty() bookingCapacity: number; @ApiProperty() acceptsPreorders: boolean; }
+export class CalendarServiceFilterResponseDto { @ApiProperty({ enum: ServiceKind }) kind: ServiceKind; @ApiProperty() id: number; @ApiProperty() name: string; @ApiProperty() sortOrder: number; @ApiProperty({ enum: BookingMode }) bookingMode: BookingMode; @ApiProperty() bookingCapacity: number; @ApiProperty() acceptsPreorders: boolean; }
 export class CalendarElementFilterResponseDto { @ApiProperty() id: number; @ApiProperty() name: string; @ApiProperty() type: number; @ApiProperty() isArchive: boolean; @ApiProperty() preorderAvailable: boolean; }
 export class CalendarFilterOptionsResponseDto { @ApiProperty({ type: () => CalendarServiceFilterResponseDto, isArray: true }) services: CalendarServiceFilterResponseDto[]; @ApiProperty({ type: () => CalendarElementFilterResponseDto, isArray: true }) serviceElements: CalendarElementFilterResponseDto[]; @ApiProperty({ enum: PreorderStatus, isArray: true }) statuses: PreorderStatus[]; }
 export class UserFilterOptionResponseDto extends UserSummaryResponseDto { @ApiPropertyOptional({ nullable: true }) email: string | null; @ApiPropertyOptional({ nullable: true }) telegram: string | null; @ApiProperty() role: string; @ApiProperty() userRole: string; @ApiProperty() label: string; }

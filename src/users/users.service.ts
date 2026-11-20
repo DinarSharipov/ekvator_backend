@@ -12,7 +12,17 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { RegisterDto } from "../auth/dto/register.dto";
 import { phoneLookupKey } from "./phone";
-import { AuthenticatedUser, ServiceAccessService } from "../auth/service-access.service";
+import {
+  AuthenticatedUser,
+  ServiceAccessService,
+} from "../auth/service-access.service";
+import {
+  effectivePrivileges,
+  hasGlobalPrivilege,
+  hasPrivilege,
+  PrivilegeKey,
+} from "../auth/privileges";
+import { lockAccessAdministration } from "../roles/access-administration";
 
 export const publicUserSelect = {
   id: true,
@@ -26,6 +36,17 @@ export const publicUserSelect = {
   userRole: true,
   phoneVerifiedAt: true,
   serviceAssignments: { select: { serviceTypeId: true } },
+  accessRoles: {
+    select: {
+      role: {
+        select: {
+          id: true,
+          name: true,
+          grants: { select: { privilege: true, scope: true } },
+        },
+      },
+    },
+  },
 } satisfies Prisma.UserSelect;
 
 type AccountData = {
@@ -52,8 +73,22 @@ export class UsersService {
   async create(actor: AuthenticatedUser, dto: CreateUserDto) {
     const userRole = dto.userRole ?? UserRole.user;
     const serviceTypeIds = dto.serviceTypeIds ?? [];
-    await this.assertRoleAssignment(actor, userRole, serviceTypeIds);
-    return this.createAccount({ ...dto, userRole, serviceTypeIds });
+    return this.prisma.$transaction(async (tx) => {
+      await lockAccessAdministration(tx);
+      const currentActor = await this.currentActor(
+        tx,
+        actor.id,
+        "users.create",
+      );
+      await this.assertRoleAssignment(
+        currentActor,
+        userRole,
+        serviceTypeIds,
+        undefined,
+        tx,
+      );
+      return this.createAccount({ ...dto, userRole, serviceTypeIds }, tx);
+    });
   }
 
   async register(dto: RegisterDto) {
@@ -68,17 +103,31 @@ export class UsersService {
     });
   }
 
-  private async createAccount(data: AccountData) {
-    const { password: plainPassword, serviceTypeIds, role: legacyRole, ...user } = data;
+  private async createAccount(
+    data: AccountData,
+    db: PrismaService | Prisma.TransactionClient = this.prisma,
+  ) {
+    const {
+      password: plainPassword,
+      serviceTypeIds,
+      role: legacyRole,
+      ...user
+    } = data;
     const password = await this.passwords.hash(plainPassword);
     try {
-      return await this.prisma.user.create({
+      return await db.user.create({
         data: {
           ...user,
           role: legacyRole ?? user.userRole,
           phoneNormalized: phoneLookupKey(user.phone),
           password,
-          serviceAssignments: serviceTypeIds.length ? { create: serviceTypeIds.map((serviceTypeId) => ({ serviceTypeId })) } : undefined,
+          serviceAssignments: serviceTypeIds.length
+            ? {
+                create: serviceTypeIds.map((serviceTypeId) => ({
+                  serviceTypeId,
+                })),
+              }
+            : undefined,
         },
         select: publicUserSelect,
       });
@@ -88,32 +137,68 @@ export class UsersService {
   }
 
   async update(actor: AuthenticatedUser, id: number, dto: UpdateUserDTO) {
-    const current = await this.prisma.user.findUnique({ where: { id }, select: publicUserSelect });
-    if (!current) throw new NotFoundException("Пользователь не найден");
-    const userRole = dto.userRole ?? current.userRole;
-    const serviceTypeIds = dto.serviceTypeIds ?? current.serviceAssignments.map((assignment) => assignment.serviceTypeId);
-    await this.assertRoleAssignment(actor, userRole, serviceTypeIds, current);
-    const { serviceTypeIds: _serviceTypeIds, ...updates } = dto;
-    const data = {
-      ...updates,
-      ...(dto.password !== undefined
-        ? { password: await this.passwords.hash(dto.password) }
-        : {}),
-      ...(dto.phone !== undefined
-        ? {
-            phoneNormalized: phoneLookupKey(dto.phone),
-            phoneVerifiedAt: null,
-          }
-        : {}),
-    };
+    const password =
+      dto.password === undefined
+        ? undefined
+        : await this.passwords.hash(dto.password);
     try {
-      return await this.prisma.user.update({
-        where: { id },
-        data: {
-          ...data,
-          ...(dto.serviceTypeIds === undefined ? {} : { serviceAssignments: { deleteMany: {}, create: serviceTypeIds.map((serviceTypeId) => ({ serviceTypeId })) } }),
-        },
-        select: publicUserSelect,
+      return await this.prisma.$transaction(async (tx) => {
+        await lockAccessAdministration(tx);
+        const currentActor = await this.currentActor(
+          tx,
+          actor.id,
+          "users.update",
+        );
+        const current = await tx.user.findUnique({
+          where: { id },
+          select: publicUserSelect,
+        });
+        if (!current) throw new NotFoundException("Пользователь не найден");
+        const userRole = dto.userRole ?? current.userRole;
+        const serviceTypeIds =
+          dto.serviceTypeIds ??
+          current.serviceAssignments.map(
+            (assignment) => assignment.serviceTypeId,
+          );
+        if (currentActor.userRole !== UserRole.admin)
+          this.assertCanManageUser(currentActor, current, "users.update");
+        await this.assertRoleAssignment(
+          currentActor,
+          userRole,
+          serviceTypeIds,
+          current,
+          tx,
+        );
+        if (current.userRole === UserRole.admin && userRole !== UserRole.admin)
+          await this.assertAnotherAdministrator(tx);
+        const { serviceTypeIds: _serviceTypeIds, ...updates } = dto;
+        const data = {
+          ...updates,
+          ...(dto.password !== undefined ? { password } : {}),
+          ...(dto.phone !== undefined
+            ? {
+                phoneNormalized: phoneLookupKey(dto.phone),
+                phoneVerifiedAt: null,
+              }
+            : {}),
+        };
+        return await tx.user.update({
+          where: { id },
+          data: {
+            ...data,
+            ...(dto.serviceTypeIds === undefined
+              ? {}
+              : {
+                  serviceAssignments: {
+                    deleteMany: {},
+                    create: serviceTypeIds.map((serviceTypeId) => ({
+                      serviceTypeId,
+                    })),
+                  },
+                }),
+          },
+          select: publicUserSelect,
+        });
       });
     } catch (error) {
       this.rethrowWriteError(error);
@@ -122,13 +207,23 @@ export class UsersService {
 
   findAll(actor: AuthenticatedUser) {
     return this.prisma.user.findMany({
-      where: actor.userRole === UserRole.admin ? undefined : {
-        userRole: UserRole.employee,
-        serviceAssignments: {
-          some: { serviceTypeId: { in: this.serviceAccess.serviceTypeIds(actor) } },
-          every: { serviceTypeId: { in: this.serviceAccess.serviceTypeIds(actor) } },
-        },
-      },
+      where: hasGlobalPrivilege(actor, "users.read")
+        ? undefined
+        : {
+            userRole: UserRole.employee,
+            serviceAssignments: {
+              some: {
+                serviceTypeId: {
+                  in: this.serviceAccess.serviceTypeIds(actor, "users.read"),
+                },
+              },
+              every: {
+                serviceTypeId: {
+                  in: this.serviceAccess.serviceTypeIds(actor, "users.read"),
+                },
+              },
+            },
+          },
       orderBy: { name: "desc" },
       select: publicUserSelect,
     });
@@ -136,6 +231,15 @@ export class UsersService {
 
   findByLogin(login: string) {
     return this.prisma.user.findUnique({ where: { login } });
+  }
+
+  async profile(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: publicUserSelect,
+    });
+    if (!user) throw new NotFoundException("Пользователь не найден");
+    return { ...user, privileges: effectivePrivileges(user) };
   }
 
   async findForSignIn(identifier: string, phoneOnly = false) {
@@ -154,37 +258,129 @@ export class UsersService {
       select: publicUserSelect,
     });
     if (!user) return null;
-    this.assertCanReadUser(actor, user);
+    if (!hasGlobalPrivilege(actor, "users.read")) {
+      if (user.userRole !== UserRole.employee)
+        throw new ForbiddenException("Нет доступа к пользователю");
+      this.serviceAccess.assertCanAccessServices(
+        actor,
+        user.serviceAssignments.map((assignment) => assignment.serviceTypeId),
+        "users.read",
+      );
+    }
     return user;
   }
 
-  async delete(id: number) {
+  async delete(actor: AuthenticatedUser, id: number) {
     try {
-      await this.prisma.user.delete({ where: { id } });
+      await this.prisma.$transaction(async (tx) => {
+        await lockAccessAdministration(tx);
+        const currentActor = await this.currentActor(
+          tx,
+          actor.id,
+          "users.delete",
+        );
+        const current = await tx.user.findUnique({
+          where: { id },
+          select: publicUserSelect,
+        });
+        if (!current) throw new NotFoundException("Пользователь не найден");
+        if (currentActor.userRole !== UserRole.admin)
+          this.assertCanManageUser(currentActor, current, "users.delete");
+        if (current.userRole === UserRole.admin)
+          await this.assertAnotherAdministrator(tx);
+        await tx.user.delete({ where: { id } });
+      });
     } catch (error) {
       this.rethrowWriteError(error);
     }
   }
 
-  private async assertRoleAssignment(actor: AuthenticatedUser, userRole: UserRole, serviceTypeIds: number[], current?: { userRole: UserRole }) {
+  private async assertRoleAssignment(
+    actor: AuthenticatedUser,
+    userRole: UserRole,
+    serviceTypeIds: number[],
+    current?: { userRole: UserRole },
+    db: PrismaService | Prisma.TransactionClient = this.prisma,
+  ) {
     if (serviceTypeIds.length) {
-      const count = await this.prisma.serviceType.count({ where: { id: { in: serviceTypeIds } } });
-      if (count !== serviceTypeIds.length) throw new NotFoundException("Один или несколько сервисов не найдены");
+      const count = await db.serviceType.count({
+        where: { id: { in: serviceTypeIds } },
+      });
+      if (count !== serviceTypeIds.length)
+        throw new NotFoundException("Один или несколько сервисов не найдены");
     }
     if (actor.userRole === UserRole.admin) {
-      if ((userRole === UserRole.manager || userRole === UserRole.employee) && !serviceTypeIds.length) throw new ConflictException("Для менеджера или сотрудника укажите хотя бы один сервис");
+      if (
+        (userRole === UserRole.manager || userRole === UserRole.employee) &&
+        !serviceTypeIds.length
+      )
+        throw new ConflictException(
+          "Для менеджера или сотрудника укажите хотя бы один сервис",
+        );
       return;
     }
-    if (actor.userRole !== UserRole.manager || userRole !== UserRole.employee || (current && current.userRole !== UserRole.employee)) {
-      throw new ForbiddenException("Менеджер может создавать и изменять только сотрудников");
+    if (
+      (userRole !== UserRole.user && userRole !== UserRole.employee) ||
+      (current &&
+        current.userRole !== UserRole.user &&
+        current.userRole !== UserRole.employee) ||
+      (actor.userRole === UserRole.manager &&
+        (userRole !== UserRole.employee ||
+          (current && current.userRole !== UserRole.employee)))
+    ) {
+      throw new ForbiddenException(
+        "Менеджер может создавать и изменять только сотрудников",
+      );
     }
-    this.serviceAccess.assertCanAccessServices(actor, serviceTypeIds);
+    const privilege = current ? "users.update" : "users.create";
+    this.serviceAccess.assertCanAccessServices(
+      actor,
+      serviceTypeIds,
+      privilege,
+    );
+    if (userRole === UserRole.employee && !serviceTypeIds.length)
+      throw new ConflictException("Для сотрудника укажите хотя бы один сервис");
   }
 
-  private assertCanReadUser(actor: AuthenticatedUser, user: { userRole: UserRole; serviceAssignments: { serviceTypeId: number }[] }) {
-    if (actor.userRole === UserRole.admin) return;
-    if (actor.userRole !== UserRole.manager || user.userRole !== UserRole.employee) throw new ForbiddenException("Нет доступа к пользователю");
-    this.serviceAccess.assertCanAccessServices(actor, user.serviceAssignments.map((assignment) => assignment.serviceTypeId));
+  private assertCanManageUser(
+    actor: AuthenticatedUser,
+    user: AuthenticatedUser,
+    privilege: PrivilegeKey,
+  ) {
+    if (
+      (user.userRole !== UserRole.user &&
+        user.userRole !== UserRole.employee) ||
+      user.accessRoles?.length
+    )
+      throw new ForbiddenException(
+        "Учётные записи с правами доступа изменяет только администратор",
+      );
+    this.serviceAccess.assertCanAccessServices(
+      actor,
+      user.serviceAssignments.map((assignment) => assignment.serviceTypeId),
+      privilege,
+    );
+  }
+
+  private async currentActor(
+    tx: Prisma.TransactionClient,
+    id: number,
+    privilege: PrivilegeKey,
+  ) {
+    const actor = await tx.user.findUnique({
+      where: { id },
+      select: publicUserSelect,
+    });
+    if (!actor || !hasPrivilege(actor, privilege))
+      throw new ForbiddenException("Недостаточно привилегий");
+    return actor;
+  }
+
+  private async assertAnotherAdministrator(tx: Prisma.TransactionClient) {
+    if ((await tx.user.count({ where: { userRole: UserRole.admin } })) <= 1)
+      throw new ConflictException(
+        "Нельзя удалить или понизить последнего администратора",
+      );
   }
 
   private rethrowWriteError(error: unknown): never {
@@ -193,6 +389,8 @@ export class UsersService {
         throw new ConflictException("Логин или телефон уже используется");
       if (error.code === "P2025")
         throw new NotFoundException("Пользователь не найден");
+      if (error.code === "P2003")
+        throw new ConflictException("У пользователя есть связанные данные");
     }
     throw error;
   }

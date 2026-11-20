@@ -1,6 +1,6 @@
+import { PrivilegesGuard, RequirePrivileges } from "../auth/privileges.guard";
 import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Post, Query, UseGuards, ValidationPipe } from "@nestjs/common";
 import { ApiAcceptedResponse, ApiBearerAuth, ApiExtraModels, ApiForbiddenResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
-import { AdminGuard } from "../auth/admin.guard";
 import { AuthGuard } from "../auth/auth.guard";
 import { AnalyticsIdentityService } from "./analytics-identity.service";
 import { AnalyticsService } from "./analytics.service";
@@ -27,7 +27,8 @@ export class AnalyticsController {
 @ApiTags("analytics")
 @ApiBearerAuth()
 @Controller("admin/analytics")
-@UseGuards(AuthGuard, AdminGuard)
+@UseGuards(AuthGuard, PrivilegesGuard)
+@RequirePrivileges("analytics.read")
 @ApiExtraModels(AnalyticsOverviewResponseDto, ApiErrorDto)
 @ApiResponse({ status: 400, description: "Некорректный период", type: ApiErrorDto })
 @ApiUnauthorizedResponse({ description: "Требуется Bearer JWT", type: ApiErrorDto })

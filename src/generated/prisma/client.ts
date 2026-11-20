@@ -27,8 +27,8 @@ export * from "./enums"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more SiteContacts
+ * const siteContacts = await prisma.siteContacts.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -37,6 +37,36 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
+/**
+ * Model SiteContacts
+ *
+ */
+export type SiteContacts = Prisma.SiteContactsModel
+/**
+ * Model Privilege
+ *
+ */
+export type Privilege = Prisma.PrivilegeModel
+/**
+ * Model AccessRole
+ *
+ */
+export type AccessRole = Prisma.AccessRoleModel
+/**
+ * Model RolePrivilege
+ *
+ */
+export type RolePrivilege = Prisma.RolePrivilegeModel
+/**
+ * Model UserAccessRole
+ *
+ */
+export type UserAccessRole = Prisma.UserAccessRoleModel
+/**
+ * Model AdministratorState
+ *
+ */
+export type AdministratorState = Prisma.AdministratorStateModel
 /**
  * Model User
  * 

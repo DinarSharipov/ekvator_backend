@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Hardened production deployment with a full backup restore and migration rehearsal on an isolated PostgreSQL copy, a final backup during a short maintenance window, row-integrity verification, read-only HTTP smoke checks and application-image rollback. Production configuration and database volumes are preserved.
+- Verified the release integrity checker against preserved and deliberately changed rows, and exercised the production HTTP smoke script against an isolated local backend.
+- Added administrator-only custom role CRUD, a 28-operation privilege catalogue and multiple role assignments per user, with global or assigned-service scopes. Existing staff permissions remain compatible; frontend profiles expose effective privileges.
+- Protected the last administrator from deletion and demotion, including concurrent API calls, direct database changes and bulk operations. Delegated account management cannot grant administrative access or change protected accounts.
+- Added explicit goods/service direction kinds: goods support quantities and start-time orders; services support one of each selected position at a start time or for a period. Existing period directions migrate to services; appointment directions remain goods for compatibility and require classification review. Historical orders are preserved and draft quantities are revalidated at placement.
+- Fixed multipart service capacity creation, strict scalar/name/display-mode validation and invalid-image errors. Corrected service upload schemas and removed duplicate image conversion. Omitted update flags now preserve existing settings.
+- Added privilege-protected paginated company and top-up discovery with company name/INN search and top-up status/company filters, plus persistent public business contacts with protected replacement. Administrators have these privileges by default. No contacts are seeded.
+- Added frontend integration/migration guidance in `docs/FRONTEND_API.md` and isolated PostgreSQL HTTP regression coverage. Frontend adoption, SMS delivery and payment-provider integration remain separate; no deployment is implied.
+- Verification: all 67 HTTP/database and migration checks passed on isolated PostgreSQL 16, including simultaneous booking attempts for the last slot, custom-role boundaries and concurrent last-administrator protection. Prisma schema validation and TypeScript compilation passed; browser behavior and production deployment were not tested.
+
 ## 2026-11-12
 
 - Added complete Swagger response contracts for site analytics and audited every published endpoint so each successful response with a body has an explicit OpenAPI schema. Expanded typed response documentation for authentication, user management, services, and catalogue items.

@@ -40,48 +40,15 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
+          command_timeout: 30m
           script: |
             set -eu
-            cd /home/${{ secrets.SSH_USER }}/ekvator 
+            cd /home/${{ secrets.SSH_USER }}/ekvator
             test -s .env
-            previous_image=""
-            current_container=$(docker compose ps -q app)
-            if [ -n "$current_container" ]; then
-              previous_image=$(docker inspect --format '{{.Image}}' "$current_container")
-            fi
             docker compose pull app
-            # Abort on identity conflicts before Prisma records a failed migration.
-            docker compose run --rm --no-deps app node scripts/auth-preflight.cjs
-            # Keep a private, complete database backup on the server before any migration.
             umask 077
             mkdir -p backups
-            backup="backups/before-migration-$(date -u +%Y%m%dT%H%M%SZ)-${{ github.sha }}.dump"
-            docker compose exec -T db sh -c 'exec pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc' > "$backup.partial"
-            test -s "$backup.partial"
-            docker compose exec -T db pg_restore --list < "$backup.partial" > /dev/null
-            mv "$backup.partial" "$backup"
-            echo "Database backup saved: $backup"
-            docker compose run --rm --no-deps app npx prisma migrate deploy
-            started=true
-            docker compose up -d --no-deps app || started=false
-            for attempt in $(seq 1 24); do
-              if [ "$started" != "true" ]; then break; fi
-              container=$(docker compose ps -q app)
-              if [ -n "$container" ]; then
-                state=$(docker inspect --format '{{.State.Status}}' "$container")
-                health=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}missing{{end}}' "$container")
-                if [ "$health" = "healthy" ]; then
-                  echo "Backend deployment is healthy."
-                  exit 0
-                fi
-                if [ "$state" = "exited" ] || [ "$health" = "unhealthy" ]; then break; fi
-              fi
-              sleep 5
-            done
-            echo "Backend health verification failed."
-            if [ -n "$previous_image" ]; then
-              docker image tag "$previous_image" dinarsharipov/ekvator:latest
-              docker compose up -d --no-deps app
-              echo "Previous application image restored."
-            fi
-            exit 1
+            runner="backups/deploy-runner-${{ github.sha }}.sh"
+            docker run --rm --entrypoint cat dinarsharipov/ekvator:latest /app/scripts/safe-deploy.sh > "$runner"
+            test -s "$runner"
+            bash "$runner" dinarsharipov/ekvator:latest ${{ github.sha }}

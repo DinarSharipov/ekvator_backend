@@ -6,17 +6,45 @@ import { AuthenticatedUser, ServiceAccessService } from "../auth/service-access.
 import { phoneLookupKey } from "../users/phone";
 import { PrismaService } from "../prisma/prisma.service";
 import { AddCompanyEmployeeDto, AllocateCompanyBalanceDto, ChargeCompanyQrDto, CreateCompanyDto, CreateCompanyTopUpDto } from "./dto/company.dto";
+import { AdminCompanyQueryDto, AdminTopUpQueryDto } from "./dto/admin-company-query.dto";
+import { hasPrivilege } from "../auth/privileges";
 
 const companyLockNamespace = 74_161;
 const maxMoneyMinor = 2_147_483_647;
 const userSelect = { id: true, name: true, surname: true, login: true, phone: true, email: true } satisfies Prisma.UserSelect;
 const companyInclude = { members: { orderBy: { id: "asc" }, include: { user: { select: userSelect } } } } satisfies Prisma.CompanyInclude;
 const topUpInclude = { createdBy: { select: userSelect }, confirmedBy: { select: userSelect } } satisfies Prisma.CompanyTopUpInclude;
-type Actor = { id: number; userRole: UserRole };
+type Actor = AuthenticatedUser;
 
 @Injectable()
 export class CompaniesService {
   constructor(private readonly prisma: PrismaService, private readonly passwords: PasswordService, private readonly serviceAccess: ServiceAccessService) {}
+
+  private companySearch(query?: string): Prisma.CompanyWhereInput {
+    return query ? { OR: [{ name: { contains: query, mode: "insensitive" } }, { inn: { contains: query, mode: "insensitive" } }] } : {};
+  }
+
+  async adminCompanies(query: AdminCompanyQueryDto) {
+    const where = this.companySearch(query.query);
+    const [companies, total] = await this.prisma.$transaction([
+      this.prisma.company.findMany({ where, include: companyInclude, orderBy: { id: "desc" }, skip: (query.page - 1) * query.limit, take: query.limit }),
+      this.prisma.company.count({ where }),
+    ], { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
+    return { items: companies.map((company) => this.presentCompany(company)), total, page: query.page, limit: query.limit };
+  }
+
+  async adminTopUps(query: AdminTopUpQueryDto) {
+    const where: Prisma.CompanyTopUpWhereInput = {
+      ...(query.status ? { status: query.status } : {}),
+      ...(query.companyId ? { companyId: query.companyId } : {}),
+      ...(query.query ? { company: this.companySearch(query.query) } : {}),
+    };
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.companyTopUp.findMany({ where, include: { ...topUpInclude, company: { select: { id: true, name: true, inn: true } } }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: (query.page - 1) * query.limit, take: query.limit }),
+      this.prisma.companyTopUp.count({ where }),
+    ], { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
+    return { items, total, page: query.page, limit: query.limit };
+  }
 
   async create(actor: Actor, dto: CreateCompanyDto) {
     return this.presentCompany(await this.prisma.company.create({
@@ -70,7 +98,7 @@ export class CompaniesService {
   }
 
   async confirmTopUp(actor: Actor, topUpId: number) {
-    if (actor.userRole !== UserRole.admin) throw new ForbiddenException("Подтверждать пополнения может только администратор Экватора");
+    if (!hasPrivilege(actor, "topups.confirm")) throw new ForbiddenException("Нет привилегии подтверждения пополнений");
     return this.prisma.$transaction(async (tx) => {
       const topUp = await tx.companyTopUp.findUnique({ where: { id: topUpId } });
       if (!topUp) throw new NotFoundException("Заявка на пополнение не найдена");
@@ -123,7 +151,7 @@ export class CompaniesService {
       ]);
       if (!member || !member.isActive) throw new NotFoundException("Активный сотрудник по QR-коду не найден");
       if (!serviceElement || serviceElement.isArchive) throw new NotFoundException("Товар или услуга не найдены");
-      this.serviceAccess.assertCanAccessServices(actor, [serviceElement.type]);
+      this.serviceAccess.assertCanAccessServices(actor, [serviceElement.type], "companies.charge");
       const amountMinor = Math.round(serviceElement.price * 100) * quantity;
       if (!Number.isSafeInteger(amountMinor) || amountMinor <= 0 || amountMinor > maxMoneyMinor) throw new ConflictException("Для позиции задана некорректная цена");
       await this.lockCompany(tx, member.companyId);
@@ -159,13 +187,13 @@ export class CompaniesService {
   private referenceId(reference: string | null, kind: "top-up" | "service-element") { const match = reference?.match(new RegExp(`(?:^|;)${kind}:(\\d+)`)); return match ? Number(match[1]) : null; }
 
   private async assertMember(actor: Actor, companyId: number) {
-    if (actor.userRole === UserRole.admin) return;
+    if (hasPrivilege(actor, "companies.read")) return;
     const member = await this.prisma.companyMember.findFirst({ where: { companyId, userId: actor.id, isActive: true } });
     if (!member) throw new ForbiddenException("Нет доступа к компании");
   }
 
   private async assertOwner(actor: Actor, companyId: number) {
-    if (actor.userRole === UserRole.admin) return;
+    if (hasPrivilege(actor, "companies.manage")) return;
     const owner = await this.prisma.companyMember.findFirst({ where: { companyId, userId: actor.id, role: CompanyMemberRole.owner, isActive: true } });
     if (!owner) throw new ForbiddenException("Управлять компанией может только её владелец");
   }

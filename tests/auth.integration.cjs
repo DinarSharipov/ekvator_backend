@@ -30,6 +30,7 @@ const phone = `+7${String(Date.now()).slice(-10)}`;
 
 test("registration, authentication and administrative access over HTTP with PostgreSQL", async (t) => {
   const prisma = new PrismaService();
+  await require("./support/ensure-test-admin.cjs")(prisma);
   const module = await Test.createTestingModule({ imports: [AppModule] })
     .overrideProvider(PrismaService)
     .useValue(prisma)
@@ -450,7 +451,7 @@ test("registration, authentication and administrative access over HTTP with Post
           .expect(200);
 
         const durationService = await prisma.serviceType.create({
-          data: { name: `${prefix} duration service`, acceptsPreorders: true, allowMixedCart: false, bookingMode: "duration" },
+          data: { name: `${prefix} duration service`, acceptsPreorders: true, allowMixedCart: false, bookingMode: "duration", kind: "services" },
         });
         const durationItem = await prisma.serviceElement.create({
           data: { name: `${prefix} duration item`, price: 100, type: durationService.id, preorderAvailable: true },

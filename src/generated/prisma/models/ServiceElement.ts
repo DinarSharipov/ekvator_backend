@@ -463,14 +463,6 @@ export type ServiceElementCreatephotosInput = {
   set: string[]
 }
 
-export type FloatFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type ServiceElementUpdatephotosInput = {
   set?: string[]
   push?: string | string[]

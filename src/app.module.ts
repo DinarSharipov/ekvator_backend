@@ -1,3 +1,4 @@
+import { AccessRolesModule } from "./roles/access-roles.module";
 import { Module } from "@nestjs/common";
 import { PrismaService } from "./prisma/prisma.service";
 import { ServiceElementModule } from "./service-elements/service-element.module";
@@ -8,9 +9,10 @@ import { OrdersModule } from "./orders/orders.module";
 import { WeatherModule } from "./weather/weather.module";
 import { CompaniesModule } from "./companies/companies.module";
 import { AnalyticsModule } from "./analytics/analytics.module";
+import { SettingsModule } from "./settings/settings.module";
 
 @Module({
-  imports: [UsersModule, ServiceTypesModule, ServiceElementModule, AuthModule, OrdersModule, WeatherModule, CompaniesModule, AnalyticsModule],
+  imports: [UsersModule, ServiceTypesModule, ServiceElementModule, AuthModule, OrdersModule, WeatherModule, CompaniesModule, AnalyticsModule, SettingsModule, AccessRolesModule],
   controllers: [],
   providers: [PrismaService],
 })

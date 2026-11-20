@@ -273,6 +273,7 @@ export type UserWhereInput = {
   telegram?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.StringFilter<"User"> | string
   serviceAssignments?: Prisma.UserServiceAssignmentListRelationFilter
+  accessRoles?: Prisma.UserAccessRoleListRelationFilter
   carts?: Prisma.CartListRelationFilter
   preorders?: Prisma.PreorderListRelationFilter
   companiesCreated?: Prisma.CompanyListRelationFilter
@@ -297,6 +298,7 @@ export type UserOrderByWithRelationInput = {
   telegram?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   serviceAssignments?: Prisma.UserServiceAssignmentOrderByRelationAggregateInput
+  accessRoles?: Prisma.UserAccessRoleOrderByRelationAggregateInput
   carts?: Prisma.CartOrderByRelationAggregateInput
   preorders?: Prisma.PreorderOrderByRelationAggregateInput
   companiesCreated?: Prisma.CompanyOrderByRelationAggregateInput
@@ -324,6 +326,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   telegram?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.StringFilter<"User"> | string
   serviceAssignments?: Prisma.UserServiceAssignmentListRelationFilter
+  accessRoles?: Prisma.UserAccessRoleListRelationFilter
   carts?: Prisma.CartListRelationFilter
   preorders?: Prisma.PreorderListRelationFilter
   companiesCreated?: Prisma.CompanyListRelationFilter
@@ -385,6 +388,7 @@ export type UserCreateInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
@@ -409,6 +413,7 @@ export type UserUncheckedCreateInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -432,6 +437,7 @@ export type UserUpdateInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
@@ -456,6 +462,7 @@ export type UserUncheckedUpdateInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -508,6 +515,11 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -563,22 +575,23 @@ export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
-}
-
 export type UserNullableScalarRelationFilter = {
   is?: Prisma.UserWhereInput | null
   isNot?: Prisma.UserWhereInput | null
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type UserCreateNestedOneWithoutAccessRolesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessRolesInput, Prisma.UserUncheckedCreateWithoutAccessRolesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessRolesInput
+  connect?: Prisma.UserWhereUniqueInput
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
+export type UserUpdateOneRequiredWithoutAccessRolesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessRolesInput, Prisma.UserUncheckedCreateWithoutAccessRolesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessRolesInput
+  upsert?: Prisma.UserUpsertWithoutAccessRolesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccessRolesInput, Prisma.UserUpdateWithoutAccessRolesInput>, Prisma.UserUncheckedUpdateWithoutAccessRolesInput>
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -587,14 +600,6 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
 
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
-}
-
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
 }
 
 export type UserCreateNestedOneWithoutCompaniesCreatedInput = {
@@ -729,6 +734,116 @@ export type UserUpdateOneRequiredWithoutPreordersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPreordersInput, Prisma.UserUpdateWithoutPreordersInput>, Prisma.UserUncheckedUpdateWithoutPreordersInput>
 }
 
+export type UserCreateWithoutAccessRolesInput = {
+  name: string
+  login: string
+  password: string
+  surname?: string | null
+  phone?: string | null
+  phoneNormalized?: string | null
+  phoneVerifiedAt?: Date | string | null
+  userRole?: $Enums.UserRole
+  email?: string | null
+  telegram?: string | null
+  role?: string
+  serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartCreateNestedManyWithoutUserInput
+  preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
+  companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
+  companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
+  companyTopUpsCreated?: Prisma.CompanyTopUpCreateNestedManyWithoutCreatedByInput
+  companyTopUpsConfirmed?: Prisma.CompanyTopUpCreateNestedManyWithoutConfirmedByInput
+  companyLedgerEntries?: Prisma.CompanyLedgerEntryCreateNestedManyWithoutCreatedByInput
+  analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAccessRolesInput = {
+  id?: number
+  name: string
+  login: string
+  password: string
+  surname?: string | null
+  phone?: string | null
+  phoneNormalized?: string | null
+  phoneVerifiedAt?: Date | string | null
+  userRole?: $Enums.UserRole
+  email?: string | null
+  telegram?: string | null
+  role?: string
+  serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
+  preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
+  companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
+  companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
+  companyTopUpsCreated?: Prisma.CompanyTopUpUncheckedCreateNestedManyWithoutCreatedByInput
+  companyTopUpsConfirmed?: Prisma.CompanyTopUpUncheckedCreateNestedManyWithoutConfirmedByInput
+  companyLedgerEntries?: Prisma.CompanyLedgerEntryUncheckedCreateNestedManyWithoutCreatedByInput
+  analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAccessRolesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessRolesInput, Prisma.UserUncheckedCreateWithoutAccessRolesInput>
+}
+
+export type UserUpsertWithoutAccessRolesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAccessRolesInput, Prisma.UserUncheckedUpdateWithoutAccessRolesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessRolesInput, Prisma.UserUncheckedCreateWithoutAccessRolesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAccessRolesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAccessRolesInput, Prisma.UserUncheckedUpdateWithoutAccessRolesInput>
+}
+
+export type UserUpdateWithoutAccessRolesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  login?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNormalized?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRole?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUpdateManyWithoutUserNestedInput
+  preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
+  companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
+  companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
+  companyTopUpsCreated?: Prisma.CompanyTopUpUpdateManyWithoutCreatedByNestedInput
+  companyTopUpsConfirmed?: Prisma.CompanyTopUpUpdateManyWithoutConfirmedByNestedInput
+  companyLedgerEntries?: Prisma.CompanyLedgerEntryUpdateManyWithoutCreatedByNestedInput
+  analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAccessRolesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  login?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNormalized?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRole?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
+  preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
+  companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
+  companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
+  companyTopUpsCreated?: Prisma.CompanyTopUpUncheckedUpdateManyWithoutCreatedByNestedInput
+  companyTopUpsConfirmed?: Prisma.CompanyTopUpUncheckedUpdateManyWithoutConfirmedByNestedInput
+  companyLedgerEntries?: Prisma.CompanyLedgerEntryUncheckedUpdateManyWithoutCreatedByNestedInput
+  analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutCompaniesCreatedInput = {
   name: string
   login: string
@@ -742,6 +857,7 @@ export type UserCreateWithoutCompaniesCreatedInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
@@ -765,6 +881,7 @@ export type UserUncheckedCreateWithoutCompaniesCreatedInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
@@ -803,6 +920,7 @@ export type UserUpdateWithoutCompaniesCreatedInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
@@ -826,6 +944,7 @@ export type UserUncheckedUpdateWithoutCompaniesCreatedInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -848,6 +967,7 @@ export type UserCreateWithoutCompanyMembershipsInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
@@ -871,6 +991,7 @@ export type UserUncheckedCreateWithoutCompanyMembershipsInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -909,6 +1030,7 @@ export type UserUpdateWithoutCompanyMembershipsInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
@@ -932,6 +1054,7 @@ export type UserUncheckedUpdateWithoutCompanyMembershipsInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -954,6 +1077,7 @@ export type UserCreateWithoutCompanyTopUpsCreatedInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
@@ -977,6 +1101,7 @@ export type UserUncheckedCreateWithoutCompanyTopUpsCreatedInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -1004,6 +1129,7 @@ export type UserCreateWithoutCompanyTopUpsConfirmedInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
@@ -1027,6 +1153,7 @@ export type UserUncheckedCreateWithoutCompanyTopUpsConfirmedInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -1065,6 +1192,7 @@ export type UserUpdateWithoutCompanyTopUpsCreatedInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
@@ -1088,6 +1216,7 @@ export type UserUncheckedUpdateWithoutCompanyTopUpsCreatedInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -1121,6 +1250,7 @@ export type UserUpdateWithoutCompanyTopUpsConfirmedInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
@@ -1144,6 +1274,7 @@ export type UserUncheckedUpdateWithoutCompanyTopUpsConfirmedInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -1166,6 +1297,7 @@ export type UserCreateWithoutCompanyLedgerEntriesInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
@@ -1189,6 +1321,7 @@ export type UserUncheckedCreateWithoutCompanyLedgerEntriesInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -1227,6 +1360,7 @@ export type UserUpdateWithoutCompanyLedgerEntriesInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
@@ -1250,6 +1384,7 @@ export type UserUncheckedUpdateWithoutCompanyLedgerEntriesInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -1271,6 +1406,7 @@ export type UserCreateWithoutServiceAssignmentsInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
@@ -1294,6 +1430,7 @@ export type UserUncheckedCreateWithoutServiceAssignmentsInput = {
   email?: string | null
   telegram?: string | null
   role?: string
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -1332,6 +1469,7 @@ export type UserUpdateWithoutServiceAssignmentsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
@@ -1355,6 +1493,7 @@ export type UserUncheckedUpdateWithoutServiceAssignmentsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -1378,6 +1517,7 @@ export type UserCreateWithoutAnalyticsEventsInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
@@ -1401,6 +1541,7 @@ export type UserUncheckedCreateWithoutAnalyticsEventsInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -1439,6 +1580,7 @@ export type UserUpdateWithoutAnalyticsEventsInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
@@ -1462,6 +1604,7 @@ export type UserUncheckedUpdateWithoutAnalyticsEventsInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -1484,6 +1627,7 @@ export type UserCreateWithoutCartsInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
@@ -1507,6 +1651,7 @@ export type UserUncheckedCreateWithoutCartsInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   preorders?: Prisma.PreorderUncheckedCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
@@ -1545,6 +1690,7 @@ export type UserUpdateWithoutCartsInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
@@ -1568,6 +1714,7 @@ export type UserUncheckedUpdateWithoutCartsInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   preorders?: Prisma.PreorderUncheckedUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -1590,6 +1737,7 @@ export type UserCreateWithoutPreordersInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleCreateNestedManyWithoutUserInput
   carts?: Prisma.CartCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyCreateNestedManyWithoutCreatedByInput
   companyMemberships?: Prisma.CompanyMemberCreateNestedManyWithoutUserInput
@@ -1613,6 +1761,7 @@ export type UserUncheckedCreateWithoutPreordersInput = {
   telegram?: string | null
   role?: string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedCreateNestedManyWithoutUserInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedCreateNestedManyWithoutUserInput
   carts?: Prisma.CartUncheckedCreateNestedManyWithoutUserInput
   companiesCreated?: Prisma.CompanyUncheckedCreateNestedManyWithoutCreatedByInput
   companyMemberships?: Prisma.CompanyMemberUncheckedCreateNestedManyWithoutUserInput
@@ -1651,6 +1800,7 @@ export type UserUpdateWithoutPreordersInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUpdateManyWithoutCreatedByNestedInput
   companyMemberships?: Prisma.CompanyMemberUpdateManyWithoutUserNestedInput
@@ -1674,6 +1824,7 @@ export type UserUncheckedUpdateWithoutPreordersInput = {
   telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.StringFieldUpdateOperationsInput | string
   serviceAssignments?: Prisma.UserServiceAssignmentUncheckedUpdateManyWithoutUserNestedInput
+  accessRoles?: Prisma.UserAccessRoleUncheckedUpdateManyWithoutUserNestedInput
   carts?: Prisma.CartUncheckedUpdateManyWithoutUserNestedInput
   companiesCreated?: Prisma.CompanyUncheckedUpdateManyWithoutCreatedByNestedInput
   companyMemberships?: Prisma.CompanyMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -1690,6 +1841,7 @@ export type UserUncheckedUpdateWithoutPreordersInput = {
 
 export type UserCountOutputType = {
   serviceAssignments: number
+  accessRoles: number
   carts: number
   preorders: number
   companiesCreated: number
@@ -1702,6 +1854,7 @@ export type UserCountOutputType = {
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   serviceAssignments?: boolean | UserCountOutputTypeCountServiceAssignmentsArgs
+  accessRoles?: boolean | UserCountOutputTypeCountAccessRolesArgs
   carts?: boolean | UserCountOutputTypeCountCartsArgs
   preorders?: boolean | UserCountOutputTypeCountPreordersArgs
   companiesCreated?: boolean | UserCountOutputTypeCountCompaniesCreatedArgs
@@ -1727,6 +1880,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountServiceAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserServiceAssignmentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAccessRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserAccessRoleWhereInput
 }
 
 /**
@@ -1800,6 +1960,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   telegram?: boolean
   role?: boolean
   serviceAssignments?: boolean | Prisma.User$serviceAssignmentsArgs<ExtArgs>
+  accessRoles?: boolean | Prisma.User$accessRolesArgs<ExtArgs>
   carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
   preorders?: boolean | Prisma.User$preordersArgs<ExtArgs>
   companiesCreated?: boolean | Prisma.User$companiesCreatedArgs<ExtArgs>
@@ -1859,6 +2020,7 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "login" | "password" | "surname" | "phone" | "phoneNormalized" | "phoneVerifiedAt" | "userRole" | "email" | "telegram" | "role", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   serviceAssignments?: boolean | Prisma.User$serviceAssignmentsArgs<ExtArgs>
+  accessRoles?: boolean | Prisma.User$accessRolesArgs<ExtArgs>
   carts?: boolean | Prisma.User$cartsArgs<ExtArgs>
   preorders?: boolean | Prisma.User$preordersArgs<ExtArgs>
   companiesCreated?: boolean | Prisma.User$companiesCreatedArgs<ExtArgs>
@@ -1876,6 +2038,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     serviceAssignments: Prisma.$UserServiceAssignmentPayload<ExtArgs>[]
+    accessRoles: Prisma.$UserAccessRolePayload<ExtArgs>[]
     carts: Prisma.$CartPayload<ExtArgs>[]
     preorders: Prisma.$PreorderPayload<ExtArgs>[]
     companiesCreated: Prisma.$CompanyPayload<ExtArgs>[]
@@ -2293,6 +2456,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   serviceAssignments<T extends Prisma.User$serviceAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$serviceAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserServiceAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accessRoles<T extends Prisma.User$accessRolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accessRolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserAccessRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   carts<T extends Prisma.User$cartsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$cartsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   preorders<T extends Prisma.User$preordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$preordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PreorderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   companiesCreated<T extends Prisma.User$companiesCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$companiesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2751,6 +2915,30 @@ export type User$serviceAssignmentsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.UserServiceAssignmentScalarFieldEnum | Prisma.UserServiceAssignmentScalarFieldEnum[]
+}
+
+/**
+ * User.accessRoles
+ */
+export type User$accessRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserAccessRole
+   */
+  select?: Prisma.UserAccessRoleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserAccessRole
+   */
+  omit?: Prisma.UserAccessRoleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserAccessRoleInclude<ExtArgs> | null
+  where?: Prisma.UserAccessRoleWhereInput
+  orderBy?: Prisma.UserAccessRoleOrderByWithRelationInput | Prisma.UserAccessRoleOrderByWithRelationInput[]
+  cursor?: Prisma.UserAccessRoleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserAccessRoleScalarFieldEnum | Prisma.UserAccessRoleScalarFieldEnum[]
 }
 
 /**

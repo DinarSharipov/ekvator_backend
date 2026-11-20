@@ -1,4 +1,7 @@
+import { PrivilegesGuard, RequirePrivileges } from "../auth/privileges.guard";
+import { AuthenticatedUser, ServiceAccessService } from "../auth/service-access.service";
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,6 +12,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Request,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -17,6 +21,7 @@ import {
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import {
   ApiBody,
+  ApiBodyOptions,
   ApiConsumes,
   ApiConflictResponse,
   ApiCreatedResponse,
@@ -31,12 +36,40 @@ import {
 } from "@nestjs/swagger";
 import { memoryStorage } from "multer";
 import * as sharp from "sharp";
-import { AdminGuard } from "../auth/admin.guard";
 import { AuthGuard } from "../auth/auth.guard";
 import { CreateServiceTypeDto } from "./dto/create.service-type.dto";
 import { ServiceTypeService } from "./service-type.service";
 import { ReorderServicesDto } from "./dto/reorder-services.dto";
 import { ApiErrorDto, OrderPermissionResponseDto, ServiceTypeListItemResponseDto, ServiceTypeResponseDto } from "../openapi/response.dto";
+
+const serviceTypeMultipartBody: ApiBodyOptions = {
+  schema: {
+    type: "object",
+    properties: {
+      name: { type: "string", minLength: 1, maxLength: 200 },
+      showInMain: { type: "boolean" },
+      phone: { type: "string" },
+      secondPhone: { type: "string" },
+      description: { type: "string", maxLength: 5000 },
+      showType: { type: "string", enum: ["table", "blocks"] },
+      kind: { type: "string", enum: ["goods", "services"] },
+      photo: { type: "string", format: "binary" },
+      gallery: {
+        type: "array",
+        items: {
+          type: "string",
+          format: "binary",
+        },
+      },
+      acceptsPreorders: { type: "boolean" },
+      allowMixedCart: { type: "boolean" },
+      bookingMode: { type: "string", enum: ["appointment", "duration"] },
+      bookingCapacity: { type: "integer", minimum: 1, maximum: 2147483647 },
+      prepaymentEnabled: { type: "boolean" },
+    },
+    required: ["name"],
+  },
+};
 
 @ApiTags("services")
 @Controller("services")
@@ -46,40 +79,16 @@ import { ApiErrorDto, OrderPermissionResponseDto, ServiceTypeListItemResponseDto
 @ApiResponse({ status: 403, description: "Недостаточно прав", type: ApiErrorDto })
 @ApiResponse({ status: 404, description: "Сервис не найден", type: ApiErrorDto })
 export class ServiceTypesController {
-  constructor(private readonly serviceTypeService: ServiceTypeService) {}
+  constructor(private readonly serviceTypeService: ServiceTypeService, private readonly serviceAccess: ServiceAccessService) {}
 
   @Post()
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, PrivilegesGuard)
+  @RequirePrivileges("services.create")
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Создать новый тип сервиса", description: "Создаёт сервис Экватора и его настройки отображения, предзаказов и бронирования." })
   @ApiCreatedResponse({ description: "Сервис успешно создан", type: ServiceTypeResponseDto })
   @ApiConsumes("multipart/form-data")
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        name: { type: "string" },
-        showInMain: { type: "boolean" },
-        phone: { type: "string" },
-        secondPhone: { type: "string" },
-        description: { type: "string" },
-        photo: { type: "string", format: "binary" },
-        gallery: {
-          type: "array",
-          items: {
-            type: "string",
-            format: "binary",
-          },
-        },
-        acceptsPreorders: { type: "boolean" },
-        allowMixedCart: { type: "boolean" },
-        bookingMode: { type: "string", enum: ["appointment", "duration"] },
-        bookingCapacity: { type: "number", minimum: 1 },
-        prepaymentEnabled: { type: "boolean" },
-      },
-      required: ["name", "photo"],
-    },
-  })
+  @ApiBody(serviceTypeMultipartBody)
   @UseInterceptors(
     FileFieldsInterceptor(
       [
@@ -93,41 +102,15 @@ export class ServiceTypesController {
     ),
   )
   async create(
-    @Body() createServiceType: CreateServiceTypeDto,
+    @Body(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) createServiceType: CreateServiceTypeDto,
     @UploadedFiles()
     files: {
-      photo?: Express.Multer.File;
+      photo?: Express.Multer.File[];
       gallery?: Express.Multer.File[];
     },
   ) {
-    // Конвертируем main photo в webp
-    const base64Photo = files?.photo?.[0]
-      ? (
-          await sharp(files.photo[0].buffer).webp({ quality: 80 }).toBuffer()
-        ).toString("base64")
-      : null;
-
-    // Конвертируем все файлы галереи в webp
-    const base64Gallery = files?.gallery
-      ? await Promise.all(
-          files.gallery.map(async (file) => {
-            const webpBuffer = await sharp(file.buffer)
-              .webp({ quality: 80 })
-              .toBuffer();
-            return webpBuffer.toString("base64");
-          }),
-        )
-      : [];
-
-    return this.serviceTypeService.create({
-      ...createServiceType,
-      showInMain: String(createServiceType.showInMain) === "true",
-      acceptsPreorders: String(createServiceType.acceptsPreorders) === "true",
-      allowMixedCart: createServiceType.allowMixedCart === undefined ? true : String(createServiceType.allowMixedCart) === "true",
-      prepaymentEnabled: String(createServiceType.prepaymentEnabled) === "true",
-      photo: base64Photo,
-      gallery: base64Gallery,
-    });
+    const images = await this.convertImages(files);
+    return this.serviceTypeService.create({ ...createServiceType, ...images });
   }
 
   @Get()
@@ -138,13 +121,15 @@ export class ServiceTypesController {
   }
 
   @Get("order-permission")
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, PrivilegesGuard)
+  @RequirePrivileges("services.reorder")
   @ApiOperation({ summary: "Проверить доступ к изменению порядка", description: "Служебная проверка права системного администратора на изменение порядка сервисов." })
   @ApiOkResponse({ type: OrderPermissionResponseDto })
   orderPermission() { return { canReorder: true }; }
 
   @Put("order")
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, PrivilegesGuard)
+  @RequirePrivileges("services.reorder")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Сохранить порядок всех сервисов", description: "Атомарно заменяет порядок полного списка сервисов; защищён от устаревшего или неполного списка." })
   @ApiNoContentResponse({ description: "Порядок сохранён; тела ответа нет." })
@@ -163,7 +148,8 @@ export class ServiceTypesController {
   }
 
   @Delete(":id")
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, PrivilegesGuard)
+  @RequirePrivileges("services.delete")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Удалить сервис по ID", description: "Удаляет сервис. Операция может быть отклонена БД при наличии связанных исторических данных." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
@@ -173,38 +159,14 @@ export class ServiceTypesController {
   }
 
   @Put(":id")
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, PrivilegesGuard)
+  @RequirePrivileges("services.update")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: "Обновить сервис по ID", description: "Обновляет данные и настройки сервиса Экватора." })
   @ApiParam({ name: "id", type: "number", description: "ID сервиса" })
   @ApiNoContentResponse({ description: "Сервис изменен; тела ответа нет." })
   @ApiConsumes("multipart/form-data")
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        name: { type: "string" },
-        showInMain: { type: "boolean" },
-        phone: { type: "string" },
-        secondPhone: { type: "string" },
-        description: { type: "string" },
-        photo: { type: "string", format: "binary" },
-        gallery: {
-          type: "array",
-          items: {
-            type: "string",
-            format: "binary",
-          },
-        },
-        acceptsPreorders: { type: "boolean" },
-        allowMixedCart: { type: "boolean" },
-        bookingMode: { type: "string", enum: ["appointment", "duration"] },
-        bookingCapacity: { type: "number", minimum: 1 },
-        prepaymentEnabled: { type: "boolean" },
-      },
-      required: ["name", "photo"],
-    },
-  })
+  @ApiBody(serviceTypeMultipartBody)
   @UseInterceptors(
     FileFieldsInterceptor(
       [
@@ -218,43 +180,31 @@ export class ServiceTypesController {
     ),
   )
   async update(
+    @Request() request: { user: AuthenticatedUser },
     @Param("id", ParseIntPipe) id: number,
-    @Body() createServiceType: CreateServiceTypeDto,
+    @Body(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) createServiceType: CreateServiceTypeDto,
     @UploadedFiles()
     files: {
-      photo?: Express.Multer.File;
+      photo?: Express.Multer.File[];
       gallery?: Express.Multer.File[];
     },
   ) {
-    // Конвертируем main photo в webp
-    const base64Photo = files?.photo?.[0]
-      ? (
-          await sharp(files.photo[0].buffer).webp({ quality: 80 }).toBuffer()
-        ).toString("base64")
-      : null;
+    const images = await this.convertImages(files);
+    this.serviceAccess.assertCanAccessServices(request.user, [id], "services.update");
+    return this.serviceTypeService.update(id, { ...createServiceType, ...images });
+  }
 
-    // Конвертируем все файлы галереи в webp
-    const base64Gallery = files?.gallery
-      ? await Promise.all(
-          files.gallery.map(async (file) => {
-            const webpBuffer = await sharp(file.buffer)
-              .webp({ quality: 80 })
-              .toBuffer();
-            return webpBuffer.toString("base64");
-          }),
-        )
-      : [];
-
-    return this.serviceTypeService.update(id, {
-      ...createServiceType,
-      showInMain: String(createServiceType.showInMain) === "true",
-      ...(createServiceType.acceptsPreorders === undefined ? {} : { acceptsPreorders: String(createServiceType.acceptsPreorders) === "true" }),
-      ...(createServiceType.allowMixedCart === undefined ? {} : { allowMixedCart: String(createServiceType.allowMixedCart) === "true" }),
-      ...(createServiceType.bookingCapacity === undefined ? {} : { bookingCapacity: Number(createServiceType.bookingCapacity) }),
-      ...(createServiceType.prepaymentEnabled === undefined ? {} : { prepaymentEnabled: String(createServiceType.prepaymentEnabled) === "true" }),
-      photo: base64Photo,
-      gallery: base64Gallery,
-    });
+  private async convertImages(files?: { photo?: Express.Multer.File[]; gallery?: Express.Multer.File[] }) {
+    const convert = async (file: Express.Multer.File) => {
+      try {
+        return (await sharp(file.buffer).webp({ quality: 80 }).toBuffer()).toString("base64");
+      } catch {
+        throw new BadRequestException("Файл должен содержать корректное изображение");
+      }
+    };
+    return {
+      photo: files?.photo?.[0] ? await convert(files.photo[0]) : null,
+      gallery: await Promise.all((files?.gallery ?? []).map(convert)),
+    };
   }
 }
-

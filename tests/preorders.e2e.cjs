@@ -29,6 +29,7 @@ const future = (hours) => new Date(Date.now() + hours * 60 * 60 * 1000);
 
 test("cart and preorder HTTP workflows with PostgreSQL", async (t) => {
   const prisma = new PrismaService();
+  await require("./support/ensure-test-admin.cjs")(prisma);
   const module = await Test.createTestingModule({ imports: [AppModule] })
     .overrideProvider(PrismaService)
     .useValue(prisma)
@@ -100,6 +101,7 @@ test("cart and preorder HTTP workflows with PostgreSQL", async (t) => {
     catalogue.secondAppointment = await createService("second-appointment");
     catalogue.duration = await createService("duration", {
       bookingMode: "duration",
+      kind: "services",
       allowMixedCart: false,
       bookingCapacity: 1,
     });

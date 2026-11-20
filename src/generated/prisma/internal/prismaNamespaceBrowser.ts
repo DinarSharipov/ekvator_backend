@@ -51,6 +51,12 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  SiteContacts: 'SiteContacts',
+  Privilege: 'Privilege',
+  AccessRole: 'AccessRole',
+  RolePrivilege: 'RolePrivilege',
+  UserAccessRole: 'UserAccessRole',
+  AdministratorState: 'AdministratorState',
   User: 'User',
   Company: 'Company',
   CompanyMember: 'CompanyMember',
@@ -80,6 +86,68 @@ export const TransactionIsolationLevel = {
 } as const
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const SiteContactsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  address: 'address',
+  phones: 'phones',
+  email: 'email',
+  workingHours: 'workingHours',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  mapUrl: 'mapUrl',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SiteContactsScalarFieldEnum = (typeof SiteContactsScalarFieldEnum)[keyof typeof SiteContactsScalarFieldEnum]
+
+
+export const PrivilegeScalarFieldEnum = {
+  key: 'key',
+  description: 'description',
+  scoped: 'scoped',
+  adminOnly: 'adminOnly'
+} as const
+
+export type PrivilegeScalarFieldEnum = (typeof PrivilegeScalarFieldEnum)[keyof typeof PrivilegeScalarFieldEnum]
+
+
+export const AccessRoleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccessRoleScalarFieldEnum = (typeof AccessRoleScalarFieldEnum)[keyof typeof AccessRoleScalarFieldEnum]
+
+
+export const RolePrivilegeScalarFieldEnum = {
+  roleId: 'roleId',
+  privilege: 'privilege',
+  scope: 'scope'
+} as const
+
+export type RolePrivilegeScalarFieldEnum = (typeof RolePrivilegeScalarFieldEnum)[keyof typeof RolePrivilegeScalarFieldEnum]
+
+
+export const UserAccessRoleScalarFieldEnum = {
+  userId: 'userId',
+  roleId: 'roleId'
+} as const
+
+export type UserAccessRoleScalarFieldEnum = (typeof UserAccessRoleScalarFieldEnum)[keyof typeof UserAccessRoleScalarFieldEnum]
+
+
+export const AdministratorStateScalarFieldEnum = {
+  id: 'id',
+  count: 'count'
+} as const
+
+export type AdministratorStateScalarFieldEnum = (typeof AdministratorStateScalarFieldEnum)[keyof typeof AdministratorStateScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -168,6 +236,7 @@ export type UserServiceAssignmentScalarFieldEnum = (typeof UserServiceAssignment
 
 export const ServiceTypeScalarFieldEnum = {
   id: 'id',
+  kind: 'kind',
   sortOrder: 'sortOrder',
   name: 'name',
   showInMain: 'showInMain',

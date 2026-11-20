@@ -40,6 +40,7 @@ export type ServiceTypeSumAggregateOutputType = {
 
 export type ServiceTypeMinAggregateOutputType = {
   id: number | null
+  kind: $Enums.ServiceKind | null
   sortOrder: number | null
   name: string | null
   showInMain: boolean | null
@@ -57,6 +58,7 @@ export type ServiceTypeMinAggregateOutputType = {
 
 export type ServiceTypeMaxAggregateOutputType = {
   id: number | null
+  kind: $Enums.ServiceKind | null
   sortOrder: number | null
   name: string | null
   showInMain: boolean | null
@@ -74,6 +76,7 @@ export type ServiceTypeMaxAggregateOutputType = {
 
 export type ServiceTypeCountAggregateOutputType = {
   id: number
+  kind: number
   sortOrder: number
   name: number
   showInMain: number
@@ -106,6 +109,7 @@ export type ServiceTypeSumAggregateInputType = {
 
 export type ServiceTypeMinAggregateInputType = {
   id?: true
+  kind?: true
   sortOrder?: true
   name?: true
   showInMain?: true
@@ -123,6 +127,7 @@ export type ServiceTypeMinAggregateInputType = {
 
 export type ServiceTypeMaxAggregateInputType = {
   id?: true
+  kind?: true
   sortOrder?: true
   name?: true
   showInMain?: true
@@ -140,6 +145,7 @@ export type ServiceTypeMaxAggregateInputType = {
 
 export type ServiceTypeCountAggregateInputType = {
   id?: true
+  kind?: true
   sortOrder?: true
   name?: true
   showInMain?: true
@@ -245,6 +251,7 @@ export type ServiceTypeGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type ServiceTypeGroupByOutputType = {
   id: number
+  kind: $Enums.ServiceKind
   sortOrder: number
   name: string
   showInMain: boolean
@@ -286,6 +293,7 @@ export type ServiceTypeWhereInput = {
   OR?: Prisma.ServiceTypeWhereInput[]
   NOT?: Prisma.ServiceTypeWhereInput | Prisma.ServiceTypeWhereInput[]
   id?: Prisma.IntFilter<"ServiceType"> | number
+  kind?: Prisma.EnumServiceKindFilter<"ServiceType"> | $Enums.ServiceKind
   sortOrder?: Prisma.IntFilter<"ServiceType"> | number
   name?: Prisma.StringFilter<"ServiceType"> | string
   showInMain?: Prisma.BoolFilter<"ServiceType"> | boolean
@@ -307,6 +315,7 @@ export type ServiceTypeWhereInput = {
 
 export type ServiceTypeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
@@ -331,6 +340,7 @@ export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ServiceTypeWhereInput | Prisma.ServiceTypeWhereInput[]
   OR?: Prisma.ServiceTypeWhereInput[]
   NOT?: Prisma.ServiceTypeWhereInput | Prisma.ServiceTypeWhereInput[]
+  kind?: Prisma.EnumServiceKindFilter<"ServiceType"> | $Enums.ServiceKind
   sortOrder?: Prisma.IntFilter<"ServiceType"> | number
   name?: Prisma.StringFilter<"ServiceType"> | string
   showInMain?: Prisma.BoolFilter<"ServiceType"> | boolean
@@ -352,6 +362,7 @@ export type ServiceTypeWhereUniqueInput = Prisma.AtLeast<{
 
 export type ServiceTypeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
@@ -378,6 +389,7 @@ export type ServiceTypeScalarWhereWithAggregatesInput = {
   OR?: Prisma.ServiceTypeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ServiceTypeScalarWhereWithAggregatesInput | Prisma.ServiceTypeScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ServiceType"> | number
+  kind?: Prisma.EnumServiceKindWithAggregatesFilter<"ServiceType"> | $Enums.ServiceKind
   sortOrder?: Prisma.IntWithAggregatesFilter<"ServiceType"> | number
   name?: Prisma.StringWithAggregatesFilter<"ServiceType"> | string
   showInMain?: Prisma.BoolWithAggregatesFilter<"ServiceType"> | boolean
@@ -395,6 +407,7 @@ export type ServiceTypeScalarWhereWithAggregatesInput = {
 }
 
 export type ServiceTypeCreateInput = {
+  kind?: $Enums.ServiceKind
   sortOrder?: number
   name: string
   showInMain?: boolean
@@ -416,6 +429,7 @@ export type ServiceTypeCreateInput = {
 
 export type ServiceTypeUncheckedCreateInput = {
   id?: number
+  kind?: $Enums.ServiceKind
   sortOrder?: number
   name: string
   showInMain?: boolean
@@ -436,6 +450,7 @@ export type ServiceTypeUncheckedCreateInput = {
 }
 
 export type ServiceTypeUpdateInput = {
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -457,6 +472,7 @@ export type ServiceTypeUpdateInput = {
 
 export type ServiceTypeUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -478,6 +494,7 @@ export type ServiceTypeUncheckedUpdateInput = {
 
 export type ServiceTypeCreateManyInput = {
   id?: number
+  kind?: $Enums.ServiceKind
   sortOrder?: number
   name: string
   showInMain?: boolean
@@ -495,6 +512,7 @@ export type ServiceTypeCreateManyInput = {
 }
 
 export type ServiceTypeUpdateManyMutationInput = {
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -513,6 +531,7 @@ export type ServiceTypeUpdateManyMutationInput = {
 
 export type ServiceTypeUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -534,16 +553,9 @@ export type ServiceTypeScalarRelationFilter = {
   isNot?: Prisma.ServiceTypeWhereInput
 }
 
-export type StringNullableListFilter<$PrismaModel = never> = {
-  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
-  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
-  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
-}
-
 export type ServiceTypeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
@@ -568,6 +580,7 @@ export type ServiceTypeAvgOrderByAggregateInput = {
 
 export type ServiceTypeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
@@ -585,6 +598,7 @@ export type ServiceTypeMaxOrderByAggregateInput = {
 
 export type ServiceTypeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   name?: Prisma.SortOrder
   showInMain?: Prisma.SortOrder
@@ -629,6 +643,10 @@ export type ServiceTypeCreategalleryInput = {
   set: string[]
 }
 
+export type EnumServiceKindFieldUpdateOperationsInput = {
+  set?: $Enums.ServiceKind
+}
+
 export type ServiceTypeUpdategalleryInput = {
   set?: string[]
   push?: string | string[]
@@ -669,6 +687,7 @@ export type ServiceTypeUpdateOneRequiredWithoutPreorderItemsNestedInput = {
 }
 
 export type ServiceTypeCreateWithoutUserAssignmentsInput = {
+  kind?: $Enums.ServiceKind
   sortOrder?: number
   name: string
   showInMain?: boolean
@@ -689,6 +708,7 @@ export type ServiceTypeCreateWithoutUserAssignmentsInput = {
 
 export type ServiceTypeUncheckedCreateWithoutUserAssignmentsInput = {
   id?: number
+  kind?: $Enums.ServiceKind
   sortOrder?: number
   name: string
   showInMain?: boolean
@@ -724,6 +744,7 @@ export type ServiceTypeUpdateToOneWithWhereWithoutUserAssignmentsInput = {
 }
 
 export type ServiceTypeUpdateWithoutUserAssignmentsInput = {
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -744,6 +765,7 @@ export type ServiceTypeUpdateWithoutUserAssignmentsInput = {
 
 export type ServiceTypeUncheckedUpdateWithoutUserAssignmentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -763,6 +785,7 @@ export type ServiceTypeUncheckedUpdateWithoutUserAssignmentsInput = {
 }
 
 export type ServiceTypeCreateWithoutAnalyticsEventsInput = {
+  kind?: $Enums.ServiceKind
   sortOrder?: number
   name: string
   showInMain?: boolean
@@ -783,6 +806,7 @@ export type ServiceTypeCreateWithoutAnalyticsEventsInput = {
 
 export type ServiceTypeUncheckedCreateWithoutAnalyticsEventsInput = {
   id?: number
+  kind?: $Enums.ServiceKind
   sortOrder?: number
   name: string
   showInMain?: boolean
@@ -818,6 +842,7 @@ export type ServiceTypeUpdateToOneWithWhereWithoutAnalyticsEventsInput = {
 }
 
 export type ServiceTypeUpdateWithoutAnalyticsEventsInput = {
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -838,6 +863,7 @@ export type ServiceTypeUpdateWithoutAnalyticsEventsInput = {
 
 export type ServiceTypeUncheckedUpdateWithoutAnalyticsEventsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -857,6 +883,7 @@ export type ServiceTypeUncheckedUpdateWithoutAnalyticsEventsInput = {
 }
 
 export type ServiceTypeCreateWithoutPreorderItemsInput = {
+  kind?: $Enums.ServiceKind
   sortOrder?: number
   name: string
   showInMain?: boolean
@@ -877,6 +904,7 @@ export type ServiceTypeCreateWithoutPreorderItemsInput = {
 
 export type ServiceTypeUncheckedCreateWithoutPreorderItemsInput = {
   id?: number
+  kind?: $Enums.ServiceKind
   sortOrder?: number
   name: string
   showInMain?: boolean
@@ -912,6 +940,7 @@ export type ServiceTypeUpdateToOneWithWhereWithoutPreorderItemsInput = {
 }
 
 export type ServiceTypeUpdateWithoutPreorderItemsInput = {
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -932,6 +961,7 @@ export type ServiceTypeUpdateWithoutPreorderItemsInput = {
 
 export type ServiceTypeUncheckedUpdateWithoutPreorderItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  kind?: Prisma.EnumServiceKindFieldUpdateOperationsInput | $Enums.ServiceKind
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   showInMain?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1001,6 +1031,7 @@ export type ServiceTypeCountOutputTypeCountAnalyticsEventsArgs<ExtArgs extends r
 
 export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  kind?: boolean
   sortOrder?: boolean
   name?: boolean
   showInMain?: boolean
@@ -1023,6 +1054,7 @@ export type ServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  kind?: boolean
   sortOrder?: boolean
   name?: boolean
   showInMain?: boolean
@@ -1041,6 +1073,7 @@ export type ServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
 
 export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  kind?: boolean
   sortOrder?: boolean
   name?: boolean
   showInMain?: boolean
@@ -1059,6 +1092,7 @@ export type ServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
 
 export type ServiceTypeSelectScalar = {
   id?: boolean
+  kind?: boolean
   sortOrder?: boolean
   name?: boolean
   showInMain?: boolean
@@ -1075,7 +1109,7 @@ export type ServiceTypeSelectScalar = {
   prepaymentEnabled?: boolean
 }
 
-export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sortOrder" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description" | "showType" | "gallery" | "acceptsPreorders" | "allowMixedCart" | "bookingMode" | "bookingCapacity" | "prepaymentEnabled", ExtArgs["result"]["serviceType"]>
+export type ServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kind" | "sortOrder" | "name" | "showInMain" | "phone" | "secondPhone" | "photo" | "description" | "showType" | "gallery" | "acceptsPreorders" | "allowMixedCart" | "bookingMode" | "bookingCapacity" | "prepaymentEnabled", ExtArgs["result"]["serviceType"]>
 export type ServiceTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   preorderItems?: boolean | Prisma.ServiceType$preorderItemsArgs<ExtArgs>
   userAssignments?: boolean | Prisma.ServiceType$userAssignmentsArgs<ExtArgs>
@@ -1094,6 +1128,7 @@ export type $ServiceTypePayload<ExtArgs extends runtime.Types.Extensions.Interna
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    kind: $Enums.ServiceKind
     sortOrder: number
     name: string
     showInMain: boolean
@@ -1535,6 +1570,7 @@ export interface Prisma__ServiceTypeClient<T, Null = never, ExtArgs extends runt
  */
 export interface ServiceTypeFieldRefs {
   readonly id: Prisma.FieldRef<"ServiceType", 'Int'>
+  readonly kind: Prisma.FieldRef<"ServiceType", 'ServiceKind'>
   readonly sortOrder: Prisma.FieldRef<"ServiceType", 'Int'>
   readonly name: Prisma.FieldRef<"ServiceType", 'String'>
   readonly showInMain: Prisma.FieldRef<"ServiceType", 'Boolean'>

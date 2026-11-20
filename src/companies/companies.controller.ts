@@ -1,10 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Request, UseGuards, ValidationPipe } from "@nestjs/common";
+import { PrivilegesGuard, RequirePrivileges } from "../auth/privileges.guard";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Query, Request, UseGuards, ValidationPipe } from "@nestjs/common";
 import { ApiBearerAuth, ApiCreatedResponse, ApiExtraModels, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, getSchemaPath } from "@nestjs/swagger";
 import { AuthGuard } from "../auth/auth.guard";
-import { Roles } from "../auth/roles.decorator";
-import { RolesGuard } from "../auth/roles.guard";
 import { AuthenticatedUser } from "../auth/service-access.service";
-import { UserRole } from "../generated/prisma/enums";
+import { AdminCompanyQueryDto, AdminTopUpQueryDto } from "./dto/admin-company-query.dto";
+import { AdminCompanyPageDto, AdminTopUpPageDto } from "./dto/admin-company-response.dto";
 import { CompaniesService } from "./companies.service";
 import { AddCompanyEmployeeDto, AllocateCompanyBalanceDto, ChargeCompanyQrDto, CreateCompanyDto, CreateCompanyTopUpDto } from "./dto/company.dto";
 import { AllocationResponseDto, ApiErrorDto, CompanyLedgerEntryResponseDto, CompanyMemberResponseDto, CompanyQrChargeResponseDto, CompanyQrResponseDto, CompanyResponseDto, CompanyTopUpResponseDto, ConfirmTopUpResponseDto } from "../openapi/response.dto";
@@ -21,6 +21,16 @@ import { AllocationResponseDto, ApiErrorDto, CompanyLedgerEntryResponseDto, Comp
 @UseGuards(AuthGuard)
 export class CompaniesController {
   constructor(private readonly companies: CompaniesService) {}
+  @Get("admin/companies") @UseGuards(PrivilegesGuard) @RequirePrivileges("companies.read")
+  @ApiOperation({ summary: "List companies", description: "Administrator-only company name/INN search with pagination." })
+  @ApiOkResponse({ type: AdminCompanyPageDto })
+  adminCompanies(@Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) query: AdminCompanyQueryDto) { return this.companies.adminCompanies(query); }
+
+  @Get("admin/company-top-ups") @UseGuards(PrivilegesGuard) @RequirePrivileges("topups.read")
+  @ApiOperation({ summary: "List corporate top-up requests", description: "Filter by status, company ID or company name/INN. Use status=pending for the confirmation queue." })
+  @ApiOkResponse({ type: AdminTopUpPageDto })
+  adminTopUps(@Query(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) query: AdminTopUpQueryDto) { return this.companies.adminTopUps(query); }
+
   @Post("companies") @ApiOperation({ summary: "Зарегистрировать компанию", description: "Создаёт организацию и делает текущего пользователя её владельцем." }) @ApiCreatedResponse({ description: "Компания создана", type: CompanyResponseDto })
   create(@Request() req: { user: AuthenticatedUser }, @Body(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) dto: CreateCompanyDto) { return this.companies.create(req.user, dto); }
   @Get("companies/me") @ApiOperation({ summary: "Получить мои компании", description: "Возвращает компании, где текущий пользователь является владельцем или сотрудником." }) @ApiOkResponse({ schema: { type: "array", items: { $ref: getSchemaPath(CompanyResponseDto) } } })
@@ -39,8 +49,8 @@ export class CompaniesController {
   qr(@Request() req: { user: AuthenticatedUser }, @Param("id", ParseIntPipe) id: number, @Param("memberId", ParseIntPipe) memberId: number) { return this.companies.memberQr(req.user, id, memberId); }
   @Get("companies/:id/ledger") @ApiOperation({ summary: "Получить журнал движения средств", description: "Неизменяемая история корпоративных пополнений и переводов сотрудникам." }) @ApiOkResponse({ schema: { type: "array", items: { $ref: getSchemaPath(CompanyLedgerEntryResponseDto) } } })
   ledger(@Request() req: { user: AuthenticatedUser }, @Param("id", ParseIntPipe) id: number) { return this.companies.ledger(req.user, id); }
-  @Post("admin/company-qr/charges") @UseGuards(RolesGuard) @Roles(UserRole.admin, UserRole.manager) @ApiOperation({ summary: "Списать депозит сотрудника по QR", description: "Сумма берётся из текущей цены товара или услуги Экватора; списание и журнал проводятся атомарно. Менеджер ограничен своими сервисами." }) @ApiCreatedResponse({ type: CompanyQrChargeResponseDto })
+  @Post("admin/company-qr/charges") @UseGuards(PrivilegesGuard) @RequirePrivileges("companies.charge") @ApiOperation({ summary: "Списать депозит сотрудника по QR", description: "Сумма берётся из текущей цены товара или услуги Экватора; списание и журнал проводятся атомарно. Менеджер ограничен своими сервисами." }) @ApiCreatedResponse({ type: CompanyQrChargeResponseDto })
   chargeByQr(@Request() req: { user: AuthenticatedUser }, @Body(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })) dto: ChargeCompanyQrDto) { return this.companies.chargeByQr(req.user, dto); }
-  @Post("admin/company-top-ups/:id/confirm") @UseGuards(RolesGuard) @Roles(UserRole.admin) @HttpCode(HttpStatus.OK) @ApiOperation({ summary: "Подтвердить пополнение компании", description: "Системный администратор подтверждает поступление денег; операция атомарно зачисляет средства и фиксируется в журнале." }) @ApiOkResponse({ type: ConfirmTopUpResponseDto })
+  @Post("admin/company-top-ups/:id/confirm") @UseGuards(PrivilegesGuard) @RequirePrivileges("topups.confirm") @HttpCode(HttpStatus.OK) @ApiOperation({ summary: "Подтвердить пополнение компании", description: "Системный администратор подтверждает поступление денег; операция атомарно зачисляет средства и фиксируется в журнале." }) @ApiOkResponse({ type: ConfirmTopUpResponseDto })
   confirmTopUp(@Request() req: { user: AuthenticatedUser }, @Param("id", ParseIntPipe) id: number) { return this.companies.confirmTopUp(req.user, id); }
 }

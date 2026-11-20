@@ -9,6 +9,7 @@ import { Request } from "express";
 import { PrismaService } from "../prisma/prisma.service";
 import { publicUserSelect } from "../users/users.service";
 import { SmsVerificationService } from "./sms-verification.service";
+import { effectivePrivileges } from "./privileges";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -37,7 +38,7 @@ export class AuthGuard implements CanActivate {
     });
     if (!user) throw new UnauthorizedException();
     this.smsVerification.assertCanSignIn(user);
-    request.user = user;
+    request.user = { ...user, privileges: effectivePrivileges(user) };
     return true;
   }
 }

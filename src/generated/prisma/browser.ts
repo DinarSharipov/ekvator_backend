@@ -18,6 +18,36 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model SiteContacts
+ *
+ */
+export type SiteContacts = Prisma.SiteContactsModel
+/**
+ * Model Privilege
+ *
+ */
+export type Privilege = Prisma.PrivilegeModel
+/**
+ * Model AccessRole
+ *
+ */
+export type AccessRole = Prisma.AccessRoleModel
+/**
+ * Model RolePrivilege
+ *
+ */
+export type RolePrivilege = Prisma.RolePrivilegeModel
+/**
+ * Model UserAccessRole
+ *
+ */
+export type UserAccessRole = Prisma.UserAccessRoleModel
+/**
+ * Model AdministratorState
+ *
+ */
+export type AdministratorState = Prisma.AdministratorStateModel
+/**
  * Model User
  * 
  */

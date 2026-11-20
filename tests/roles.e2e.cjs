@@ -21,6 +21,7 @@ const future = (hours) => new Date(Date.now() + hours * 60 * 60 * 1000);
 
 test("role and service access boundaries work over HTTP", async (t) => {
   const prisma = new PrismaService();
+  await require("./support/ensure-test-admin.cjs")(prisma);
   const module = await Test.createTestingModule({ imports: [AppModule] })
     .overrideProvider(PrismaService)
     .useValue(prisma)

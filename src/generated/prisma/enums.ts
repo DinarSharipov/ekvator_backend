@@ -19,12 +19,28 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
+export const AccessScope = {
+  all: 'all',
+  assigned: 'assigned'
+} as const
+
+export type AccessScope = (typeof AccessScope)[keyof typeof AccessScope]
+
+
 export const BookingMode = {
   appointment: 'appointment',
   duration: 'duration'
 } as const
 
 export type BookingMode = (typeof BookingMode)[keyof typeof BookingMode]
+
+
+export const ServiceKind = {
+  goods: 'goods',
+  services: 'services'
+} as const
+
+export type ServiceKind = (typeof ServiceKind)[keyof typeof ServiceKind]
 
 
 export const PreorderStatus = {

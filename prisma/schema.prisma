@@ -7,6 +7,19 @@ datasource db {
   provider = "postgresql"
 }
 
+model SiteContacts {
+  id Int @id @default(1)
+  name String
+  address String
+  phones String[]
+  email String?
+  workingHours String
+  latitude Float
+  longitude Float
+  mapUrl String?
+  updatedAt DateTime @updatedAt
+}
+
 enum UserRole {
   admin
   manager
@@ -14,9 +27,60 @@ enum UserRole {
   user
 }
 
+enum AccessScope {
+  all
+  assigned
+}
+
+model Privilege {
+  key String @id
+  description String
+  scoped Boolean @default(false)
+  adminOnly Boolean @default(false)
+  grants RolePrivilege[]
+}
+
+model AccessRole {
+  id Int @id @default(autoincrement())
+  name String @unique
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  grants RolePrivilege[]
+  users UserAccessRole[]
+}
+
+model RolePrivilege {
+  roleId Int
+  privilege String
+  scope AccessScope @default(assigned)
+  role AccessRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  definition Privilege @relation(fields: [privilege], references: [key], onDelete: Restrict)
+  @@id([roleId, privilege])
+}
+
+model UserAccessRole {
+  userId Int
+  roleId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role AccessRole @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  @@id([userId, roleId])
+  @@index([roleId])
+}
+
+model AdministratorState {
+  id Int @id @default(1)
+  count Int @default(0)
+}
+
 enum BookingMode {
   appointment
   duration
+}
+
+enum ServiceKind {
+  goods
+  services
 }
 
 enum PreorderStatus {
@@ -75,6 +139,7 @@ model User {
   telegram String?
   role String @default("user")
   serviceAssignments UserServiceAssignment[]
+  accessRoles UserAccessRole[]
   carts Cart[]
   preorders Preorder[]
   companiesCreated Company[] @relation("CompanyCreator")
@@ -163,6 +228,7 @@ model UserServiceAssignment {
 
 model ServiceType {
   id Int @id @default(autoincrement())
+  kind ServiceKind @default(goods)
   sortOrder Int @default(0)
   name String
   showInMain Boolean @default(false)

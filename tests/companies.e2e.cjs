@@ -14,6 +14,7 @@ const prefix = `companies-e2e-${Date.now()}`;
 
 test("company deposits, permissions, QR charging and ledger HTTP workflow", async () => {
   const prisma = new PrismaService();
+  await require("./support/ensure-test-admin.cjs")(prisma);
   const module = await Test.createTestingModule({ imports: [AppModule] }).overrideProvider(PrismaService).useValue(prisma).compile();
   const app = module.createNestApplication();
   await app.init();

@@ -19,6 +19,7 @@ const { AuthTokensService } = require("../dist/auth/auth-tokens.service");
 
 test("analytics records idempotent privacy-safe events and protects summaries", async (t) => {
   const prisma = new PrismaService();
+  await require("./support/ensure-test-admin.cjs")(prisma);
   const module = await Test.createTestingModule({ imports: [AppModule] }).overrideProvider(PrismaService).useValue(prisma).compile();
   const app = module.createNestApplication();
   await app.init();

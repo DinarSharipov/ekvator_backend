@@ -95,6 +95,22 @@ It covers validation, registration, concurrent duplicates, login, legacy-passwor
 
 ## Production deployment safety
 
+The current release runner is `scripts/safe-deploy.sh`. Before touching the live
+schema, it restores a fresh private backup into a temporary PostgreSQL container
+on a dedicated internal Docker network, runs all migrations, and compares counts
+and digests of every original table column. It then stops only the backend app,
+takes a final backup and integrity snapshot, migrates production, and verifies all
+original data before restarting the candidate. The database container, volume,
+`.env`, and base Compose file are preserved. Recovery backups, image references
+and integrity manifests remain private in `backups/release-*`.
+
+If deployment fails after maintenance begins, the runner starts the previous app
+image directly, without retrying migrations or restoring production data. Schema
+rollback is not automatic. Inspect a failed migration before retrying; never
+restore a backup over newer live writes. New migrations in this release are
+additive and preserve the old application's columns. A successful deployment also
+requires container health and read-only authenticated HTTP smoke checks.
+
 The deployment first runs `scripts/auth-preflight.cjs` in read-only mode. It checks
 login and normalized phone conflicts and failed Prisma migration history, exposing
 only counts. A failed check stops before Prisma changes the migration history.
