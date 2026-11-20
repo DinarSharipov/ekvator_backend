@@ -1,5 +1,11 @@
 # Frontend integration requirements
 
+## Production backend ready — 2026-11-20, 18:21 Moscow
+
+Unified roles are now live from backend commit `e69c311019a350e041ddfe0aaca2cd2779e6300e`. Migration `20261120040000_unified_roles` completed after a private restore/migration rehearsal and final stopped-writer backup. Original records in 19 tables, account privileges, administrator membership and database protection checks passed, followed by authenticated HTTP smoke checks.
+
+The user explicitly requested backend deployment only; frontend publication remains with its own agent. Read-only inspection confirms the sibling source now uses `roleIds`, assigned grants and `isAdministrator`; `npm run check:api-types` passed without changing files. Its `scripts/check-deployment-contract.mjs` may now run against the live backend before frontend publication. This does not claim browser verification or deployment of the frontend. The original handoff below records the pre-cutover findings and is superseded by this status where it describes local-only backend work or obsolete frontend consumers.
+
 ## Unified roles — implemented locally, not deployed
 
 The backend now has one role system. `UserRole`, `User.userRole` and `User.role` are removed by `20261120040000_unified_roles`. Existing staff access is migrated into regular editable roles and assignments. Names such as `manager`, `employee` or `admin` confer no privileges. The administrator is a protected role in the same catalogue.
