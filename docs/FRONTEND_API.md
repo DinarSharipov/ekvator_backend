@@ -4,9 +4,9 @@ Implemented locally on top of backend commit `6281806`. Deployment is not implie
 
 ## Roles and privileges
 
-See [roles and access](roles-and-access.md) for the full API and operation catalogue. Only system administrators can create, edit, delete or assign custom roles through `/admin/roles` and `/admin/users/:id/roles`; `GET /admin/privileges` supplies the catalogue. Multiple roles combine permissions with `all` or `assigned` service scopes.
+See [roles and access](roles-and-access.md) for the full API and operation catalogue. Only members of the protected administrator role can create, edit, delete or assign roles through `/admin/roles` and `/admin/users/:id/roles`; `GET /admin/privileges` supplies the catalogue. Multiple roles combine permissions with `all` or `assigned` service scopes.
 
-Read `privileges` from `/auth/me` or the login profile to gate staff navigation and actions. Checking only `userRole` will hide delegated operations from custom-role users. Changes apply on the next request with the same JWT; refresh the profile after role/assignment changes. Deleting or demoting the last system administrator returns `409`.
+Read `privileges` from `/auth/me` or the login profile to gate staff navigation and actions. `userRole` and legacy `role` are removed. Roles expose `isAdministrator`; user writes accept administrator-controlled `roleIds`. See [frontend handoff](../FRONTEND_AGENT_REQUIREMENTS.md) for the breaking contract. Changes apply on the next request with the same JWT; refresh the profile after role/assignment changes. Deleting or demoting the last administrator returns `409`.
 
 ## Two kinds of service directions
 

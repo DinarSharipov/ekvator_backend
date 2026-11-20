@@ -6,7 +6,6 @@ import { env } from "prisma/config";
 interface AuthPayload {
   sub: number;
   login: string;
-  userRole: string;
 }
 
 @Injectable()
@@ -20,10 +19,11 @@ export class AuthTokensService {
   }
 
   sign(payload: AuthPayload): Promise<string> {
-    // The old application has no role checks. It must not accept ordinary-user JWTs on rollback.
+    // Identity only; current privileges are loaded from the database.
+    // Keep the separated signing key and accept existing JWTs during migration.
     return this.jwt.signAsync(
-      payload,
-      payload.userRole === "user" ? { secret: this.userSecret } : {},
+      { sub: payload.sub, login: payload.login },
+      { secret: this.userSecret },
     );
   }
 

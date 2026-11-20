@@ -13,6 +13,14 @@ async function main() {
     await client.query("BEGIN READ ONLY");
     await client.query("SET LOCAL statement_timeout = '30s'");
     await client.query("SET LOCAL lock_timeout = '2s'");
+    if (process.argv.includes("--require-unified-roles")) {
+      const { rows: [state] } = await client.query(`SELECT count(*)::int AS legacy_columns
+        FROM information_schema.columns WHERE table_schema = current_schema()
+          AND table_name = 'User' AND column_name IN ('role', 'userRole')`);
+      if (state.legacy_columns) throw new Error(
+        "Automatic deployment refused: unified roles remove legacy columns. Coordinate the frontend cutover and a schema-compatible recovery image before this migration. Production data is unchanged.",
+      );
+    }
     const {
       rows: [duplicates],
     } = await client.query(`

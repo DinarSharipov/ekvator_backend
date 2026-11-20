@@ -1,3 +1,4 @@
+const { roleId, roleData, setRoles } = require("./support/role-fixtures.cjs");
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
 
@@ -44,8 +45,7 @@ test("registration, authentication and administrative access over HTTP with Post
       login: `${prefix}-admin`,
       name: "Existing administrator",
       password: "legacy-password",
-      role: "manager",
-      userRole: "admin",
+      ...await roleData(prisma, "admin"),
     },
   });
   let token;
@@ -58,7 +58,8 @@ test("registration, authentication and administrative access over HTTP with Post
         const result = await http.post("/auth/register").send(body).expect(201);
         token = result.body.access_token;
         userId = result.body.user.id;
-        assert.equal(result.body.user.userRole, "user");
+        assert.deepEqual(result.body.user.accessRoles, []);
+        assert.equal("userRole" in result.body.user, false);
         assert.equal(result.body.user.phoneVerifiedAt, null);
         assert.equal(result.body.user.name, body.login);
         assert.equal("password" in result.body.user, false);
@@ -172,7 +173,7 @@ test("registration, authentication and administrative access over HTTP with Post
           .auth(token, { type: "bearer" })
           .expect(200);
         assert.equal(result.body.id, userId);
-        assert.equal(result.body.userRole, "user");
+        assert.deepEqual(result.body.accessRoles, []);
         assert.equal("password" in result.body, false);
         await http.get("/auth/me").expect(401);
         await http
@@ -243,11 +244,10 @@ test("registration, authentication and administrative access over HTTP with Post
             name: "New admin",
             surname: "Test",
             phone: `+9${phone.slice(2)}`,
-            role: "staff",
-            userRole: "admin",
+            roleIds: [await roleId(prisma, "admin")],
           })
           .expect(201);
-        assert.equal(result.body.userRole, "admin");
+        assert.ok(result.body.accessRoles.some(({ role }) => role.isAdministrator));
         assert.equal("password" in result.body, false);
         await http
           .put(`/users/${result.body.id}`)
@@ -273,7 +273,7 @@ test("registration, authentication and administrative access over HTTP with Post
           name: "Manager",
           surname: "Test",
           phone: "+78000000001",
-          userRole: "manager",
+          roleIds: [await roleId(prisma, "manager")],
           serviceTypeIds: [service.id],
         })
         .expect(201);
@@ -294,11 +294,10 @@ test("registration, authentication and administrative access over HTTP with Post
           name: "Employee",
           surname: "Test",
           phone: "+78000000002",
-          userRole: "employee",
           serviceTypeIds: [service.id],
         })
         .expect(201);
-      assert.equal(employee.body.userRole, "employee");
+      await setRoles(prisma, employee.body.id, "employee");
       await http
         .post("/users")
         .auth(managerToken, { type: "bearer" })
@@ -308,7 +307,7 @@ test("registration, authentication and administrative access over HTTP with Post
           name: "Escalation",
           surname: "Test",
           phone: "+78000000003",
-          userRole: "manager",
+          roleIds: [await roleId(prisma, "manager")],
           serviceTypeIds: [service.id],
         })
         .expect(403);
@@ -316,18 +315,12 @@ test("registration, authentication and administrative access over HTTP with Post
     await t.test(
       "role changes take effect immediately for existing tokens",
       async () => {
-        await prisma.user.update({
-          where: { id: admin.id },
-          data: { userRole: "user" },
-        });
+        await setRoles(prisma, admin.id, "user");
         await http
           .get("/users")
           .auth(adminToken, { type: "bearer" })
           .expect(403);
-        await prisma.user.update({
-          where: { id: admin.id },
-          data: { userRole: "admin" },
-        });
+        await setRoles(prisma, admin.id, "admin");
       },
     );
     await t.test(

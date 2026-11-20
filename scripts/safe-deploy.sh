@@ -52,7 +52,9 @@ backup() {
 isolated() { docker run --rm -i --network "$verify_network" -e DATABASE_URL=postgresql://verify@db:5432/verify --entrypoint node "$candidate" "$@"; }
 production() { compose run --rm -T --no-deps --entrypoint node app "$@"; }
 
-production scripts/auth-preflight.cjs
+# This runner only rolls back application images. A column-removing role cutover
+# requires coordinated clients and a schema-compatible recovery release first.
+production scripts/auth-preflight.cjs --require-unified-roles
 backup "$release/rehearsal.dump"
 docker network create --internal "$verify_network" >/dev/null
 docker run -d --name "$verify_name" --network "$verify_network" --network-alias db \

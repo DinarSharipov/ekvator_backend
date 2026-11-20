@@ -59,7 +59,7 @@ export class AssignAccessRolesDto {
   @ApiProperty({
     type: [Number],
     description:
-      "Complete custom role set. Empty array removes all custom roles, retaining the system access level.",
+      "Complete role set. Empty array removes every role; the last administrator cannot lose their role.",
   })
   @IsArray()
   @ArrayMaxSize(100)
@@ -70,6 +70,7 @@ export class AssignAccessRolesDto {
 }
 
 export class AccessRoleResponseDto {
+  @ApiProperty({ description: "Protected administrator role; read-only.", readOnly: true }) isAdministrator: boolean;
   @ApiProperty() id: number;
   @ApiProperty() name: string;
   @ApiPropertyOptional({ type: String, nullable: true }) description:

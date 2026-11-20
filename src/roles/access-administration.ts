@@ -1,4 +1,5 @@
 import { ForbiddenException } from "@nestjs/common";
+import { isAdministrator } from "../auth/privileges";
 import { Prisma } from "../generated/prisma/client";
 
 export async function lockAccessAdministration(tx: Prisma.TransactionClient) {
@@ -11,9 +12,20 @@ export async function requireCurrentAdministrator(
 ) {
   const actor = await tx.user.findUnique({
     where: { id: actorId },
-    select: { userRole: true },
+    select: {
+      accessRoles: {
+        select: {
+          role: {
+            select: {
+              isAdministrator: true,
+              grants: { select: { privilege: true, scope: true } },
+            },
+          },
+        },
+      },
+    },
   });
-  if (actor?.userRole !== "admin")
+  if (!isAdministrator(actor))
     throw new ForbiddenException(
       "Управлять ролями может только системный администратор",
     );

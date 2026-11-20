@@ -123,7 +123,7 @@ export class ServiceTypesController {
   @Get("order-permission")
   @UseGuards(AuthGuard, PrivilegesGuard)
   @RequirePrivileges("services.reorder")
-  @ApiOperation({ summary: "Проверить доступ к изменению порядка", description: "Служебная проверка права системного администратора на изменение порядка сервисов." })
+  @ApiOperation({ summary: "Проверить доступ к изменению порядка", description: "Служебная проверка привилегии services.reorder для изменения порядка сервисов." })
   @ApiOkResponse({ type: OrderPermissionResponseDto })
   orderPermission() { return { canReorder: true }; }
 

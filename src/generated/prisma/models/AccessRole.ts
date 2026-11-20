@@ -35,6 +35,7 @@ export type AccessRoleSumAggregateOutputType = {
 }
 
 export type AccessRoleMinAggregateOutputType = {
+  isAdministrator: boolean | null
   id: number | null
   name: string | null
   description: string | null
@@ -43,6 +44,7 @@ export type AccessRoleMinAggregateOutputType = {
 }
 
 export type AccessRoleMaxAggregateOutputType = {
+  isAdministrator: boolean | null
   id: number | null
   name: string | null
   description: string | null
@@ -51,6 +53,7 @@ export type AccessRoleMaxAggregateOutputType = {
 }
 
 export type AccessRoleCountAggregateOutputType = {
+  isAdministrator: number
   id: number
   name: number
   description: number
@@ -69,6 +72,7 @@ export type AccessRoleSumAggregateInputType = {
 }
 
 export type AccessRoleMinAggregateInputType = {
+  isAdministrator?: true
   id?: true
   name?: true
   description?: true
@@ -77,6 +81,7 @@ export type AccessRoleMinAggregateInputType = {
 }
 
 export type AccessRoleMaxAggregateInputType = {
+  isAdministrator?: true
   id?: true
   name?: true
   description?: true
@@ -85,6 +90,7 @@ export type AccessRoleMaxAggregateInputType = {
 }
 
 export type AccessRoleCountAggregateInputType = {
+  isAdministrator?: true
   id?: true
   name?: true
   description?: true
@@ -180,6 +186,7 @@ export type AccessRoleGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 export type AccessRoleGroupByOutputType = {
+  isAdministrator: boolean
   id: number
   name: string
   description: string | null
@@ -211,6 +218,7 @@ export type AccessRoleWhereInput = {
   AND?: Prisma.AccessRoleWhereInput | Prisma.AccessRoleWhereInput[]
   OR?: Prisma.AccessRoleWhereInput[]
   NOT?: Prisma.AccessRoleWhereInput | Prisma.AccessRoleWhereInput[]
+  isAdministrator?: Prisma.BoolFilter<"AccessRole"> | boolean
   id?: Prisma.IntFilter<"AccessRole"> | number
   name?: Prisma.StringFilter<"AccessRole"> | string
   description?: Prisma.StringNullableFilter<"AccessRole"> | string | null
@@ -221,6 +229,7 @@ export type AccessRoleWhereInput = {
 }
 
 export type AccessRoleOrderByWithRelationInput = {
+  isAdministrator?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -236,6 +245,7 @@ export type AccessRoleWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.AccessRoleWhereInput | Prisma.AccessRoleWhereInput[]
   OR?: Prisma.AccessRoleWhereInput[]
   NOT?: Prisma.AccessRoleWhereInput | Prisma.AccessRoleWhereInput[]
+  isAdministrator?: Prisma.BoolFilter<"AccessRole"> | boolean
   description?: Prisma.StringNullableFilter<"AccessRole"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AccessRole"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AccessRole"> | Date | string
@@ -244,6 +254,7 @@ export type AccessRoleWhereUniqueInput = Prisma.AtLeast<{
 }, "id" | "name">
 
 export type AccessRoleOrderByWithAggregationInput = {
+  isAdministrator?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -260,6 +271,7 @@ export type AccessRoleScalarWhereWithAggregatesInput = {
   AND?: Prisma.AccessRoleScalarWhereWithAggregatesInput | Prisma.AccessRoleScalarWhereWithAggregatesInput[]
   OR?: Prisma.AccessRoleScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AccessRoleScalarWhereWithAggregatesInput | Prisma.AccessRoleScalarWhereWithAggregatesInput[]
+  isAdministrator?: Prisma.BoolWithAggregatesFilter<"AccessRole"> | boolean
   id?: Prisma.IntWithAggregatesFilter<"AccessRole"> | number
   name?: Prisma.StringWithAggregatesFilter<"AccessRole"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"AccessRole"> | string | null
@@ -268,6 +280,7 @@ export type AccessRoleScalarWhereWithAggregatesInput = {
 }
 
 export type AccessRoleCreateInput = {
+  isAdministrator?: boolean
   name: string
   description?: string | null
   createdAt?: Date | string
@@ -277,6 +290,7 @@ export type AccessRoleCreateInput = {
 }
 
 export type AccessRoleUncheckedCreateInput = {
+  isAdministrator?: boolean
   id?: number
   name: string
   description?: string | null
@@ -287,6 +301,7 @@ export type AccessRoleUncheckedCreateInput = {
 }
 
 export type AccessRoleUpdateInput = {
+  isAdministrator?: Prisma.BoolFieldUpdateOperationsInput | boolean
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -296,6 +311,7 @@ export type AccessRoleUpdateInput = {
 }
 
 export type AccessRoleUncheckedUpdateInput = {
+  isAdministrator?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -306,6 +322,7 @@ export type AccessRoleUncheckedUpdateInput = {
 }
 
 export type AccessRoleCreateManyInput = {
+  isAdministrator?: boolean
   id?: number
   name: string
   description?: string | null
@@ -314,6 +331,7 @@ export type AccessRoleCreateManyInput = {
 }
 
 export type AccessRoleUpdateManyMutationInput = {
+  isAdministrator?: Prisma.BoolFieldUpdateOperationsInput | boolean
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -321,6 +339,7 @@ export type AccessRoleUpdateManyMutationInput = {
 }
 
 export type AccessRoleUncheckedUpdateManyInput = {
+  isAdministrator?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -329,6 +348,7 @@ export type AccessRoleUncheckedUpdateManyInput = {
 }
 
 export type AccessRoleCountOrderByAggregateInput = {
+  isAdministrator?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -341,6 +361,7 @@ export type AccessRoleAvgOrderByAggregateInput = {
 }
 
 export type AccessRoleMaxOrderByAggregateInput = {
+  isAdministrator?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -349,6 +370,7 @@ export type AccessRoleMaxOrderByAggregateInput = {
 }
 
 export type AccessRoleMinOrderByAggregateInput = {
+  isAdministrator?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -394,6 +416,7 @@ export type AccessRoleUpdateOneRequiredWithoutUsersNestedInput = {
 }
 
 export type AccessRoleCreateWithoutGrantsInput = {
+  isAdministrator?: boolean
   name: string
   description?: string | null
   createdAt?: Date | string
@@ -402,6 +425,7 @@ export type AccessRoleCreateWithoutGrantsInput = {
 }
 
 export type AccessRoleUncheckedCreateWithoutGrantsInput = {
+  isAdministrator?: boolean
   id?: number
   name: string
   description?: string | null
@@ -427,6 +451,7 @@ export type AccessRoleUpdateToOneWithWhereWithoutGrantsInput = {
 }
 
 export type AccessRoleUpdateWithoutGrantsInput = {
+  isAdministrator?: Prisma.BoolFieldUpdateOperationsInput | boolean
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -435,6 +460,7 @@ export type AccessRoleUpdateWithoutGrantsInput = {
 }
 
 export type AccessRoleUncheckedUpdateWithoutGrantsInput = {
+  isAdministrator?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -444,6 +470,7 @@ export type AccessRoleUncheckedUpdateWithoutGrantsInput = {
 }
 
 export type AccessRoleCreateWithoutUsersInput = {
+  isAdministrator?: boolean
   name: string
   description?: string | null
   createdAt?: Date | string
@@ -452,6 +479,7 @@ export type AccessRoleCreateWithoutUsersInput = {
 }
 
 export type AccessRoleUncheckedCreateWithoutUsersInput = {
+  isAdministrator?: boolean
   id?: number
   name: string
   description?: string | null
@@ -477,6 +505,7 @@ export type AccessRoleUpdateToOneWithWhereWithoutUsersInput = {
 }
 
 export type AccessRoleUpdateWithoutUsersInput = {
+  isAdministrator?: Prisma.BoolFieldUpdateOperationsInput | boolean
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -485,6 +514,7 @@ export type AccessRoleUpdateWithoutUsersInput = {
 }
 
 export type AccessRoleUncheckedUpdateWithoutUsersInput = {
+  isAdministrator?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -534,6 +564,7 @@ export type AccessRoleCountOutputTypeCountUsersArgs<ExtArgs extends runtime.Type
 
 
 export type AccessRoleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  isAdministrator?: boolean
   id?: boolean
   name?: boolean
   description?: boolean
@@ -545,6 +576,7 @@ export type AccessRoleSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
 }, ExtArgs["result"]["accessRole"]>
 
 export type AccessRoleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  isAdministrator?: boolean
   id?: boolean
   name?: boolean
   description?: boolean
@@ -553,6 +585,7 @@ export type AccessRoleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
 }, ExtArgs["result"]["accessRole"]>
 
 export type AccessRoleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  isAdministrator?: boolean
   id?: boolean
   name?: boolean
   description?: boolean
@@ -561,6 +594,7 @@ export type AccessRoleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 }, ExtArgs["result"]["accessRole"]>
 
 export type AccessRoleSelectScalar = {
+  isAdministrator?: boolean
   id?: boolean
   name?: boolean
   description?: boolean
@@ -568,7 +602,7 @@ export type AccessRoleSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AccessRoleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["accessRole"]>
+export type AccessRoleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"isAdministrator" | "id" | "name" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["accessRole"]>
 export type AccessRoleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   grants?: boolean | Prisma.AccessRole$grantsArgs<ExtArgs>
   users?: boolean | Prisma.AccessRole$usersArgs<ExtArgs>
@@ -584,6 +618,7 @@ export type $AccessRolePayload<ExtArgs extends runtime.Types.Extensions.Internal
     users: Prisma.$UserAccessRolePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    isAdministrator: boolean
     id: number
     name: string
     description: string | null
@@ -672,8 +707,8 @@ export interface AccessRoleDelegate<ExtArgs extends runtime.Types.Extensions.Int
    * // Get first 10 AccessRoles
    * const accessRoles = await prisma.accessRole.findMany({ take: 10 })
    *
-   * // Only select the `id`
-   * const accessRoleWithIdOnly = await prisma.accessRole.findMany({ select: { id: true } })
+   * // Only select the `isAdministrator`
+   * const accessRoleWithIsAdministratorOnly = await prisma.accessRole.findMany({ select: { isAdministrator: true } })
    *
    */
   findMany<T extends AccessRoleFindManyArgs>(args?: Prisma.SelectSubset<T, AccessRoleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccessRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -717,9 +752,9 @@ export interface AccessRoleDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *   ]
    * })
    *
-   * // Create many AccessRoles and only return the `id`
-   * const accessRoleWithIdOnly = await prisma.accessRole.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many AccessRoles and only return the `isAdministrator`
+   * const accessRoleWithIsAdministratorOnly = await prisma.accessRole.createManyAndReturn({
+   *   select: { isAdministrator: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -808,9 +843,9 @@ export interface AccessRoleDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *   ]
    * })
    *
-   * // Update zero or more AccessRoles and only return the `id`
-   * const accessRoleWithIdOnly = await prisma.accessRole.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more AccessRoles and only return the `isAdministrator`
+   * const accessRoleWithIsAdministratorOnly = await prisma.accessRole.updateManyAndReturn({
+   *   select: { isAdministrator: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1014,6 +1049,7 @@ export interface Prisma__AccessRoleClient<T, Null = never, ExtArgs extends runti
  * Fields of the AccessRole model
  */
 export interface AccessRoleFieldRefs {
+  readonly isAdministrator: Prisma.FieldRef<"AccessRole", 'Boolean'>
   readonly id: Prisma.FieldRef<"AccessRole", 'Int'>
   readonly name: Prisma.FieldRef<"AccessRole", 'String'>
   readonly description: Prisma.FieldRef<"AccessRole", 'String'>

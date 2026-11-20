@@ -1,3 +1,4 @@
+const { roleData } = require("./support/role-fixtures.cjs");
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
 
@@ -87,8 +88,7 @@ test("cart and preorder HTTP workflows with PostgreSQL", async (t) => {
         login: `${prefix}-admin`,
         name: "Administrator",
         password: "legacy-admin-password",
-        role: "admin",
-        userRole: "admin",
+        ...await roleData(prisma, "admin"),
       },
     });
     const adminLogin = await http

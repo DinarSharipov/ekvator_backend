@@ -45,7 +45,7 @@ export class UsersController {
   @UseGuards(AuthGuard, PrivilegesGuard)
   @RequirePrivileges("users.create")
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: "Создать нового пользователя", description: "Администратор создаёт любую роль; менеджер может создавать только сотрудников своих сервисов." })
+  @ApiOperation({ summary: "Создать нового пользователя", description: "Требует users.create. Только администратор может передать roleIds; делегированное создание не назначает роли." })
   @ApiCreatedResponse({ description: "Пользователь успешно создан", type: UserResponseDto })
   create(@Request() request: { user: AuthenticatedUser }, @Body() createUserDto: CreateUserDto) {
     return this.usersService.create(request.user, createUserDto);
@@ -68,7 +68,7 @@ export class UsersController {
   @Get()
   @UseGuards(AuthGuard, PrivilegesGuard)
   @RequirePrivileges("users.read")
-  @ApiOperation({ summary: "Получить список всех пользователей", description: "Администратор видит всех пользователей; менеджер — только сотрудников своих сервисов." })
+  @ApiOperation({ summary: "Получить список всех пользователей", description: "Требует users.read: all видит всех, assigned — неадминистраторов с полным набором назначений в доступных направлениях." })
   @ApiOkResponse({ description: "Список пользователей", type: UserResponseDto, isArray: true })
   findAll(@Request() request: { user: AuthenticatedUser }) {
     return this.usersService.findAll(request.user);
@@ -88,7 +88,7 @@ export class UsersController {
   @Delete(":id")
   @UseGuards(AuthGuard, PrivilegesGuard)
   @RequirePrivileges("users.delete")
-  @ApiOperation({ summary: "Удалить пользователя", description: "Требует users.delete. Аккаунты с правами доступа изменяет только администратор; последнего администратора удалить нельзя (409)." })
+  @ApiOperation({ summary: "Удалить пользователя", description: "Требует users.delete. Управление аккаунтом не может расширять права оператора; последнего администратора удалить нельзя (409)." })
   @ApiParam({ name: "id", type: "number", description: "ID пользователя" })
   @ApiNoContentResponse({ description: "Пользователь удален; тела ответа нет." })
   @HttpCode(HttpStatus.NO_CONTENT)

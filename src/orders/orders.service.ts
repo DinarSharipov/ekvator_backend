@@ -207,7 +207,7 @@ export class OrdersService implements OnModuleInit, OnModuleDestroy {
         ...(serviceTypeIds ? { preorders: { some: this.serviceScope(serviceTypeIds) } } : {}),
       },
       orderBy: [{ name: "asc" }, { surname: "asc" }, { id: "asc" }],
-      select: { id: true, name: true, surname: true, login: true, phone: true, email: true, telegram: true, role: true, userRole: true },
+      select: { id: true, name: true, surname: true, login: true, phone: true, email: true, telegram: true },
     });
     return users.map((user) => ({ ...user, label: [user.name, user.surname].filter(Boolean).join(" ") || user.login }));
   }

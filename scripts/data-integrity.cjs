@@ -39,13 +39,14 @@ async function main() {
       console.log(`All original columns and rows preserved in ${baseline.tables.length} tables.`);
     } else if (process.argv[2] === "invariants") {
       const { rows: [state] } = await client.query(`SELECT
-        (SELECT count(*)::int FROM "User" WHERE "userRole" = 'admin') AS admins,
+        (SELECT count(*)::int FROM "UserAccessRole" a JOIN "AccessRole" r ON r.id = a."roleId" WHERE r."isAdministrator") AS admins,
         (SELECT "count" FROM "AdministratorState" WHERE id = 1) AS counter,
         (SELECT count(*)::int FROM "Privilege") AS privileges,
-        (SELECT count(*)::int FROM pg_trigger WHERE tgname IN ('User_protect_last_administrator', 'User_protect_administrator_truncate', 'RolePrivilege_validate') AND tgenabled = 'O') AS triggers,
+        (SELECT count(*)::int FROM "RolePrivilege" g JOIN "AccessRole" r ON r.id = g."roleId" WHERE r."isAdministrator" AND g.scope = 'all') AS admin_grants,
+        (SELECT count(*)::int FROM pg_trigger WHERE tgrelid IN (SELECT oid FROM pg_class WHERE relnamespace = current_schema()::regnamespace) AND tgname IN ('UserAccessRole_protect_last_administrator', 'User_protect_administrator_truncate', 'RolePrivilege_validate', 'UserAccessRole_protect_truncate', 'AccessRole_protect_administrator', 'RolePrivilege_protect_administrator', 'AccessRole_protect_truncate', 'RolePrivilege_protect_truncate') AND tgenabled = 'O') AS triggers,
         (SELECT count(*)::int FROM "_prisma_migrations" WHERE finished_at IS NULL AND rolled_back_at IS NULL) AS failed
       `);
-      if (!state.admins || state.admins !== state.counter || state.privileges !== 28 || state.triggers !== 3 || state.failed) throw new Error("Access or migration invariant failed");
+      if (!state.admins || state.admins !== state.counter || state.privileges !== 28 || state.admin_grants !== 28 || state.triggers !== 8 || state.failed) throw new Error("Access or migration invariant failed");
       console.log(JSON.stringify(state));
     } else throw new Error("Expected snapshot, verify or invariants");
     await client.query("COMMIT");

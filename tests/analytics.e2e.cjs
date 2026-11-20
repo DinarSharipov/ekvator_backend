@@ -1,3 +1,4 @@
+const { roleData } = require("./support/role-fixtures.cjs");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const { test } = require("node:test");
@@ -26,7 +27,7 @@ test("analytics records idempotent privacy-safe events and protects summaries", 
   const http = request(app.getHttpServer());
   const suffix = Date.now();
   const service = await prisma.serviceType.create({ data: { name: `Analytics service ${suffix}` } });
-  const admin = await prisma.user.create({ data: { login: `analytics-admin-${suffix}`, name: "Admin", password: "legacy", userRole: "admin" } });
+  const admin = await prisma.user.create({ data: { login: `analytics-admin-${suffix}`, name: "Admin", password: "legacy", ...await roleData(prisma, "admin") } });
   const ordinary = await prisma.user.create({ data: { login: `analytics-user-${suffix}`, name: "User", password: "legacy" } });
   const tokens = module.get(AuthTokensService);
   const adminToken = await tokens.sign({ sub: admin.id, login: admin.login, userRole: "admin" });

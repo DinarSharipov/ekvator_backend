@@ -1,5 +1,3 @@
-import { UserRole } from "../generated/prisma/enums";
-
 // Fixed operation keys; administrators compose roles from this catalogue.
 export const privilegeDefinitions = [
   {
@@ -127,7 +125,7 @@ export const privilegeDefinitions = [
   },
   {
     key: "roles.assign",
-    description: "Назначение ролей и системных уровней доступа",
+    description: "Назначение ролей пользователям",
     scoped: false,
     adminOnly: true,
   },
@@ -139,53 +137,32 @@ export type PrivilegeGrant = {
   scope: "all" | "assigned";
 };
 export type AccessUser = {
-  userRole: UserRole;
   accessRoles?: {
-    role: { grants: { privilege: string; scope: "all" | "assigned" }[] };
+    role: {
+      isAdministrator: boolean;
+      grants: { privilege: string; scope: "all" | "assigned" }[];
+    };
   }[];
 };
 
-const managerPrivileges: PrivilegeKey[] = [
-  "items.create",
-  "items.update",
-  "items.delete",
-  "orders.read",
-  "orders.status",
-  "orders.schedule",
-  "orders.archive",
-  "calendar.read",
-  "users.read",
-  "users.create",
-  "users.update",
-  "companies.charge",
-];
-const employeePrivileges: PrivilegeKey[] = [
-  "orders.read",
-  "orders.status",
-  "calendar.read",
-];
+/** The protected administrator uses the same role assignments as every other role. */
+export function isAdministrator(user: AccessUser | null | undefined): boolean {
+  return user?.accessRoles?.some(({ role }) => role.isAdministrator) ?? false;
+}
 
 export function effectivePrivileges(user: AccessUser): PrivilegeGrant[] {
-  if (user.userRole === UserRole.admin)
-    return privilegeDefinitions.map(({ key }) => ({
-      privilege: key,
-      scope: "all",
-    }));
   const grants = new Map<PrivilegeKey, PrivilegeGrant>();
-  const legacy =
-    user.userRole === UserRole.manager
-      ? managerPrivileges
-      : user.userRole === UserRole.employee
-        ? employeePrivileges
-        : [];
-  for (const privilege of legacy)
-    grants.set(privilege, { privilege, scope: "assigned" });
   for (const assignment of user.accessRoles ?? []) {
     for (const grant of assignment.role.grants) {
       const definition = privilegeDefinitions.find(
         ({ key }) => key === grant.privilege,
       );
-      if (!definition || ("adminOnly" in definition && definition.adminOnly))
+      if (
+        !definition ||
+        ("adminOnly" in definition &&
+          definition.adminOnly &&
+          !assignment.role.isAdministrator)
+      )
         continue;
       const privilege = definition.key;
       if (grants.get(privilege)?.scope !== "all")

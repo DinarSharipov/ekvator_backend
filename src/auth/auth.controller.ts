@@ -56,7 +56,7 @@ export class AuthController {
   }
 
   @Post("register")
-  @ApiOperation({ summary: "Зарегистрировать обычного пользователя", description: "Создаёт пользователя с ролью user. SMS-подтверждение управляется feature flag." })
+  @ApiOperation({ summary: "Зарегистрировать обычного пользователя", description: "Создаёт пользователя без административных ролей. SMS-подтверждение управляется feature flag." })
   @ApiCreatedResponse({ description: "Пользователь создан, возвращены JWT и профиль", type: AuthResponseDto })
   @ApiResponse({ status: 400, description: "Некорректное тело регистрации", type: ApiErrorDto })
   @ApiConflictResponse({ description: "Логин или телефон уже используется", type: ApiErrorDto })

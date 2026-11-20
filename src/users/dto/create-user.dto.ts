@@ -1,17 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
-  IsEnum,
   IsEmail,
   IsNotEmpty,
   IsOptional,
   IsArray,
   ArrayUnique,
+  ArrayMaxSize,
   IsInt,
   Min,
   IsString,
+  ValidateIf,
 } from "class-validator";
-
-import { UserRole } from "../../generated/prisma/enums";
 
 export class CreateUserDto {
   @ApiProperty({ description: "Логин" })
@@ -49,22 +48,26 @@ export class CreateUserDto {
   @IsOptional()
   telegram?: string;
 
-  @ApiPropertyOptional({ description: "Роль" })
-  @IsOptional()
-  @IsString()
-  role?: string;
+  @ApiPropertyOptional({
+    type: [Number],
+    description: "Complete role set; only administrators can assign roles.",
+  })
+  @ValidateIf((_dto, value) => value !== undefined)
+  @IsArray()
+  @ArrayMaxSize(100)
+  @ArrayUnique()
+  @IsInt({ each: true })
+  @Min(1, { each: true })
+  roleIds?: number[];
 
-  @ApiPropertyOptional({ enum: UserRole, description: "Роль доступа" })
-  @IsOptional()
-  @IsEnum(UserRole)
-  userRole?: UserRole;
-
-  @ApiPropertyOptional({ type: [Number], description: "Сервисы, в которых работает менеджер или сотрудник" })
-  @IsOptional()
+  @ApiPropertyOptional({
+    type: [Number],
+    description: "Сервисы, в которых работает менеджер или сотрудник",
+  })
+  @ValidateIf((_dto, value) => value !== undefined)
   @IsArray()
   @ArrayUnique()
   @IsInt({ each: true })
   @Min(1, { each: true })
   serviceTypeIds?: number[];
 }
-

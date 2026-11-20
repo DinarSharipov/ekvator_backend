@@ -20,13 +20,6 @@ model SiteContacts {
   updatedAt DateTime @updatedAt
 }
 
-enum UserRole {
-  admin
-  manager
-  employee
-  user
-}
-
 enum AccessScope {
   all
   assigned
@@ -41,6 +34,7 @@ model Privilege {
 }
 
 model AccessRole {
+  isAdministrator Boolean @default(false)
   id Int @id @default(autoincrement())
   name String @unique
   description String?
@@ -134,10 +128,8 @@ model User {
   phone String?
   phoneNormalized String? @unique
   phoneVerifiedAt DateTime?
-  userRole UserRole @default(user)
   email String?
   telegram String?
-  role String @default("user")
   serviceAssignments UserServiceAssignment[]
   accessRoles UserAccessRole[]
   carts Cart[]

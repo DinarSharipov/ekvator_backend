@@ -12,7 +12,6 @@ import { PrismaService } from "../prisma/prisma.service";
 import { AuthGuard } from "./auth.guard";
 import { AdminGuard } from "./admin.guard";
 import { SmsVerificationService } from "./sms-verification.service";
-import { RolesGuard } from "./roles.guard";
 import { ServiceAccessService } from "./service-access.service";
 
 @Global()
@@ -32,7 +31,6 @@ import { ServiceAccessService } from "./service-access.service";
     PrismaService,
     AuthGuard,
     AdminGuard,
-    RolesGuard,
     PrivilegesGuard,
     ServiceAccessService,
     SmsVerificationService,
@@ -43,7 +41,6 @@ import { ServiceAccessService } from "./service-access.service";
     PrismaService,
     AuthGuard,
     AdminGuard,
-    RolesGuard,
     PrivilegesGuard,
     ServiceAccessService,
     SmsVerificationService,

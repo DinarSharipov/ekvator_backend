@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { BookingMode, CompanyLedgerKind, CompanyMemberRole, CompanyTopUpStatus, PaymentStatus, PreorderStatus, ServiceKind, UserRole } from "../generated/prisma/enums";
+import { BookingMode, CompanyLedgerKind, CompanyMemberRole, CompanyTopUpStatus, PaymentStatus, PreorderStatus, ServiceKind } from "../generated/prisma/enums";
 import { RoleGrantDto } from "../roles/dto/access-role.dto";
 
 const money = { type: Number, format: "int32", minimum: 0, maximum: 2_147_483_647, description: "Сумма в копейках (amountMinor): 100 ₽ = 10 000." } as const;
@@ -22,6 +22,7 @@ export class UserSummaryResponseDto {
 }
 
 export class AssignedRoleResponseDto {
+  @ApiProperty({ readOnly: true }) isAdministrator: boolean;
   @ApiProperty() id: number;
   @ApiProperty() name: string;
   @ApiProperty({ type: () => RoleGrantDto, isArray: true }) grants: RoleGrantDto[];
@@ -32,10 +33,8 @@ export class UserAccessRoleResponseDto {
 
 export class UserResponseDto extends UserSummaryResponseDto {
   @ApiProperty({ type: () => UserAccessRoleResponseDto, isArray: true }) accessRoles: UserAccessRoleResponseDto[];
-  @ApiPropertyOptional({ type: () => RoleGrantDto, isArray: true, description: "Effective grants in authentication/profile responses; scopes are merged across all roles and the system access level." }) privileges?: RoleGrantDto[];
+  @ApiPropertyOptional({ type: () => RoleGrantDto, isArray: true, description: "Effective grants in authentication/profile responses; scopes are merged across assigned roles." }) privileges?: RoleGrantDto[];
   @ApiPropertyOptional({ nullable: true, example: "@ivan" }) telegram: string | null;
-  @ApiProperty({ enum: UserRole, example: UserRole.user }) userRole: UserRole;
-  @ApiProperty({ example: "user", description: "Legacy role field retained for backwards compatibility." }) role: string;
   @ApiPropertyOptional({ ...date, nullable: true }) phoneVerifiedAt: Date | null;
   @ApiProperty({ type: "array", items: { type: "object", required: ["serviceTypeId"], properties: { serviceTypeId: { type: "integer", example: 1 } } }, example: [{ serviceTypeId: 1 }], description: "Назначения на сервисы." }) serviceAssignments: { serviceTypeId: number }[];
 }
@@ -173,7 +172,7 @@ export class CalendarEventResponseDto { @ApiProperty() id: string; @ApiProperty(
 export class CalendarServiceFilterResponseDto { @ApiProperty({ enum: ServiceKind }) kind: ServiceKind; @ApiProperty() id: number; @ApiProperty() name: string; @ApiProperty() sortOrder: number; @ApiProperty({ enum: BookingMode }) bookingMode: BookingMode; @ApiProperty() bookingCapacity: number; @ApiProperty() acceptsPreorders: boolean; }
 export class CalendarElementFilterResponseDto { @ApiProperty() id: number; @ApiProperty() name: string; @ApiProperty() type: number; @ApiProperty() isArchive: boolean; @ApiProperty() preorderAvailable: boolean; }
 export class CalendarFilterOptionsResponseDto { @ApiProperty({ type: () => CalendarServiceFilterResponseDto, isArray: true }) services: CalendarServiceFilterResponseDto[]; @ApiProperty({ type: () => CalendarElementFilterResponseDto, isArray: true }) serviceElements: CalendarElementFilterResponseDto[]; @ApiProperty({ enum: PreorderStatus, isArray: true }) statuses: PreorderStatus[]; }
-export class UserFilterOptionResponseDto extends UserSummaryResponseDto { @ApiPropertyOptional({ nullable: true }) email: string | null; @ApiPropertyOptional({ nullable: true }) telegram: string | null; @ApiProperty() role: string; @ApiProperty() userRole: string; @ApiProperty() label: string; }
+export class UserFilterOptionResponseDto extends UserSummaryResponseDto { @ApiPropertyOptional({ nullable: true }) email: string | null; @ApiPropertyOptional({ nullable: true }) telegram: string | null; @ApiProperty() label: string; }
 
 export class AnalyticsAcceptedResponseDto { @ApiProperty({ minimum: 0, maximum: 50, example: 2, description: "Число новых событий, сохранённых из пакета. Повторный eventId не увеличивает счётчик." }) accepted: number; }
 export class AnalyticsPeriodResponseDto { @ApiProperty(date) from: Date; @ApiProperty(date) to: Date; }

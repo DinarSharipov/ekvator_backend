@@ -1,24 +1,8 @@
 # User registration and authorization
 
-## Roles and migration
+## Unified roles
 
-`User.userRole` is the access role: `admin` or `user`. The database default is `user`.
-The registration migration assigns `admin` to every existing account. The legacy
-`role` field is preserved for compatibility and is not used for access decisions.
-An administrator can create any role through `POST /users`; see [roles-and-access.md](./roles-and-access.md) for role and service-assignment rules.
-its default access role is `admin`, with an optional explicit `userRole` override.
-Only administrators can list, create, update or delete users and mutate services,
-service elements or their order. Public catalogue reads remain public.
-
-Apply the committed migration using `npx prisma migrate deploy` as part of the
-normal release process. It preserves original phone values, adds a nullable unique `phoneNormalized` lookup
-column and nullable `phoneVerifiedAt`, and makes login unique. Existing users receive
-`admin` through a constant column default; no bulk role UPDATE is required. If existing logins or
-normalized nonempty phone numbers are duplicated, it aborts atomically with an explicit
-error. Resolve duplicates before retrying; do not delete accounts automatically.
-After a failed Prisma migration, use the normal Prisma migration recovery workflow
-before retrying the deployment. A database backup and a preflight duplicate check
-should precede production application of this identity migration.
+All permissions come from AccessRole assignments. There is no User.role, User.userRole or UserRole enum. See [roles-and-access.md](roles-and-access.md) for role management, scopes and administrator protection. Registration creates an ordinary account without roles. Only the protected administrator role can assign roles; delegated users.create/update cannot confer roles.
 
 ## HTTP contract
 
@@ -31,7 +15,7 @@ should precede production application of this identity migration.
   A phone number can also be supplied in `login` for a single identifier input.
   Supply exactly one of `login` and `phone`. Returns `200` with `{ access_token, user }`.
 - `GET /auth/me`: Bearer JWT required. Returns the current user's safe profile,
-  including `userRole` and `phoneVerifiedAt`.
+  including `accessRoles`, effective `privileges`, service assignments and `phoneVerifiedAt`.
 - `GET /auth/features`: public endpoint returning `{ smsVerificationEnabled: false }`.
 
 Invalid input returns `400`; invalid credentials or JWT return `401`;
@@ -45,16 +29,8 @@ numbers use 11–15 digits with a nonzero country prefix. Login matching is
 case-sensitive. Normalized valid phone numbers and logins are unique, with database constraints
 also covering simultaneous registration attempts.
 
-JWTs include `sub`, `login` and `userRole`. Authorization always reloads the account
-from the database, so role changes and account deletion take effect for existing
-tokens too. Old JWTs without `userRole` remain usable for migrated administrators. Ordinary-user
-JWTs use a separate signing key derived from `JWT`, so the old application cannot
-accept them as administrator sessions if its image is restored.
-Passwords and hashes are excluded from user responses. New passwords use salted
-scrypt hashes; existing plaintext passwords remain unchanged so rollback does not lock existing
-administrators out. Migrating those legacy passwords to hashes is a separate release
-after retiring the legacy application. New accounts and explicitly changed passwords
-use scrypt. An explicit password change is not compatible with legacy plaintext login.
+New JWTs contain only `sub` and `login` plus standard expiry claims. Every authenticated request reloads current roles and grants from the database. Existing JWTs signed with either supported key remain usable; role claims in them are ignored. All newly issued JWTs use the derived signing key.
+Passwords and hashes are excluded from user responses. Existing stored passwords remain unchanged; verification still accepts legacy plaintext credentials. New accounts and explicitly changed passwords use salted scrypt hashes. Preserving credentials does not make an old application image compatible with the unified schema.
 `PUT /users/:id` supports partial updates; omit `password` to keep it unchanged.
 Changing a phone resets its confirmation state.
 
@@ -67,17 +43,13 @@ does not falsely mark their phone as verified.
 `SmsVerificationService` is the boundary for a future SMS provider and confirmation
 flow. No SMS is sent and no verification codes are generated or accepted yet.
 Until that integration is implemented, setting the flag to `true` makes public
-registration return `503` and blocks unverified ordinary accounts at login and on
-protected routes with `403`. Existing administrators retain access. Do not enable
+registration return `503` and blocks unverified accounts without effective staff privileges at login and on
+protected routes with `403`. Accounts with effective staff privileges retain access; role labels have no bearing on verification. Do not enable
 the flag in production until the real confirmation flow is connected.
 
 ## Frontend integration
 
-The frontend should use `/auth/me` or the returned profile's `userRole` to choose
-between ordinary user and administrator UI. The presence of a token alone no
-longer grants administrative access. Existing login requests remain compatible.
-User edit forms must no longer expect a password from user responses; omit the
-password property unless the administrator is setting a new password.
+Use effective `privileges` and service assignments for individual actions. Read `accessRoles[].role.isAdministrator` for protected role management; display assigned role names directly. Send `roleIds` for administrator-controlled assignments, never `role` or `userRole`. Authentication requests and existing order/company/catalogue payloads remain unchanged. See [frontend handoff](../FRONTEND_AGENT_REQUIREMENTS.md).
 
 ## Verification
 
@@ -95,63 +67,14 @@ It covers validation, registration, concurrent duplicates, login, legacy-passwor
 
 ## Production deployment safety
 
-The current release runner is `scripts/safe-deploy.sh`. Before touching the live
-schema, it restores a fresh private backup into a temporary PostgreSQL container
-on a dedicated internal Docker network, runs all migrations, and compares counts
-and digests of every original table column. It then stops only the backend app,
-takes a final backup and integrity snapshot, migrates production, and verifies all
-original data before restarting the candidate. The database container, volume,
-`.env`, and base Compose file are preserved. Recovery backups, image references
-and integrity manifests remain private in `backups/release-*`.
+The role-unification migration removes legacy columns. It preserves account identifiers, profiles, password hashes, phones, service assignments, existing custom roles and business records; it transfers old role access into actual grants and assignments. It is transactional, with lock_timeout=5s and statement_timeout=60s. Local migration tests verify existing data and effective privileges, including a late failure and complete rollback.
 
-If deployment fails after maintenance begins, the runner starts the previous app
-image directly, without retrying migrations or restoring production data. Schema
-rollback is not automatic. Inspect a failed migration before retrying; never
-restore a backup over newer live writes. New migrations in this release are
-additive and preserve the old application's columns. A successful deployment also
-requires container health and read-only authenticated HTTP smoke checks.
+The previous application image requires removed columns and is **not a valid rollback image** after this migration. The deployed frontend also still sends old role fields. Do not apply this schema change as an ordinary image-only rolling update.
 
-The deployment first runs `scripts/auth-preflight.cjs` in read-only mode. It checks
-login and normalized phone conflicts and failed Prisma migration history, exposing
-only counts. A failed check stops before Prisma changes the migration history.
-It then creates a private full `pg_dump -Fc` backup in the server's `backups/`
-directory, checks its archive listing, and only then runs migrations. A failed dump
-or archive check aborts deployment. Backups are not removed automatically.
-Archive readability is not a substitute for a successful restore rehearsal.
+The automatic scripts/safe-deploy.sh runner invokes auth-preflight.cjs --require-unified-roles and refuses a database with either legacy role column before stopping the app or applying migrations. That guard deliberately cannot be bypassed by an environment flag. It prevents an unsafe automatic cutover while clients and recovery are not ready. Future releases on an already unified schema retain backup restore rehearsal, all-column row digests, final maintenance backup, health checks and authenticated smoke checks.
 
-The migration modifies only `User` and adds an enum and indexes; it does not touch
-`ServiceType`, `ServiceElement`, photos, prices or galleries. All original user fields
-are preserved byte for byte. `lock_timeout=5s` bounds waiting for table locks;
-`statement_timeout=60s` bounds each statement. Any error rolls the migration back.
-The old application continues running if preflight, backup or migration fails. A
-failed migration still requires `prisma migrate resolve --rolled-back` after checking
-that the transaction was rolled back; do not mark an unapplied migration applied.
+A coordinated first cutover requires a frontend using the new contract, a recovery backend built for the new schema, and a fresh private pg_dump -Fc backup with a tested restore on isolated PostgreSQL 16. Stop writers for the final backup and migration; compare unchanged business fields, preexisting role rows and assignments, plus every user's effective access. Retain the exact old role mapping in the private backup. Start only schema-compatible candidate/recovery images. If a failure occurs after live writes resume, preserve those writes and fix forward or use the compatible recovery image; never automatically restore an older database backup.
 
-Do not create or edit accounts through the old application while applying this
-identity migration and switching images. Old code does not fill `phoneNormalized`
-or `userRole`; the new application writes both explicitly. Existing admin login
-and catalogue reads are compatible with the additive schema. After rollback to
-old code, ordinary-user functionality is unavailable and newly created or explicitly
-changed password hashes cannot be authenticated by that legacy version.
+The existing all-column data-integrity verifier intentionally cannot certify a column-removing transition. Do not weaken it by globally skipping missing columns. For this one-time transition, `scripts/unified-role-integrity.cjs snapshot` records private digests before migration and `verify` reads that snapshot from stdin after migration. It compares every original business column, existing custom roles/grants/assignments and every account's effective privileges and administrator status. Its only expected transformations are removed legacy user columns, three added roles with grants/assignments, the administrator flag, and the updated `roles.assign` description. Run the normal invariants check as well. Regression tests verify both preservation and rejection of changed credentials or privileges; repeat these checks on the restored production copy and within the stopped-writer production window.
 
-Before release, rehearse restoring a fresh backup to a separate PostgreSQL 16
-database and run migration and integration checks there. Never use `migrate reset`,
-`db push --accept-data-loss`, or automatic duplicate-account deletion on production.
-
-### Verification on 12 November 2026
-
-A fresh production backup was restored into a temporary, network-isolated
-PostgreSQL 16.11 container on the same server. The migration completed successfully.
-Before/after fingerprints matched for every original user field and every catalogue
-record, including photos and galleries. Counts remained 4 users, 6 service types and
-113 service elements; all 4 users received `admin`. The temporary container was
-removed. The production schema and records were not migrated or modified.
-
-Backup retained on the server (private, not downloaded):
-`/home/backend_deploy/ekvator/backups/cart-before-migration-20261111T220448Z.dump`.
-
-Local regression checks additionally replayed migration history with 5000 users and
-10000 catalogue rows, checked duplicate and lock-timeout rollback, and ran both the
-original HEAD application and the new application against the upgraded schema.
-Existing administrator login remained compatible; ordinary-user tokens were rejected
-by the original application.
+Do not use migrate reset, db push --accept-data-loss, automatic account deletion, or backup restoration over newer live data. Production configuration and volumes must remain untouched. A failed transactional migration still needs normal Prisma recovery after verifying rollback; do not mark an unapplied migration applied.

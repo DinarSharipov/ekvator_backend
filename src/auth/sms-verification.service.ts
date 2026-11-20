@@ -4,6 +4,8 @@ import {
   ServiceUnavailableException,
 } from "@nestjs/common";
 
+import { AccessUser, effectivePrivileges } from "./privileges";
+
 @Injectable()
 export class SmsVerificationService {
   get enabled(): boolean {
@@ -19,11 +21,16 @@ export class SmsVerificationService {
     }
   }
 
-  assertCanSignIn(user: {
-    userRole: string;
-    phoneVerifiedAt: Date | null;
-  }): void {
-    if (this.enabled && user.userRole === "user" && !user.phoneVerifiedAt) {
+  assertCanSignIn(
+    user: AccessUser & {
+      phoneVerifiedAt: Date | null;
+    },
+  ): void {
+    if (
+      this.enabled &&
+      effectivePrivileges(user).length === 0 &&
+      !user.phoneVerifiedAt
+    ) {
       throw new ForbiddenException("Необходимо подтвердить номер телефона");
     }
   }

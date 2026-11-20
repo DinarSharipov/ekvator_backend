@@ -1,3 +1,4 @@
+const { roleId, roleData, setRoles } = require("./support/role-fixtures.cjs");
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
 
@@ -56,7 +57,7 @@ test("role and service access boundaries work over HTTP", async (t) => {
 
   try {
     const admin = await prisma.user.create({
-      data: { login: `${prefix}-admin`, name: "Admin", password: "admin-password", userRole: "admin" },
+      data: { login: `${prefix}-admin`, name: "Admin", password: "admin-password", ...await roleData(prisma, "admin") },
     });
     const services = await Promise.all(["workshop", "hotel", "cafe"].map((name) => prisma.serviceType.create({
       data: { name: `${prefix}-${name}`, acceptsPreorders: true },
@@ -71,28 +72,29 @@ test("role and service access boundaries work over HTTP", async (t) => {
     await t.test("admin assigns multiple services when creating a manager", async () => {
       const response = await http.post("/users").auth(adminToken, { type: "bearer" }).send({
         login: `${prefix}-manager`, password: "manager-password", name: "Manager", surname: "Test", phone: phone("01"),
-        userRole: "manager", serviceTypeIds: [workshop.id, hotel.id],
+        roleIds: [await roleId(prisma, "manager")], serviceTypeIds: [workshop.id, hotel.id],
       }).expect(201);
-      assert.equal(response.body.userRole, "manager");
+      assert.equal(response.body.accessRoles[0].role.id, await roleId(prisma, "manager"));
       assert.deepEqual(response.body.serviceAssignments.map((item) => item.serviceTypeId).sort(), [workshop.id, hotel.id].sort());
       managerToken = (await http.post("/auth/login").send({ login: `${prefix}-manager`, password: "manager-password" }).expect(200)).body.access_token;
 
       await http.post("/users").auth(adminToken, { type: "bearer" }).send({
-        login: `${prefix}-invalid-manager`, password: "password", name: "Invalid", surname: "Test", phone: phone("02"), userRole: "manager",
-      }).expect(409);
+        login: `${prefix}-invalid-manager`, password: "password", name: "Invalid", surname: "Test", phone: phone("02"), roleIds: [await roleId(prisma, "manager")],
+      }).expect(201);
     });
 
     let managedEmployee;
     await t.test("manager manages only employees whose full assignment is within their services", async () => {
       managedEmployee = (await http.post("/users").auth(managerToken, { type: "bearer" }).send({
         login: `${prefix}-employee`, password: "employee-password", name: "Employee", surname: "Test", phone: phone("03"),
-        userRole: "employee", serviceTypeIds: [workshop.id, hotel.id],
+        serviceTypeIds: [workshop.id, hotel.id],
       }).expect(201)).body;
+      await setRoles(prisma, managedEmployee.id, "employee");
       employeeToken = (await http.post("/auth/login").send({ login: `${prefix}-employee`, password: "employee-password" }).expect(200)).body.access_token;
 
       const outsideEmployee = (await http.post("/users").auth(adminToken, { type: "bearer" }).send({
         login: `${prefix}-outside-employee`, password: "employee-password", name: "Outside", surname: "Test", phone: phone("04"),
-        userRole: "employee", serviceTypeIds: [workshop.id, cafe.id],
+        roleIds: [await roleId(prisma, "employee")], serviceTypeIds: [workshop.id, cafe.id],
       }).expect(201)).body;
       const employees = await http.get("/users").auth(managerToken, { type: "bearer" }).expect(200);
       assert.equal(employees.body.some((user) => user.id === managedEmployee.id), true);
@@ -102,7 +104,7 @@ test("role and service access boundaries work over HTTP", async (t) => {
       await http.put(`/users/${managedEmployee.id}`).auth(managerToken, { type: "bearer" }).send({ name: "Updated employee" }).expect(201);
       await http.put(`/users/${managedEmployee.id}`).auth(managerToken, { type: "bearer" }).send({ serviceTypeIds: [cafe.id] }).expect(403);
       await http.post("/users").auth(managerToken, { type: "bearer" }).send({
-        login: `${prefix}-manager-escalation`, password: "password", name: "Escalation", surname: "Test", phone: phone("05"), userRole: "manager", serviceTypeIds: [workshop.id],
+        login: `${prefix}-manager-escalation`, password: "password", name: "Escalation", surname: "Test", phone: phone("05"), roleIds: [await roleId(prisma, "manager")], serviceTypeIds: [workshop.id],
       }).expect(403);
     });
 
@@ -112,7 +114,7 @@ test("role and service access boundaries work over HTTP", async (t) => {
       }).expect(201);
       await http.delete(`/service-elements/${managedItem.body.id}`).auth(managerToken, { type: "bearer" }).expect(204);
       await http.post("/users").auth(employeeToken, { type: "bearer" }).send({
-        login: `${prefix}-employee-escalation`, password: "password", name: "Escalation", surname: "Test", phone: phone("06"), userRole: "employee", serviceTypeIds: [workshop.id],
+        login: `${prefix}-employee-escalation`, password: "password", name: "Escalation", surname: "Test", phone: phone("06"), roleIds: [await roleId(prisma, "employee")], serviceTypeIds: [workshop.id],
       }).expect(403);
       await http.post("/service-elements").auth(employeeToken, { type: "bearer" }).send({ name: "Blocked", price: "1", type: workshop.id }).expect(403);
       await http.post("/services").auth(managerToken, { type: "bearer" }).send({ name: "Blocked" }).expect(403);

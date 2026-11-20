@@ -1,6 +1,6 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
-import { CompanyLedgerKind, CompanyMemberRole, CompanyTopUpStatus, Prisma, UserRole } from "../generated/prisma/client";
+import { CompanyLedgerKind, CompanyMemberRole, CompanyTopUpStatus, Prisma } from "../generated/prisma/client";
 import { PasswordService } from "../auth/password.service";
 import { AuthenticatedUser, ServiceAccessService } from "../auth/service-access.service";
 import { phoneLookupKey } from "../users/phone";
@@ -55,7 +55,7 @@ export class CompaniesService {
 
   async myCompanies(actor: Actor) {
     return (await this.prisma.company.findMany({
-      where: actor.userRole === UserRole.admin ? undefined : { members: { some: { userId: actor.id, isActive: true } } },
+      where: hasPrivilege(actor, "companies.read") ? undefined : { members: { some: { userId: actor.id, isActive: true } } },
       include: companyInclude,
       orderBy: { id: "asc" },
     })).map((company) => this.presentCompany(company));
@@ -75,7 +75,7 @@ export class CompaniesService {
       if (!userId) {
         try {
           const password = await this.passwords.hash(dto.password!);
-          const user = await tx.user.create({ data: { login: dto.login!, password, name: dto.name!, phone: dto.phone, phoneNormalized: phoneLookupKey(dto.phone), userRole: UserRole.user, role: UserRole.user }, select: { id: true } });
+          const user = await tx.user.create({ data: { login: dto.login!, password, name: dto.name!, phone: dto.phone, phoneNormalized: phoneLookupKey(dto.phone) }, select: { id: true } });
           userId = user.id;
         } catch (error) { this.rethrowWriteError(error); }
       } else if (!await tx.user.findUnique({ where: { id: userId }, select: { id: true } })) {
@@ -138,7 +138,7 @@ export class CompaniesService {
   async memberQr(actor: Actor, companyId: number, memberId: number) {
     const member = await this.prisma.companyMember.findFirst({ where: { id: memberId, companyId }, include: { user: { select: userSelect } } });
     if (!member) throw new NotFoundException("Сотрудник компании не найден");
-    if (actor.userRole !== UserRole.admin && actor.id !== member.userId) await this.assertOwner(actor, companyId);
+    if (!hasPrivilege(actor, "companies.manage") && actor.id !== member.userId) await this.assertOwner(actor, companyId);
     return { companyId, memberId: member.id, employee: member.user, qrToken: member.qrToken, expiresAt: null, balanceMinor: member.balanceMinor, isActive: member.isActive };
   }
 

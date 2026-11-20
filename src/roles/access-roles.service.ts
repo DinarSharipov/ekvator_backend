@@ -7,6 +7,7 @@ import {
 import { Prisma } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { privilegeDefinitions } from "../auth/privileges";
+import { replaceUserRoles } from "./role-assignments";
 import { AssignAccessRolesDto, SaveAccessRoleDto } from "./dto/access-role.dto";
 import {
   lockAccessAdministration,
@@ -75,8 +76,9 @@ export class AccessRolesService {
 
   async update(actorId: number, id: number, dto: SaveAccessRoleDto) {
     this.validateGrants(dto);
-    return this.mutate(actorId, (tx) =>
-      tx.accessRole.update({
+    return this.mutate(actorId, async (tx) => {
+      await this.assertEditable(tx, id);
+      return tx.accessRole.update({
         where: { id },
         data: {
           name: dto.name,
@@ -84,32 +86,37 @@ export class AccessRolesService {
           grants: { deleteMany: {}, create: dto.grants },
         },
         include: roleInclude,
-      }),
-    );
+      });
+    });
   }
 
   async delete(actorId: number, id: number) {
-    await this.mutate(actorId, (tx) => tx.accessRole.delete({ where: { id } }));
+    await this.mutate(actorId, async (tx) => {
+      await this.assertEditable(tx, id);
+      return tx.accessRole.delete({ where: { id } });
+    });
   }
 
   async assign(actorId: number, userId: number, dto: AssignAccessRolesDto) {
     return this.mutate(actorId, async (tx) => {
       if (
-        (await tx.accessRole.count({ where: { id: { in: dto.roleIds } } })) !==
-        dto.roleIds.length
+        !(await tx.user.findUnique({
+          where: { id: userId },
+          select: { id: true },
+        }))
       )
-        throw new NotFoundException("Одна или несколько ролей не найдены");
-      return tx.user.update({
-        where: { id: userId },
-        data: {
-          accessRoles: {
-            deleteMany: {},
-            create: dto.roleIds.map((roleId) => ({ roleId })),
-          },
-        },
-        select: { id: true, accessRoles: { select: { roleId: true } } },
-      });
+        throw new NotFoundException("Пользователь не найден");
+      await replaceUserRoles(tx, userId, dto.roleIds);
     });
+  }
+
+  private async assertEditable(tx: Prisma.TransactionClient, id: number) {
+    const role = await tx.accessRole.findUnique({ where: { id } });
+    if (!role) throw new NotFoundException("Роль не найдена");
+    if (role.isAdministrator)
+      throw new ConflictException(
+        "Роль администратора защищена от изменения и удаления",
+      );
   }
 
   private async mutate<T>(

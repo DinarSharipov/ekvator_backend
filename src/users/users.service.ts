@@ -6,7 +6,6 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { Prisma } from "../generated/prisma/client";
-import { UserRole } from "../generated/prisma/enums";
 import { PasswordService } from "../auth/password.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
@@ -20,9 +19,14 @@ import {
   effectivePrivileges,
   hasGlobalPrivilege,
   hasPrivilege,
+  isAdministrator,
   PrivilegeKey,
 } from "../auth/privileges";
 import { lockAccessAdministration } from "../roles/access-administration";
+import {
+  assertAnotherAdministrator,
+  replaceUserRoles,
+} from "../roles/role-assignments";
 
 export const publicUserSelect = {
   id: true,
@@ -32,8 +36,6 @@ export const publicUserSelect = {
   phone: true,
   email: true,
   telegram: true,
-  role: true,
-  userRole: true,
   phoneVerifiedAt: true,
   serviceAssignments: { select: { serviceTypeId: true } },
   accessRoles: {
@@ -42,6 +44,7 @@ export const publicUserSelect = {
         select: {
           id: true,
           name: true,
+          isAdministrator: true,
           grants: { select: { privilege: true, scope: true } },
         },
       },
@@ -57,8 +60,6 @@ type AccountData = {
   phone?: string;
   email?: string;
   telegram?: string;
-  role?: string;
-  userRole: UserRole;
   serviceTypeIds: number[];
 };
 
@@ -71,8 +72,6 @@ export class UsersService {
   ) {}
 
   async create(actor: AuthenticatedUser, dto: CreateUserDto) {
-    const userRole = dto.userRole ?? UserRole.user;
-    const serviceTypeIds = dto.serviceTypeIds ?? [];
     return this.prisma.$transaction(async (tx) => {
       await lockAccessAdministration(tx);
       const currentActor = await this.currentActor(
@@ -80,25 +79,32 @@ export class UsersService {
         actor.id,
         "users.create",
       );
-      await this.assertRoleAssignment(
+      const { roleIds, serviceTypeIds = [], ...account } = dto;
+      if (roleIds !== undefined && !isAdministrator(currentActor))
+        throw new ForbiddenException(
+          "Назначать роли может только администратор",
+        );
+      await this.assertServiceAssignments(
         currentActor,
-        userRole,
         serviceTypeIds,
-        undefined,
+        "users.create",
         tx,
       );
-      return this.createAccount({ ...dto, userRole, serviceTypeIds }, tx);
+      const user = await this.createAccount({ ...account, serviceTypeIds }, tx);
+      if (roleIds !== undefined) await replaceUserRoles(tx, user.id, roleIds);
+      return tx.user.findUniqueOrThrow({
+        where: { id: user.id },
+        select: publicUserSelect,
+      });
     });
   }
 
-  async register(dto: RegisterDto) {
-    // Never spread public input into permission or verification fields.
+  register(dto: RegisterDto) {
     return this.createAccount({
       login: dto.login,
       phone: dto.phone,
       password: dto.password,
       name: dto.name ?? dto.login,
-      userRole: UserRole.user,
       serviceTypeIds: [],
     });
   }
@@ -107,27 +113,17 @@ export class UsersService {
     data: AccountData,
     db: PrismaService | Prisma.TransactionClient = this.prisma,
   ) {
-    const {
-      password: plainPassword,
-      serviceTypeIds,
-      role: legacyRole,
-      ...user
-    } = data;
+    const { password: plainPassword, serviceTypeIds, ...user } = data;
     const password = await this.passwords.hash(plainPassword);
     try {
       return await db.user.create({
         data: {
           ...user,
-          role: legacyRole ?? user.userRole,
           phoneNormalized: phoneLookupKey(user.phone),
           password,
-          serviceAssignments: serviceTypeIds.length
-            ? {
-                create: serviceTypeIds.map((serviceTypeId) => ({
-                  serviceTypeId,
-                })),
-              }
-            : undefined,
+          serviceAssignments: {
+            create: serviceTypeIds.map((serviceTypeId) => ({ serviceTypeId })),
+          },
         },
         select: publicUserSelect,
       });
@@ -154,39 +150,47 @@ export class UsersService {
           select: publicUserSelect,
         });
         if (!current) throw new NotFoundException("Пользователь не найден");
-        const userRole = dto.userRole ?? current.userRole;
-        const serviceTypeIds =
-          dto.serviceTypeIds ??
-          current.serviceAssignments.map(
-            (assignment) => assignment.serviceTypeId,
-          );
-        if (currentActor.userRole !== UserRole.admin)
+        if (!isAdministrator(currentActor)) {
           this.assertCanManageUser(currentActor, current, "users.update");
-        await this.assertRoleAssignment(
-          currentActor,
-          userRole,
-          serviceTypeIds,
-          current,
-          tx,
-        );
-        if (current.userRole === UserRole.admin && userRole !== UserRole.admin)
-          await this.assertAnotherAdministrator(tx);
-        const { serviceTypeIds: _serviceTypeIds, ...updates } = dto;
-        const data = {
-          ...updates,
-          ...(dto.password !== undefined ? { password } : {}),
-          ...(dto.phone !== undefined
-            ? {
-                phoneNormalized: phoneLookupKey(dto.phone),
-                phoneVerifiedAt: null,
-              }
-            : {}),
-        };
-        return await tx.user.update({
+          if (dto.serviceTypeIds !== undefined)
+            this.assertCanManageUser(
+              currentActor,
+              {
+                ...current,
+                serviceAssignments: dto.serviceTypeIds.map((serviceTypeId) => ({
+                  serviceTypeId,
+                })),
+              },
+              "users.update",
+            );
+        }
+        const { roleIds, serviceTypeIds, ...updates } = dto;
+        if (roleIds !== undefined) {
+          if (!isAdministrator(currentActor))
+            throw new ForbiddenException(
+              "Назначать роли может только администратор",
+            );
+          await replaceUserRoles(tx, id, roleIds);
+        }
+        if (serviceTypeIds !== undefined)
+          await this.assertServiceAssignments(
+            currentActor,
+            serviceTypeIds,
+            "users.update",
+            tx,
+          );
+        return tx.user.update({
           where: { id },
           data: {
-            ...data,
-            ...(dto.serviceTypeIds === undefined
+            ...updates,
+            ...(dto.password !== undefined ? { password } : {}),
+            ...(dto.phone !== undefined
+              ? {
+                  phoneNormalized: phoneLookupKey(dto.phone),
+                  phoneVerifiedAt: null,
+                }
+              : {}),
+            ...(serviceTypeIds === undefined
               ? {}
               : {
                   serviceAssignments: {
@@ -206,31 +210,28 @@ export class UsersService {
   }
 
   findAll(actor: AuthenticatedUser) {
+    const scope = this.serviceAccess.serviceTypeIds(actor, "users.read");
     return this.prisma.user.findMany({
-      where: hasGlobalPrivilege(actor, "users.read")
-        ? undefined
-        : {
-            userRole: UserRole.employee,
-            serviceAssignments: {
-              some: {
-                serviceTypeId: {
-                  in: this.serviceAccess.serviceTypeIds(actor, "users.read"),
-                },
-              },
-              every: {
-                serviceTypeId: {
-                  in: this.serviceAccess.serviceTypeIds(actor, "users.read"),
-                },
+      where:
+        scope === undefined
+          ? undefined
+          : {
+              accessRoles: { none: { role: { isAdministrator: true } } },
+              serviceAssignments: {
+                some: { serviceTypeId: { in: scope } },
+                every: { serviceTypeId: { in: scope } },
               },
             },
-          },
       orderBy: { name: "desc" },
       select: publicUserSelect,
     });
   }
 
   findByLogin(login: string) {
-    return this.prisma.user.findUnique({ where: { login } });
+    return this.prisma.user.findUnique({
+      where: { login },
+      include: { accessRoles: publicUserSelect.accessRoles },
+    });
   }
 
   async profile(id: number) {
@@ -244,12 +245,15 @@ export class UsersService {
 
   async findForSignIn(identifier: string, phoneOnly = false) {
     if (!phoneOnly) {
-      const byLogin = await this.findByLogin(identifier);
-      if (byLogin) return byLogin;
+      const user = await this.findByLogin(identifier);
+      if (user) return user;
     }
     const phone = phoneLookupKey(identifier);
     if (!phone) return null;
-    return this.prisma.user.findUnique({ where: { phoneNormalized: phone } });
+    return this.prisma.user.findUnique({
+      where: { phoneNormalized: phone },
+      include: { accessRoles: publicUserSelect.accessRoles },
+    });
   }
 
   async findOne(actor: AuthenticatedUser, id: number) {
@@ -259,7 +263,7 @@ export class UsersService {
     });
     if (!user) return null;
     if (!hasGlobalPrivilege(actor, "users.read")) {
-      if (user.userRole !== UserRole.employee)
+      if (isAdministrator(user))
         throw new ForbiddenException("Нет доступа к пользователю");
       this.serviceAccess.assertCanAccessServices(
         actor,
@@ -284,10 +288,9 @@ export class UsersService {
           select: publicUserSelect,
         });
         if (!current) throw new NotFoundException("Пользователь не найден");
-        if (currentActor.userRole !== UserRole.admin)
+        if (!isAdministrator(currentActor))
           this.assertCanManageUser(currentActor, current, "users.delete");
-        if (current.userRole === UserRole.admin)
-          await this.assertAnotherAdministrator(tx);
+        if (isAdministrator(current)) await assertAnotherAdministrator(tx);
         await tx.user.delete({ where: { id } });
       });
     } catch (error) {
@@ -295,51 +298,18 @@ export class UsersService {
     }
   }
 
-  private async assertRoleAssignment(
+  private async assertServiceAssignments(
     actor: AuthenticatedUser,
-    userRole: UserRole,
-    serviceTypeIds: number[],
-    current?: { userRole: UserRole },
-    db: PrismaService | Prisma.TransactionClient = this.prisma,
+    ids: number[],
+    privilege: PrivilegeKey,
+    tx: Prisma.TransactionClient,
   ) {
-    if (serviceTypeIds.length) {
-      const count = await db.serviceType.count({
-        where: { id: { in: serviceTypeIds } },
-      });
-      if (count !== serviceTypeIds.length)
-        throw new NotFoundException("Один или несколько сервисов не найдены");
-    }
-    if (actor.userRole === UserRole.admin) {
-      if (
-        (userRole === UserRole.manager || userRole === UserRole.employee) &&
-        !serviceTypeIds.length
-      )
-        throw new ConflictException(
-          "Для менеджера или сотрудника укажите хотя бы один сервис",
-        );
-      return;
-    }
     if (
-      (userRole !== UserRole.user && userRole !== UserRole.employee) ||
-      (current &&
-        current.userRole !== UserRole.user &&
-        current.userRole !== UserRole.employee) ||
-      (actor.userRole === UserRole.manager &&
-        (userRole !== UserRole.employee ||
-          (current && current.userRole !== UserRole.employee)))
-    ) {
-      throw new ForbiddenException(
-        "Менеджер может создавать и изменять только сотрудников",
-      );
-    }
-    const privilege = current ? "users.update" : "users.create";
-    this.serviceAccess.assertCanAccessServices(
-      actor,
-      serviceTypeIds,
-      privilege,
-    );
-    if (userRole === UserRole.employee && !serviceTypeIds.length)
-      throw new ConflictException("Для сотрудника укажите хотя бы один сервис");
+      (await tx.serviceType.count({ where: { id: { in: ids } } })) !==
+      ids.length
+    )
+      throw new NotFoundException("Один или несколько сервисов не найдены");
+    this.serviceAccess.assertCanAccessServices(actor, ids, privilege);
   }
 
   private assertCanManageUser(
@@ -347,13 +317,31 @@ export class UsersService {
     user: AuthenticatedUser,
     privilege: PrivilegeKey,
   ) {
+    const actorGrants = effectivePrivileges(actor);
+    // Account credentials confer all of its roles: scoped account editors cannot
+    // take over peers, access administrators, or users with stronger privileges.
     if (
-      (user.userRole !== UserRole.user &&
-        user.userRole !== UserRole.employee) ||
-      user.accessRoles?.length
+      isAdministrator(user) ||
+      effectivePrivileges(user).some(
+        (grant) =>
+          grant.privilege.startsWith("users.") ||
+          grant.privilege.startsWith("roles.") ||
+          !actorGrants.some(
+            (own) =>
+              own.privilege === grant.privilege &&
+              (own.scope === "all" ||
+                (own.scope === grant.scope &&
+                  user.serviceAssignments.every((assignment) =>
+                    actor.serviceAssignments.some(
+                      (allowed) =>
+                        allowed.serviceTypeId === assignment.serviceTypeId,
+                    ),
+                  ))),
+          ),
+      )
     )
       throw new ForbiddenException(
-        "Учётные записи с правами доступа изменяет только администратор",
+        "Недостаточно прав для управления этой учётной записью",
       );
     this.serviceAccess.assertCanAccessServices(
       actor,
@@ -374,13 +362,6 @@ export class UsersService {
     if (!actor || !hasPrivilege(actor, privilege))
       throw new ForbiddenException("Недостаточно привилегий");
     return actor;
-  }
-
-  private async assertAnotherAdministrator(tx: Prisma.TransactionClient) {
-    if ((await tx.user.count({ where: { userRole: UserRole.admin } })) <= 1)
-      throw new ConflictException(
-        "Нельзя удалить или понизить последнего администратора",
-      );
   }
 
   private rethrowWriteError(error: unknown): never {

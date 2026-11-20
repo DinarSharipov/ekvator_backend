@@ -1,3 +1,4 @@
+const { setRoles } = require("./support/role-fixtures.cjs");
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
 const url = new URL(process.env.TEST_DATABASE_URL || "postgresql://localhost/missing");
@@ -33,7 +34,7 @@ test("frontend contracts: multipart, service kinds, admin lists and contacts", a
     const registered = await http.post("/auth/register").send({ login: `${prefix}-${role}`, phone: `+7999${String(Date.now()).slice(-6)}${users.length}`, password: "test-password-123" }).expect(201);
     const id = registered.body.user.id;
     users.push(id);
-    await prisma.user.update({ where: { id }, data: { userRole: role } });
+    await setRoles(prisma, id, role);
     const login = await http.post("/auth/login").send({ login: `${prefix}-${role}`, password: "test-password-123" }).expect(200);
     return { id, token: login.body.access_token };
   }
@@ -201,6 +202,14 @@ test("frontend contracts: multipart, service kinds, admin lists and contacts", a
       assert.deepEqual(schema.properties.showType.enum, ["table", "blocks"]);
       assert.equal(schema.properties.bookingCapacity.type, "integer");
       for (const path of ["/admin/companies", "/admin/company-top-ups", "/settings/contacts", "/admin/settings/contacts"]) assert.ok(document.paths[path]);
+      for (const name of ["CreateUserDto", "UpdateUserDTO", "UserResponseDto", "UserFilterOptionResponseDto"]) {
+        const properties = document.components.schemas[name].properties;
+        assert.equal("role" in properties, false, name);
+        assert.equal("userRole" in properties, false, name);
+      }
+      assert.equal(document.components.schemas.CreateUserDto.properties.roleIds.type, "array");
+      assert.equal(document.components.schemas.AssignedRoleResponseDto.properties.isAdministrator.type, "boolean");
+      assert.equal(document.components.schemas.AccessRoleResponseDto.properties.isAdministrator.readOnly, true);
     });
   } finally {
     await prisma.companyLedgerEntry.deleteMany({ where: { companyId: { in: companies } } });

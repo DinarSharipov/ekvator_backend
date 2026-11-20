@@ -22,7 +22,10 @@ export class AuthService {
   async register(dto: RegisterDto) {
     this.smsVerification.assertRegistrationAvailable();
     const user = await this.usersService.register(dto);
-    return { ...(await this.issueToken(user)), user: await this.usersService.profile(user.id) };
+    return {
+      ...(await this.issueToken(user)),
+      user: await this.usersService.profile(user.id),
+    };
   }
 
   async signIn(dto: LoginDto) {
@@ -40,20 +43,16 @@ export class AuthService {
     );
     if (!user || !valid)
       throw new UnauthorizedException("Неверный логин, телефон или пароль");
-    this.smsVerification.assertCanSignIn(user);
-    return { ...(await this.issueToken(user)), user: await this.usersService.profile(user.id) };
+    const profile = await this.usersService.profile(user.id);
+    this.smsVerification.assertCanSignIn(profile);
+    return { ...(await this.issueToken(user)), user: profile };
   }
 
-  private async issueToken(user: {
-    id: number;
-    login: string;
-    userRole: string;
-  }) {
+  private async issueToken(user: { id: number; login: string }) {
     return {
       access_token: await this.tokens.sign({
         sub: user.id,
         login: user.login,
-        userRole: user.userRole,
       }),
     };
   }

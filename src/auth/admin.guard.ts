@@ -4,14 +4,14 @@ import {
   ForbiddenException,
   Injectable,
 } from "@nestjs/common";
-import { UserRole } from "../generated/prisma/enums";
+import { isAdministrator } from "./privileges";
 
 /** Must run after AuthGuard, which loads the current account from the database. */
 @Injectable()
 export class AdminGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const { user } = context.switchToHttp().getRequest();
-    if (user?.userRole !== UserRole.admin) {
+    if (!isAdministrator(user)) {
       throw new ForbiddenException("Доступ разрешён только администраторам");
     }
     return true;

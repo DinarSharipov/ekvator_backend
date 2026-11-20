@@ -1,3 +1,4 @@
+const { roleData } = require("./support/role-fixtures.cjs");
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
 const url = new URL(process.env.TEST_DATABASE_URL || "postgresql://localhost/missing");
@@ -33,7 +34,7 @@ test("company deposits, permissions, QR charging and ledger HTTP workflow", asyn
     await http.get("/companies/me").expect(401);
     const owner = await register("owner");
     await http.post("/companies").auth(owner.token, { type: "bearer" }).send({ name: "" }).expect(400);
-    const admin = await prisma.user.create({ data: { login: `${prefix}-admin`, password: "legacy-admin-password", name: "Admin", role: "admin", userRole: "admin" } });
+    const admin = await prisma.user.create({ data: { login: `${prefix}-admin`, password: "legacy-admin-password", name: "Admin", ...await roleData(prisma, "admin") } });
     createdUserIds.push(admin.id);
     const adminLogin = await http.post("/auth/login").send({ login: admin.login, password: "legacy-admin-password" }).expect(200);
     const company = await http.post("/companies").auth(owner.token, { type: "bearer" }).send({ name: "ООО Тестовый перевозчик", inn: "1234567890" }).expect(201);
@@ -70,7 +71,7 @@ test("company deposits, permissions, QR charging and ledger HTTP workflow", asyn
     await http.get(`/companies/${companyId}/employees/${memberId}/qr`).auth(outsider.token, { type: "bearer" }).expect(403);
     const service = await prisma.serviceType.create({ data: { name: `${prefix}-service` } });
     const item = await prisma.serviceElement.create({ data: { name: `${prefix}-item`, price: 123.45, type: service.id } });
-    const manager = await prisma.user.create({ data: { login: `${prefix}-manager`, password: "legacy-manager-password", name: "Manager", role: "manager", userRole: "manager", serviceAssignments: { create: { serviceTypeId: service.id } } } });
+    const manager = await prisma.user.create({ data: { login: `${prefix}-manager`, password: "legacy-manager-password", name: "Manager", ...await roleData(prisma, "manager"), serviceAssignments: { create: { serviceTypeId: service.id } } } });
     createdUserIds.push(manager.id);
     const managerLogin = await http.post("/auth/login").send({ login: manager.login, password: "legacy-manager-password" }).expect(200);
     const charge = await http.post("/admin/company-qr/charges").auth(managerLogin.body.access_token, { type: "bearer" }).send({ qrToken: qr.body.qrToken, serviceElementId: item.id, quantity: 2 }).expect(201);
@@ -83,7 +84,7 @@ test("company deposits, permissions, QR charging and ledger HTTP workflow", asyn
     await prisma.serviceElement.update({ where: { id: item.id }, data: { isArchive: true } });
     await http.post("/admin/company-qr/charges").auth(managerLogin.body.access_token, { type: "bearer" }).send({ qrToken: qr.body.qrToken, serviceElementId: item.id }).expect(404);
     await prisma.serviceElement.update({ where: { id: item.id }, data: { isArchive: false } });
-    const unassignedManager = await prisma.user.create({ data: { login: `${prefix}-unassigned-manager`, password: "manager-password", name: "Unassigned manager", role: "manager", userRole: "manager" } });
+    const unassignedManager = await prisma.user.create({ data: { login: `${prefix}-unassigned-manager`, password: "manager-password", name: "Unassigned manager", ...await roleData(prisma, "manager") } });
     createdUserIds.push(unassignedManager.id);
     const unassignedManagerToken = (await http.post("/auth/login").send({ login: unassignedManager.login, password: "manager-password" }).expect(200)).body.access_token;
     await http.post("/admin/company-qr/charges").auth(unassignedManagerToken, { type: "bearer" }).send({ qrToken: qr.body.qrToken, serviceElementId: item.id }).expect(403);

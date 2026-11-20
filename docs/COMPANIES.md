@@ -13,8 +13,8 @@ All money is stored as integer kopecks (`amountMinor` / `balanceMinor`): `1_000_
 1. An authenticated user calls `POST /companies` and becomes the company owner.
 2. The owner calls `POST /companies/:id/employees` with an existing `userId`, or with `login`, `password`, and `name` to create and attach a driver.
 3. The company calls `POST /companies/:id/top-ups`. It creates a `pending` request only.
-4. Until a payment provider is integrated, an Ekvator administrator confirms an actual payment through `POST /admin/company-top-ups/:id/confirm`.
+4. Until a payment provider is integrated, an operator with topups.confirm confirms an actual payment through `POST /admin/company-top-ups/:id/confirm`.
 5. The owner transfers funds to a driver through `POST /companies/:id/employees/:memberId/allocations`.
-6. A driver displays the token from `GET /companies/:id/employees/:memberId/qr`. An administrator or an appropriately assigned service manager calls `POST /admin/company-qr/charges`; the server obtains the current service price, checks access and the employee deposit, then performs an atomic debit.
+6. A driver displays the token from `GET /companies/:id/employees/:memberId/qr`. An operator with companies.charge in the required scope calls `POST /admin/company-qr/charges`; the server obtains the current service price, checks access and the employee deposit, then performs an atomic debit.
 
 The QR token is an account credential: clients must render it as a QR image locally and must not expose it in public listings. Actual payment-provider callbacks are intentionally not implemented yet; they should confirm the existing pending top-up rather than write balances directly.
