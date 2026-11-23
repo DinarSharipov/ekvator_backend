@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added atomic bulk preorder availability updates for selected catalogue IDs, with strict JSON validation and existing item-edit privileges for every affected service. Archive flags and service settings remain unchanged.
+
 - Production cutover completed on 2026-11-20 at 18:21 Moscow time from `e69c311`: restored and migrated a private production copy, rehearsed normal and schema-compatible recovery startup, then took a final stopped-writer backup and migrated live data. Verified original records in 19 tables, every account's effective access, four administrators, all 28 privileges and eight protection triggers. Live health and authenticated HTTP checks passed; configuration, database container and mounts were unchanged. Frontend source contract checks passed, but its deployment belongs to the frontend agent.
 - Unified all staff access under editable `AccessRole` grants and `UserAccessRole` assignments; removed legacy account role fields, the fixed `UserRole` enum, implicit manager/employee permissions and old role guards. Migrated existing staff access without changing account identities, credentials, business records or existing custom roles. Manager and employee roles can be renamed, edited and removed; only the administrator role and its complete privilege set are protected.
 - Adapted authentication, SMS verification, user administration, company access, OpenAPI and deployment checks to unified roles. Administrator-controlled user writes now accept `roleIds` atomically. Preserved existing JWT sessions with database-backed authorization, protected retained/last-administrator assignments against concurrent HTTP/SQL changes, and prevented delegated account editing from expanding privilege or service coverage.

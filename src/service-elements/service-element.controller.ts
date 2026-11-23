@@ -10,6 +10,8 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Patch,
+  ValidationPipe,
   Request,
   UploadedFiles,
   UseGuards,
@@ -33,6 +35,7 @@ import * as sharp from "sharp";
 import { AuthGuard } from "../auth/auth.guard";
 import { AuthenticatedUser, ServiceAccessService } from "../auth/service-access.service";
 import { CreateServiceElementDto } from "./dto/create.service-element.dto";
+import { BulkPreorderAvailabilityDto } from "./dto/bulk-preorder-availability.dto";
 import { ServiceElementService } from "./service-element.service";
 import { ApiErrorDto, ServiceElementListItemResponseDto, ServiceElementResponseDto } from "../openapi/response.dto";
 
@@ -45,6 +48,19 @@ import { ApiErrorDto, ServiceElementListItemResponseDto, ServiceElementResponseD
 @ApiResponse({ status: 404, description: "Услуга или сервис не найдены", type: ApiErrorDto })
 export class ServiceElementsController {
   constructor(private readonly serviceElementService: ServiceElementService, private readonly serviceAccess: ServiceAccessService) {}
+
+  @Patch("preorder-availability")
+  @UseGuards(AuthGuard, PrivilegesGuard)
+  @RequirePrivileges("items.update")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: "Массово изменить доступность предзаказа", description: "Атомарно изменяет только preorderAvailable у выбранных товаров и услуг. Требует items.update для всех их сервисов. Если хотя бы одна позиция не найдена или недоступна, изменения не применяются. Архивность и настройки приёма предзаказов сервиса сохраняются." })
+  @ApiNoContentResponse({ description: "Доступность всех выбранных позиций изменена." })
+  async setPreorderAvailability(
+    @Request() request: { user: AuthenticatedUser },
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) dto: BulkPreorderAvailabilityDto,
+  ) {
+    await this.serviceElementService.setPreorderAvailability(dto, this.serviceAccess.serviceTypeIds(request.user, "items.update"));
+  }
 
   @Post()
   @UseGuards(AuthGuard, PrivilegesGuard)

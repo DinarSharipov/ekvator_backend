@@ -10,6 +10,10 @@ Read `privileges` from `/auth/me` or the login profile to gate staff navigation 
 
 ## Two kinds of service directions
 
+### Bulk catalogue preorder availability
+
+`PATCH /service-elements/preorder-availability` accepts JSON `{ "ids": [1, 2, 3], "preorderAvailable": true }` (or `false`) and returns `204` without a response body. Requires Bearer authentication and `items.update` covering every selected position's service. Send 1–1000 unique positive integer IDs; string IDs and string booleans are rejected with `400`. An unknown ID returns `404`, insufficient service access returns `403`; the whole batch is rejected without partial updates. Repeating a request is safe. Only `preorderAvailable` changes: archive status and the service's `acceptsPreorders` remain independent gates. No migration is required.
+
 `ServiceType.kind` is `goods` or `services`. Read it from `/services`, `/services/:id`, order item service metadata, and calendar service filter options. Send it in multipart service creation/update alongside `bookingMode`.
 
 | kind | bookingMode | Selection | Scheduling |

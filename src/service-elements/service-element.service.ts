@@ -1,4 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { Prisma } from "../generated/prisma/client";
+import { BulkPreorderAvailabilityDto } from "./dto/bulk-preorder-availability.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateServiceElementDto } from "./dto/create.service-element.dto";
 import { UpdateServiceElementDto } from "./dto/update.service-element.dto";
@@ -6,6 +8,20 @@ import { UpdateServiceElementDto } from "./dto/update.service-element.dto";
 @Injectable()
 export class ServiceElementService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async setPreorderAvailability(dto: BulkPreorderAvailabilityDto, serviceTypeIds?: number[]) {
+    await this.prisma.$transaction(async (tx) => {
+      // Keep service ownership stable until the authorization check and update finish.
+      await tx.$queryRaw`SELECT "id" FROM "ServiceElement" WHERE "id" IN (${Prisma.join(dto.ids)}) ORDER BY "id" FOR UPDATE`;
+      const items = await tx.serviceElement.findMany({ where: { id: { in: dto.ids } }, select: { id: true, type: true } });
+      if (items.length !== dto.ids.length) throw new NotFoundException("Один или несколько товаров или услуг не найдены");
+      if (serviceTypeIds !== undefined) {
+        const allowed = new Set(serviceTypeIds);
+        if (items.some((item) => !allowed.has(item.type))) throw new ForbiddenException("Нет доступа к одному или нескольким сервисам");
+      }
+      await tx.serviceElement.updateMany({ where: { id: { in: dto.ids } }, data: { preorderAvailable: dto.preorderAvailable } });
+    });
+  }
 
   create(createServiceDTO: CreateServiceElementDto) {
     return this.prisma.serviceElement.create({
