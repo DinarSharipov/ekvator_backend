@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added partners with public list/detail reads and protected creation, partial updates and deletion. Partners include a base64 image and optional website, email, phone, contact person and INN.
+
 - Added atomic bulk preorder availability updates for selected catalogue IDs, with strict JSON validation and existing item-edit privileges for every affected service. Archive flags and service settings remain unchanged.
 
 - Production cutover completed on 2026-11-20 at 18:21 Moscow time from `e69c311`: restored and migrated a private production copy, rehearsed normal and schema-compatible recovery startup, then took a final stopped-writer backup and migrated live data. Verified original records in 19 tables, every account's effective access, four administrators, all 28 privileges and eight protection triggers. Live health and authenticated HTTP checks passed; configuration, database container and mounts were unchanged. Frontend source contract checks passed, but its deployment belongs to the frontend agent.

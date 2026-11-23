@@ -74,3 +74,24 @@ No sibling repository is changed. Frontend follow-up: regenerate OpenAPI types, 
 Run `npm run test:frontend-contracts` or `npm run test:e2e` with `TEST_DATABASE_URL` pointing to a migrated local PostgreSQL database ending in `_test`. The checks exercise real Nest HTTP and PostgreSQL, multipart images, invalid input, both kinds, booking conflicts, role boundaries, pagination, contacts, and OpenAPI schemas. They do not prove browser interaction or production deployment.
 
 SMS sending and payment-provider callbacks remain separate integrations requiring a selected provider and its configuration. This release does not turn on SMS verification or future online prepayments.
+
+## Partners
+
+- GET /partners: public array of partners, ordered by id ascending.
+- GET /partners/:id: public partner details; 404 if absent.
+- POST /partners: JWT and settings.update; returns 201 with the created partner.
+- PATCH /partners/:id: JWT and settings.update; returns 200 with the updated partner.
+- DELETE /partners/:id: JWT and settings.update; returns 204 without a body.
+
+Required creation fields: name (nonblank, trimmed, up to 200 characters), image (base64, up to 90000 characters). ID is an automatically generated integer and cannot be supplied or edited.
+Image accepts raw standard padded base64 or a data:image/png|jpeg|gif|webp;base64, prefix. It is stored and returned unchanged. The API validates base64 syntax, not the decoded image contents. Keep the entire JSON body below the server's default 100 KiB limit.
+Optional nullable fields: site (absolute HTTP/HTTPS URL, up to 2000 characters), email (up to 254), phone (up to 50), person (contact name, up to 200), inn (10 or 12 digits).
+All fields are returned, including optional fields as null when unset. These are public partner contact details; do not enter private contact information.
+PATCH preserves omitted fields; null clears optional fields but is rejected for name/image. Unknown fields are rejected. Invalid input returns 400; protected writes return 401/403 without authentication/privilege; missing partner returns 404.
+
+Example creation body:
+~~~json
+{"name":"Partner","image":"aGVsbG8=","site":"https://example.com","inn":"1650123456"}
+~~~
+
+The migration only creates the Partner table and its sequence; it does not change existing records or role grants.

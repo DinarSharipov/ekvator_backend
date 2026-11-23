@@ -334,3 +334,14 @@ model PreorderItem {
   serviceType ServiceType @relation(fields: [serviceTypeId], references: [id], onDelete: Restrict)
   @@index([preorderId])
 }
+
+model Partner {
+  id Int @id @default(autoincrement())
+  name String
+  image String
+  site String?
+  email String?
+  phone String?
+  person String?
+  inn String?
+}

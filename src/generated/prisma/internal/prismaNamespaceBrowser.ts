@@ -69,7 +69,8 @@ export const ModelName = {
   Cart: 'Cart',
   CartItem: 'CartItem',
   Preorder: 'Preorder',
-  PreorderItem: 'PreorderItem'
+  PreorderItem: 'PreorderItem',
+  Partner: 'Partner'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -345,6 +346,20 @@ export const PreorderItemScalarFieldEnum = {
 } as const
 
 export type PreorderItemScalarFieldEnum = (typeof PreorderItemScalarFieldEnum)[keyof typeof PreorderItemScalarFieldEnum]
+
+
+export const PartnerScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  image: 'image',
+  site: 'site',
+  email: 'email',
+  phone: 'phone',
+  person: 'person',
+  inn: 'inn'
+} as const
+
+export type PartnerScalarFieldEnum = (typeof PartnerScalarFieldEnum)[keyof typeof PartnerScalarFieldEnum]
 
 
 export const SortOrder = {
