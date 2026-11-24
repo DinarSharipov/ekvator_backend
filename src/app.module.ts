@@ -1,3 +1,4 @@
+import { NewsModule } from "./news/news.module";
 import { PartnersModule } from "./partners/partners.module";
 import { AccessRolesModule } from "./roles/access-roles.module";
 import { Module } from "@nestjs/common";
@@ -13,7 +14,7 @@ import { AnalyticsModule } from "./analytics/analytics.module";
 import { SettingsModule } from "./settings/settings.module";
 
 @Module({
-  imports: [PartnersModule, UsersModule, ServiceTypesModule, ServiceElementModule, AuthModule, OrdersModule, WeatherModule, CompaniesModule, AnalyticsModule, SettingsModule, AccessRolesModule],
+  imports: [NewsModule, PartnersModule, UsersModule, ServiceTypesModule, ServiceElementModule, AuthModule, OrdersModule, WeatherModule, CompaniesModule, AnalyticsModule, SettingsModule, AccessRolesModule],
   controllers: [],
   providers: [PrismaService],
 })

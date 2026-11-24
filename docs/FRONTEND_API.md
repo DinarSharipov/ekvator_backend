@@ -95,3 +95,7 @@ Example creation body:
 ~~~
 
 The migration only creates the Partner table and its sequence; it does not change existing records or role grants.
+
+## M-7 news
+
+Public `GET /news/m7?category=all&period=7d`: category `all|traffic`, period `24h|7d|30d`; unknown values return 400. Response `{articles:[{url,title,seendate,domain,sourcecountry,language}],fetchedAt,stale}`. Visitors read a shared background cache only. Failures preserve the last successful response and timestamp with `stale:true`; no cache returns 503 (`M7_NEWS_UNAVAILABLE`). `seendate` is discovery time, never incident time. See [M7_NEWS.md](M7_NEWS.md) for cache lifecycle, filtering, diagnostics and outstanding real-data acceptance.

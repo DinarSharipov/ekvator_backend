@@ -4,6 +4,8 @@
 
 - Production HTTPS integration (2026-11-24): the frontend Caddy reverse proxy exposes the existing NestJS API at `https://ekvator-m-7.ru/api/`, stripping the public `/api` prefix before forwarding requests to the original backend routes on port 3000. Verified the backend is healthy and the public `/api/auth/features` endpoint returns JSON over HTTPS. TLS termination and automatic certificate renewal are managed on the frontend VPS; the proxy-to-backend connection remains HTTP. No backend application code, database schema, container configuration or endpoint contracts were changed as part of this rollout. End-to-end TLS between VPS hosts is not yet implemented.
 
+- Added a public M-7 news endpoint backed by a shared six-key background cache, refreshed every 15 minutes with sequential rate-limited GDELT requests, bounded retries and stale-result preservation. Added OpenAPI and regression tests. Production GDELT diagnostics confirm access and the empty-result format, but relevant live M-7 publication verification remains pending due to upstream errors. The news-provider API may need to be replaced if GDELT cannot reliably supply relevant M-7 publications.
+
 - Added partners with public list/detail reads and protected creation, partial updates and deletion. Partners include a base64 image and optional website, email, phone, contact person and INN.
 
 - Added atomic bulk preorder availability updates for selected catalogue IDs, with strict JSON validation and existing item-edit privileges for every affected service. Archive flags and service settings remain unchanged.

@@ -5,8 +5,7 @@ process.env.JWT = "weather-e2e-test-secret";
 require("reflect-metadata");
 const { Test } = require("@nestjs/testing");
 const request = require("supertest");
-const { AppModule } = require("../dist/app.module");
-const { PrismaService } = require("../dist/prisma/prisma.service");
+const { WeatherModule } = require("../dist/weather/weather.module");
 
 const dateAt = (offset) => {
   const value = new Date();
@@ -24,10 +23,7 @@ test("public weather proxy validates, normalizes and caches provider responses",
       hourly: { time: [`${dateAt(1)}T08:00`, `${dateAt(1)}T12:00`], temperature_2m: [1, 2], relative_humidity_2m: [61, 62], surface_pressure: [1001, 1002], weather_code: [2, 3] },
     }) };
   };
-  const module = await Test.createTestingModule({ imports: [AppModule] })
-    .overrideProvider(PrismaService)
-    .useValue({})
-    .compile();
+  const module = await Test.createTestingModule({ imports: [WeatherModule] }).compile();
   const app = module.createNestApplication();
   await app.init();
   const http = request(app.getHttpServer());
