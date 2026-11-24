@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Production HTTPS integration (2026-11-24): the frontend Caddy reverse proxy exposes the existing NestJS API at `https://ekvator-m-7.ru/api/`, stripping the public `/api` prefix before forwarding requests to the original backend routes on port 3000. Verified the backend is healthy and the public `/api/auth/features` endpoint returns JSON over HTTPS. TLS termination and automatic certificate renewal are managed on the frontend VPS; the proxy-to-backend connection remains HTTP. No backend application code, database schema, container configuration or endpoint contracts were changed as part of this rollout. End-to-end TLS between VPS hosts is not yet implemented.
+
 - Added partners with public list/detail reads and protected creation, partial updates and deletion. Partners include a base64 image and optional website, email, phone, contact person and INN.
 
 - Added atomic bulk preorder availability updates for selected catalogue IDs, with strict JSON validation and existing item-edit privileges for every affected service. Archive flags and service settings remain unchanged.
